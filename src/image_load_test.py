@@ -15,7 +15,7 @@ from operator import iand
 from functools import reduce
 import matplotlib.pyplot as plt
 
-base_dir = '../data' # assuming cwd is the location of this script
+base_dir = './data' # assuming cwd is the location of this script
 base_url = 'https://coe.northeastern.edu/Research/AClab/InfAnFace/images/'
 
 
