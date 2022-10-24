@@ -58,7 +58,8 @@ def get_image(row_id=None,path=None,file=None):
                 outfile.write(info)
     return Image.open(local_file)
 
-get_image(0).show()
+# e.g. usage
+# get_image(0).show()
 
 targets = ['turned', 'occluded', 'tilted', 'expressive']
 print(df.loc[:,targets].sum())
