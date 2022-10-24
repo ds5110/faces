@@ -13,11 +13,34 @@ import pandas as pd
 from PIL import Image
 from operator import iand
 from functools import reduce
+import matplotlib.pyplot as plt
 
 base_dir = '../data' # assuming cwd is the location of this script
 base_url = 'https://coe.northeastern.edu/Research/AClab/InfAnFace/images/'
 
-df = pd.read_csv(f'{base_dir}/labels.csv')
+
+def load_file(file,url=None,path=base_dir):
+    local_path = Path(path)
+    local_file = Path(f'{path}/{file}')
+    if not url:
+        url = f'{base_url}/file'
+    if not local_path.exists():
+        os.makedirs(local_path)
+    elif not local_file.exists():
+        with \
+                urllib.request.urlopen(url) as infile, \
+                open(local_file, 'wb') as outfile:
+            outfile.write(infile.read())
+            while True:
+                data = infile.read(1e5)
+                if len(data) < 1: break
+                outfile.write(data)
+    return local_file
+
+# load the labels data
+# NOTE: It's a little awkward, but this _mus be done between declaring these
+#       two functions...
+df = pd.read_csv(load_file('labels.csv'))
 
 def get_image(row_id=None,path=None,file=None):
     '''
@@ -44,26 +67,27 @@ def get_image(row_id=None,path=None,file=None):
         path = df['image-set'].iloc[row_id]
         file = df['filename'].iloc[row_id]
     
-    local_path = Path(f'{base_dir}/{path}')
-    local_file = Path(f'{local_path}/{file}')
-    if not local_path.exists():
-        os.makedirs(local_path)
-    elif not local_file.exists():
-        with urllib.request.urlopen(f'{base_url}/{path}/{file}') as infile, \
-             open(local_file, 'wb') as outfile:
-            outfile.write(infile.read())
-            while True:
-                info = infile.read(1e5)
-                if len(info) < 1: break
-                outfile.write(info)
-    return Image.open(local_file)
+    image_file = load_file(
+        file,
+        f'{base_url}/{path}/{file}',
+        f'{base_dir}/{path}',
+    )
+    return Image.open(image_file)
+
+def to_image(series):
+    return get_image(path=series['image-set'],file=series['filename'])
 
 # e.g. usage
-# get_image(0).show()
+# plt.imshow(get_image(1))
+
+# e.g. per row
+im_df = df.iloc[0,:]
+im = to_image(im_df)
+plt.imshow(im)
 
 targets = ['turned', 'occluded', 'tilted', 'expressive']
 print(f'target counts:\n{df.loc[:,targets].sum()}\n')
 
-no_targets = reduce(lambda x, y: x & y, [df[col] == 0 for col in targets])
+no_targets = reduce(iand, [df[col] == 0 for col in targets])
 print(f'no targets:  {df[no_targets].shape}')
 print(f'one or more: {df[~no_targets].shape}')
