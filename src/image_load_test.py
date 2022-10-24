@@ -62,7 +62,7 @@ def get_image(row_id=None,path=None,file=None):
 # get_image(0).show()
 
 targets = ['turned', 'occluded', 'tilted', 'expressive']
-print(df.loc[:,targets].sum())
+print(f'target counts:\n{df.loc[:,targets].sum()}\n')
 
 no_targets = reduce(lambda x, y: x & y, [df[col] == 0 for col in targets])
 print(f'no targets:  {df[no_targets].shape}')
