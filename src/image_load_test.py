@@ -43,11 +43,8 @@ def get_image(row_id=None,path=None,file=None):
     local_path = Path(f'{base_dir}/{path}')
     local_file = Path(f'{local_path}/{file}')
     if not local_path.exists():
-        print('making image-set directory...')
         os.makedirs(local_path)
-        print('OK')
     elif not local_file.exists():
-        print('making local copy..')
         with urllib.request.urlopen(f'{base_url}/{path}/{file}') as infile, \
              open(local_file, 'wb') as outfile:
             outfile.write(infile.read())
@@ -55,7 +52,6 @@ def get_image(row_id=None,path=None,file=None):
                 info = infile.read(1e5)
                 if len(info) < 1: break
                 outfile.write(info)
-        print('OK')
     return Image.open(local_file)
 
 get_image(0).show()
