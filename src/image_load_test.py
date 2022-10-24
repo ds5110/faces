@@ -11,6 +11,8 @@ from pathlib import Path
 import urllib.request
 import pandas as pd
 from PIL import Image
+from operator import iand
+from functools import reduce
 
 base_dir = '../data' # assuming cwd is the location of this script
 base_url = 'https://coe.northeastern.edu/Research/AClab/InfAnFace/images/'
@@ -20,6 +22,9 @@ df = pd.read_csv(f'{base_dir}/labels.csv')
 def get_image(row_id=None,path=None,file=None):
     '''
     This is a simple function for pulling raw image data to a local cache.
+    You can access images by either their 'path' and 'file' (corresponding to
+    'image-set' and 'filename' in the 'labels' DataFrame) or by row ID
+    (the index in the 'labels' DataFrame)
 
     Parameters
     ----------
@@ -32,8 +37,7 @@ def get_image(row_id=None,path=None,file=None):
 
     Returns
     -------
-    TYPE
-        DESCRIPTION.
+    A pillow Image
 
     '''
     if row_id is not None:
@@ -55,3 +59,10 @@ def get_image(row_id=None,path=None,file=None):
     return Image.open(local_file)
 
 get_image(0).show()
+
+targets = ['turned', 'occluded', 'tilted', 'expressive']
+print(df.loc[:,targets].sum())
+
+no_targets = reduce(lambda x, y: x & y, [df[col] == 0 for col in targets])
+print(f'no targets:  {df[no_targets].shape}')
+print(f'one or more: {df[~no_targets].shape}')
