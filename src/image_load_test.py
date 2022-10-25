@@ -48,28 +48,6 @@ features = [
     Feature('lip_in_bot', [*range(64,68),60]),
 ]
 
-# right_cheek = range(8)
-# chin = range(7,10) # 8
-# left_cheek = range(9,17)
-# right_brow = range(17,22)
-# left_brow = range(22,27)
-# nose_v = range(27,31)
-# nose_h = range(31,36)
-# right_eye = range(36,42)
-# left_eye = range(42,48)
-# out_lip_top_right = range(48,51)
-# out_lip_top_philtrum = 51
-# out_lip_top_left = range(52,55)
-# out_lip_bot = range(55,60)
-# lip_in_top = range(60,65)
-# lip_in_bot = range(65,68)
-
-# ext_re = re.compile('^(.+)\.([^\.]+)$')
-# def ext(x):
-#     m = ext_re.match(x)
-#     return m.group(1)
-# df['filename'].apply(ext).unique()
-
 
 def load_file(file,url=None,path=base_dir):
     local_path = Path(path)
@@ -138,9 +116,6 @@ def plot_image(
                 yy = series[[f'gt-y{i}' for i in f.idx]].astype(float).values
                 if pd.isna(xx).any(): continue;
                 if pd.isna(yy).any(): continue;
-                xmin,xmax,ymin,ymax = [min(xx),max(xx),min(yy),max(yy)]
-                xi = np.linspace(xmin, xmax, 100)
-                yi = np.linspace(ymin, ymax, 100)
                 
                 points = np.stack((xx,yy)).T
                 distance = np.cumsum(
