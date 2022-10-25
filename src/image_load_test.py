@@ -29,9 +29,9 @@ class Feature:
         self.idx = idx
 
 features = [
-    Feature('right_cheek', range(7)),
-    Feature('chin', range(6,11)), # 8
-    Feature('left_cheek', range(10,17)),
+    Feature('right_cheek', range(8)),
+    Feature('chin', range(7,10)), # center at 8
+    Feature('left_cheek', range(9,17)),
     Feature('right_brow', range(17,22)),
     Feature('left_brow', range(22,27)),
     Feature('nose_v', range(27,31)),
@@ -40,13 +40,14 @@ features = [
     Feature('right_eye_bot', [*range(39,42),36]),
     Feature('left_eye_top', range(42,46)),
     Feature('left_eye_bot', [*range(45,48),42]),
-    Feature('out_lip_top_right', range(48,52)),
-    # Feature('out_lip_top_philtrum', range(50,53)), # 51
-    Feature('out_lip_top_left', range(51,55)),
+    Feature('out_lip_top_right', range(48,51)),
+    Feature('philtrum', range(50,53)), # center at 51
+    Feature('out_lip_top_left', range(52,55)),
     Feature('out_lip_bot', range(55,60)),
     Feature('lip_in_top', range(60,65)),
     Feature('lip_in_bot', [*range(64,68),60]),
 ]
+f_per_desc = {f.desc: f for f in features}
 
 
 def load_file(file,url=None,path=base_dir):
@@ -104,6 +105,10 @@ def plot_image(
         series = df.iloc[row_id,:]
     category = series['image-set']
     filename = series['filename']
+    title = f'{category}/{filename}'
+    if row_id is not None:
+        title += f' (row {row_id})'
+    
     img = to_image(series)
     fig, ax = plt.subplots()
     ax.imshow(img)
@@ -111,35 +116,41 @@ def plot_image(
     if annotate:
         if annotate.startswith('spline'):
             for f in features:
-                print('trying feature: ' + f.desc)
+                # f = f_per_desc['left_eye_top']# problematic for 3-spline
+                
+                # print('trying feature: ' + f.desc)
                 xx = series[[f'gt-x{i}' for i in f.idx]].astype(float).values
                 yy = series[[f'gt-y{i}' for i in f.idx]].astype(float).values
                 if pd.isna(xx).any(): continue;
                 if pd.isna(yy).any(): continue;
                 
                 points = np.stack((xx,yy)).T
+                # print(points.shape)
                 distance = np.cumsum(
                     np.sqrt(np.sum(
                         np.diff(points, axis=0)**2,
                         axis=1
                     ))
                 )
-                if not distance[-1]:
-                    continue
+                # print(distance.shape)
+                if not distance[-1]: continue;
                 
+                # print('x', xx)
+                # print('y', yy)
+                # print('pre distance', distance)
                 distance = np.insert(distance, 0, 0)/distance[-1]
+                # print('post distance', distance)
+                splines = [UnivariateSpline(distance, point, k=2, s=.2) for point in points.T]
+                points_fitted = np.vstack(
+                    [spline(np.linspace(0, 1, 64)) for spline in splines]
+                )
+                # if points_fitted
                 
-                splines = [UnivariateSpline(distance, coords, k=3, s=.2) for coords in points.T]
-        
-                # Computed the spline for the asked distances:
-                alpha = np.linspace(0, 1, 75)
-                points_fitted = np.vstack([spl(alpha) for spl in splines]).T
-                
-                # Graph:
                 # plt.plot(*points.T, 'ok', label='original points')
-                plt.plot(*points_fitted.T, '-r', label='fitted spline k=3, s=.2')
+                plt.plot(*points_fitted, '-r', label='fitted spline k=3, s=.2')
                 
                 if 'splinelabel' == annotate:
+                    # TODO: come up with a way to avoid overlapping labels
                     ax.annotate(
                         f'{f.desc}',
                         (
@@ -168,9 +179,6 @@ def plot_image(
                         (series[x_col], series[y_cols[i]]),
                         fontsize=6,
                     )
-    title = f'{category}/{filename}'
-    if row_id is not None:
-        title += f' (row {row_id})'
     plt.title(title)
     plt.tight_layout()
     if save_fig:
@@ -193,10 +201,10 @@ def plot_image(
 # for i in range(df.shape[0]):
 #     get_image(i)
 
-# plot_image(0,plot_indices=True,save_fig=True)
+#-- try a few plots
 for i in range(10):
     for annotate in [None,'scatter','scatternum','spline','splinelabel']:
-        plot_image(i,annotate=annotate,save_fig=True)
+        plot_image(i,annotate=annotate,save_fig=False)
 
 
 print(f'target counts:\n{df.loc[:,targets].sum()}\n')
