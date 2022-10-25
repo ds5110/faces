@@ -124,11 +124,11 @@ def plot_image(
                 if pd.isna(xx).any(): continue;
                 if pd.isna(yy).any(): continue;
                 
-                points = np.stack((xx,yy)).T
+                points = np.stack((xx,yy))
                 # print(points.shape)
                 distance = np.cumsum(
                     np.sqrt(np.sum(
-                        np.diff(points, axis=0)**2,
+                        np.diff(points.T, axis=0)**2,
                         axis=1
                     ))
                 )
@@ -140,14 +140,19 @@ def plot_image(
                 # print('pre distance', distance)
                 distance = np.insert(distance, 0, 0)/distance[-1]
                 # print('post distance', distance)
-                splines = [UnivariateSpline(distance, point, k=2, s=.2) for point in points.T]
+                splines = [UnivariateSpline(distance, point, k=2, s=.2) for point in points]
                 points_fitted = np.vstack(
                     [spline(np.linspace(0, 1, 64)) for spline in splines]
                 )
                 # if points_fitted
                 
-                # plt.plot(*points.T, 'ok', label='original points')
-                plt.plot(*points_fitted, '-r', label='fitted spline k=3, s=.2')
+                # plt.plot(*points, 'ok', label='original points')
+                plt.plot(
+                    *points_fitted,
+                    linestyle='-',
+                    linewidth='1',
+                    c='fuchsia',
+                )
                 
                 if 'splinelabel' == annotate:
                     # TODO: come up with a way to avoid overlapping labels
@@ -169,7 +174,7 @@ def plot_image(
                 series[y_cols],
                 s=10,
                 linewidth=.5,
-                c='lightgreen',
+                c='lime',
                 edgecolors='black',
             )
             if 'scatternum' == annotate:
