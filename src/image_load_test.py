@@ -130,104 +130,69 @@ def plot_image(
     fig, ax = plt.subplots()
     ax.imshow(img)
     
-    if 'spline' == annotate:
-        for f in features:
-            print('trying feature: ' + f.desc)
-            xx = series[[f'gt-x{i}' for i in f.idx]].astype(float).values
-            yy = series[[f'gt-y{i}' for i in f.idx]].astype(float).values
-            if pd.isna(xx).any(): continue;
-            if pd.isna(yy).any(): continue;
-            xmin,xmax,ymin,ymax = [min(xx),max(xx),min(yy),max(yy)]
-            xi = np.linspace(xmin, xmax, 100)#, endpoint=False)
-            yi = np.linspace(ymin, ymax, 100)
-            
-            #-- we are not doing 2d interpolation, I guess
-            # xi, yi = np.meshgrid(xi, yi)
-            # xi, yi = np.mgrid[xx[0]:xx[len(xx)-1]:100j, yy[0]:yy[len(yy)-1]:200j]
-            # grid = griddata(xx, yy, (xi, yi), method='cubic')
-            # plt.imshow(grid.T, extent=(0,1,0,1), origin='lower')
-            
-            #-- 1D interpolation is producing werid values... (probably my fault)
-            # points = np.stack((xx,yy)).T
-            # distance = np.cumsum(
-            #     np.sqrt(np.sum(
-            #         np.diff(points, axis=0)**2,
-            #         axis=1
-            #     ))
-            # )
-            # distance = np.insert(distance, 0, 0)/distance[-1]
-            
-            # # Interpolation for different methods:
-            # interpolations_methods = ['slinear', 'quadratic', 'cubic']
-            # alpha = np.linspace(xmin,xmax,100)
-            
-            # interpolated_points = {}
-            # for method in interpolations_methods:
-            #     interpolator =  interp1d(
-            #         distance,
-            #         points,
-            #         kind=method,
-            #         axis=0,
-            #         fill_value="extrapolate"
-            #     )
-            #     interpolated_points[method] = interpolator(alpha)
-            # for method_name, curve in interpolated_points.items():
-            #     ax.plot(*curve.T, '-', label=method_name);
-            
-            points = np.stack((xx,yy)).T
-            distance = np.cumsum(
-                np.sqrt(np.sum(
-                    np.diff(points, axis=0)**2,
-                    axis=1
-                ))
-            )
-            if not distance[-1]:
-                continue
-            
-            # if row_id == 3 and 'left_brow' == f.desc:
-            #     print('xx', xx)
-            #     print('yy', yy)
-            #     print('distance', distance)
-            distance = np.insert(distance, 0, 0)/distance[-1]
+    if annotate:
+        if annotate.startswith('spline'):
+            for f in features:
+                print('trying feature: ' + f.desc)
+                xx = series[[f'gt-x{i}' for i in f.idx]].astype(float).values
+                yy = series[[f'gt-y{i}' for i in f.idx]].astype(float).values
+                if pd.isna(xx).any(): continue;
+                if pd.isna(yy).any(): continue;
+                xmin,xmax,ymin,ymax = [min(xx),max(xx),min(yy),max(yy)]
+                xi = np.linspace(xmin, xmax, 100)
+                yi = np.linspace(ymin, ymax, 100)
                 
-            # if row_id == 3 and 'left_brow' == f.desc:
-            #     print('modified distance', distance)
-            splines = [UnivariateSpline(distance, coords, k=3, s=.2) for coords in points.T]
-    
-            # Computed the spline for the asked distances:
-            alpha = np.linspace(0, 1, 75)
-            points_fitted = np.vstack([spl(alpha) for spl in splines]).T
-            
-            # Graph:
-            # plt.plot(*points.T, 'ok', label='original points')
-            plt.plot(*points_fitted.T, '-r', label='fitted spline k=3, s=.2')
-            # ax.annotate(
-            #     f'{f.desc}',
-            #     (
-            #         xx[0],
-            #         yy[0]
-            #         # xx[np.argmax(xx)],
-            #         # yy[np.argmin(xx)]
-            #         # np.mean(yy)
-            #     ),
-            #     fontsize=6,
-            # )
-    if annotate and annotate.startswith('scatter'):
-        ax.scatter(
-            series[x_cols],
-            series[y_cols],
-            s=10,
-            linewidth=.5,
-            c='lightgreen',
-            edgecolors='black',
-        )
-        if 'scatternum' == annotate:
-            for i, x_col in enumerate(x_cols):
-                ax.annotate(
-                    f'{i}',
-                    (series[x_col], series[y_cols[i]]),
-                    fontsize=6,
+                points = np.stack((xx,yy)).T
+                distance = np.cumsum(
+                    np.sqrt(np.sum(
+                        np.diff(points, axis=0)**2,
+                        axis=1
+                    ))
                 )
+                if not distance[-1]:
+                    continue
+                
+                distance = np.insert(distance, 0, 0)/distance[-1]
+                
+                splines = [UnivariateSpline(distance, coords, k=3, s=.2) for coords in points.T]
+        
+                # Computed the spline for the asked distances:
+                alpha = np.linspace(0, 1, 75)
+                points_fitted = np.vstack([spl(alpha) for spl in splines]).T
+                
+                # Graph:
+                # plt.plot(*points.T, 'ok', label='original points')
+                plt.plot(*points_fitted.T, '-r', label='fitted spline k=3, s=.2')
+                
+                if 'splinelabel' == annotate:
+                    ax.annotate(
+                        f'{f.desc}',
+                        (
+                            xx[0],
+                            yy[0]
+                            # xx[np.argmax(xx)],
+                            # yy[np.argmin(xx)]
+                            # np.mean(xx),
+                            # np.mean(yy)
+                        ),
+                        fontsize=6,
+                    )
+        if annotate and annotate.startswith('scatter'):
+            ax.scatter(
+                series[x_cols],
+                series[y_cols],
+                s=10,
+                linewidth=.5,
+                c='lightgreen',
+                edgecolors='black',
+            )
+            if 'scatternum' == annotate:
+                for i, x_col in enumerate(x_cols):
+                    ax.annotate(
+                        f'{i}',
+                        (series[x_col], series[y_cols[i]]),
+                        fontsize=6,
+                    )
     title = f'{category}/{filename}'
     if row_id is not None:
         title += f' (row {row_id})'
@@ -255,7 +220,7 @@ def plot_image(
 
 # plot_image(0,plot_indices=True,save_fig=True)
 for i in range(10):
-    for annotate in [None,'scatter','scatternum','spline']:
+    for annotate in [None,'scatter','scatternum','spline','splinelabel']:
         plot_image(i,annotate=annotate,save_fig=True)
 
 
