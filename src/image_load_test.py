@@ -10,13 +10,65 @@ import os
 from pathlib import Path
 import urllib.request
 import pandas as pd
+import numpy as np
 from PIL import Image
 from operator import iand
 from functools import reduce
 import matplotlib.pyplot as plt
+import re
+from scipy.interpolate import griddata
+from scipy.interpolate import interp1d
+from scipy.interpolate import UnivariateSpline
 
 base_dir = './data' # assuming cwd is the location of this script
 base_url = 'https://coe.northeastern.edu/Research/AClab/InfAnFace/images/'
+
+class Feature:
+    def __init__(self, desc, idx):
+        self.desc = desc
+        self.idx = idx
+
+features = [
+    Feature('right_cheek', range(7)),
+    Feature('chin', range(6,11)), # 8
+    Feature('left_cheek', range(10,17)),
+    Feature('right_brow', range(17,22)),
+    Feature('left_brow', range(22,27)),
+    Feature('nose_v', range(27,31)),
+    Feature('nose_h', range(31,36)),
+    Feature('right_eye_top', range(36,40)),
+    Feature('right_eye_bot', [*range(39,42),36]),
+    Feature('left_eye_top', range(42,46)),
+    Feature('left_eye_bot', [*range(45,48),42]),
+    Feature('out_lip_top_right', range(48,52)),
+    # Feature('out_lip_top_philtrum', range(50,53)), # 51
+    Feature('out_lip_top_left', range(51,55)),
+    Feature('out_lip_bot', range(55,60)),
+    Feature('lip_in_top', range(60,65)),
+    Feature('lip_in_bot', [*range(64,68),60]),
+]
+
+# right_cheek = range(8)
+# chin = range(7,10) # 8
+# left_cheek = range(9,17)
+# right_brow = range(17,22)
+# left_brow = range(22,27)
+# nose_v = range(27,31)
+# nose_h = range(31,36)
+# right_eye = range(36,42)
+# left_eye = range(42,48)
+# out_lip_top_right = range(48,51)
+# out_lip_top_philtrum = 51
+# out_lip_top_left = range(52,55)
+# out_lip_bot = range(55,60)
+# lip_in_top = range(60,65)
+# lip_in_bot = range(65,68)
+
+# ext_re = re.compile('^(.+)\.([^\.]+)$')
+# def ext(x):
+#     m = ext_re.match(x)
+#     return m.group(1)
+# df['filename'].apply(ext).unique()
 
 
 def load_file(file,url=None,path=base_dir):
@@ -41,6 +93,9 @@ def load_file(file,url=None,path=base_dir):
 # NOTE: It's a little awkward, but this _must_ be done between
 #       declaring these two functions...
 df = pd.read_csv(load_file('labels.csv'))
+targets = ['turned', 'occluded', 'tilted', 'expressive']
+x_cols = [col for col in df if col.startswith('gt-x')]
+y_cols = [col for col in df if col.startswith('gt-y')]
 
 def get_image(row_id=None,path=None,file=None):
     if row_id is not None:
@@ -54,9 +109,6 @@ def get_image(row_id=None,path=None,file=None):
     )
     return Image.open(image_file)
 
-targets = ['turned', 'occluded', 'tilted', 'expressive']
-x_cols = [col for col in df if col.startswith('gt-x')]
-y_cols = [col for col in df if col.startswith('gt-y')]
 
 def to_image(series):
     return get_image(
@@ -64,26 +116,148 @@ def to_image(series):
         file=series['filename'],
     )
 
-def plot_image(row_id=None,series=None):
+def plot_image(
+        row_id=None,
+        series=None,
+        annotate=None,
+        save_fig=False
+):
     if not series:
-        series = df.iloc[0,:]
+        series = df.iloc[row_id,:]
+    category = series['image-set']
+    filename = series['filename']
     img = to_image(series)
-    plt.imshow(img)
-    plt.scatter(
-        series[x_cols],
-        series[y_cols],
-        s=10,
-        linewidth=.5,
-        c='lightgreen',
-        edgecolors='black',
-    )
+    fig, ax = plt.subplots()
+    ax.imshow(img)
+    
+    if 'spline' == annotate:
+        for f in features:
+            print('trying feature: ' + f.desc)
+            xx = series[[f'gt-x{i}' for i in f.idx]].astype(float).values
+            yy = series[[f'gt-y{i}' for i in f.idx]].astype(float).values
+            if pd.isna(xx).any(): continue;
+            if pd.isna(yy).any(): continue;
+            xmin,xmax,ymin,ymax = [min(xx),max(xx),min(yy),max(yy)]
+            xi = np.linspace(xmin, xmax, 100)#, endpoint=False)
+            yi = np.linspace(ymin, ymax, 100)
+            
+            #-- we are not doing 2d interpolation, I guess
+            # xi, yi = np.meshgrid(xi, yi)
+            # xi, yi = np.mgrid[xx[0]:xx[len(xx)-1]:100j, yy[0]:yy[len(yy)-1]:200j]
+            # grid = griddata(xx, yy, (xi, yi), method='cubic')
+            # plt.imshow(grid.T, extent=(0,1,0,1), origin='lower')
+            
+            #-- 1D interpolation is producing werid values... (probably my fault)
+            # points = np.stack((xx,yy)).T
+            # distance = np.cumsum(
+            #     np.sqrt(np.sum(
+            #         np.diff(points, axis=0)**2,
+            #         axis=1
+            #     ))
+            # )
+            # distance = np.insert(distance, 0, 0)/distance[-1]
+            
+            # # Interpolation for different methods:
+            # interpolations_methods = ['slinear', 'quadratic', 'cubic']
+            # alpha = np.linspace(xmin,xmax,100)
+            
+            # interpolated_points = {}
+            # for method in interpolations_methods:
+            #     interpolator =  interp1d(
+            #         distance,
+            #         points,
+            #         kind=method,
+            #         axis=0,
+            #         fill_value="extrapolate"
+            #     )
+            #     interpolated_points[method] = interpolator(alpha)
+            # for method_name, curve in interpolated_points.items():
+            #     ax.plot(*curve.T, '-', label=method_name);
+            
+            points = np.stack((xx,yy)).T
+            distance = np.cumsum(
+                np.sqrt(np.sum(
+                    np.diff(points, axis=0)**2,
+                    axis=1
+                ))
+            )
+            if not distance[-1]:
+                continue
+            
+            # if row_id == 3 and 'left_brow' == f.desc:
+            #     print('xx', xx)
+            #     print('yy', yy)
+            #     print('distance', distance)
+            distance = np.insert(distance, 0, 0)/distance[-1]
+                
+            # if row_id == 3 and 'left_brow' == f.desc:
+            #     print('modified distance', distance)
+            splines = [UnivariateSpline(distance, coords, k=3, s=.2) for coords in points.T]
+    
+            # Computed the spline for the asked distances:
+            alpha = np.linspace(0, 1, 75)
+            points_fitted = np.vstack([spl(alpha) for spl in splines]).T
+            
+            # Graph:
+            # plt.plot(*points.T, 'ok', label='original points')
+            plt.plot(*points_fitted.T, '-r', label='fitted spline k=3, s=.2')
+            # ax.annotate(
+            #     f'{f.desc}',
+            #     (
+            #         xx[0],
+            #         yy[0]
+            #         # xx[np.argmax(xx)],
+            #         # yy[np.argmin(xx)]
+            #         # np.mean(yy)
+            #     ),
+            #     fontsize=6,
+            # )
+    if annotate and annotate.startswith('scatter'):
+        ax.scatter(
+            series[x_cols],
+            series[y_cols],
+            s=10,
+            linewidth=.5,
+            c='lightgreen',
+            edgecolors='black',
+        )
+        if 'scatternum' == annotate:
+            for i, x_col in enumerate(x_cols):
+                ax.annotate(
+                    f'{i}',
+                    (series[x_col], series[y_cols[i]]),
+                    fontsize=6,
+                )
+    title = f'{category}/{filename}'
+    if row_id is not None:
+        title += f' (row {row_id})'
+    plt.title(title)
+    plt.tight_layout()
+    if save_fig:
+        path = f'./figs/images/{category}'
+        if not Path(path).exists():
+            os.makedirs(path)
+        # NOTE: File names would look nicer if we remove the original
+        #       suffix here, but it will be easier to tie back to the
+        #       original image if we don't.
+        if annotate:
+            filename += f'_{annotate}'
+        plt.savefig(
+            f'{path}/{filename}.png',
+            dpi=300,
+            bbox_inches='tight'
+        )
     plt.show()
-
-plot_image(0)
 
 #-- scrape all images
 # for i in range(df.shape[0]):
 #     get_image(i)
+
+# plot_image(0,plot_indices=True,save_fig=True)
+for i in range(10):
+    for annotate in [None,'scatter','scatternum','spline']:
+        plot_image(i,annotate=annotate,save_fig=True)
+
 
 print(f'target counts:\n{df.loc[:,targets].sum()}\n')
 
