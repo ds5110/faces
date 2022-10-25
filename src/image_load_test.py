@@ -38,54 +38,53 @@ def load_file(file,url=None,path=base_dir):
     return local_file
 
 # load the labels data
-# NOTE: It's a little awkward, but this _mus be done between declaring these
-#       two functions...
+# NOTE: It's a little awkward, but this _must_ be done between
+#       declaring these two functions...
 df = pd.read_csv(load_file('labels.csv'))
 
 def get_image(row_id=None,path=None,file=None):
-    '''
-    This is a simple function for pulling raw image data to a local cache.
-    You can access images by either their 'path' and 'file' (corresponding to
-    'image-set' and 'filename' in the 'labels' DataFrame) or by row ID
-    (the index in the 'labels' DataFrame)
-
-    Parameters
-    ----------
-    row_id : integer, optional
-        DESCRIPTION. The default is None.
-    path : TYPE, optional
-        DESCRIPTION. The default is None.
-    file : TYPE, optional
-        DESCRIPTION. The default is None.
-
-    Returns
-    -------
-    A pillow Image
-
-    '''
     if row_id is not None:
         path = df['image-set'].iloc[row_id]
         file = df['filename'].iloc[row_id]
     
     image_file = load_file(
         file,
-        f'{base_url}/{path}/{file}',
-        f'{base_dir}/{path}',
+        url=f'{base_url}/{path}/{file}',
+        path=f'{base_dir}/images/{path}',
     )
     return Image.open(image_file)
 
-def to_image(series):
-    return get_image(path=series['image-set'],file=series['filename'])
-
-# e.g. usage
-# plt.imshow(get_image(1))
-
-# e.g. per row
-im_df = df.iloc[0,:]
-im = to_image(im_df)
-plt.imshow(im)
-
 targets = ['turned', 'occluded', 'tilted', 'expressive']
+x_cols = [col for col in df if col.startswith('gt-x')]
+y_cols = [col for col in df if col.startswith('gt-y')]
+
+def to_image(series):
+    return get_image(
+        path=series['image-set'],
+        file=series['filename'],
+    )
+
+def plot_image(row_id=None,series=None):
+    if not series:
+        series = df.iloc[0,:]
+    img = to_image(series)
+    plt.imshow(img)
+    plt.scatter(
+        series[x_cols],
+        series[y_cols],
+        s=10,
+        linewidth=.5,
+        c='lightgreen',
+        edgecolors='black',
+    )
+    plt.show()
+
+plot_image(0)
+
+#-- scrape all images
+# for i in range(df.shape[0]):
+#     get_image(i)
+
 print(f'target counts:\n{df.loc[:,targets].sum()}\n')
 
 no_targets = reduce(iand, [df[col] == 0 for col in targets])
