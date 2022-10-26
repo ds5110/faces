@@ -24,7 +24,8 @@ def show_set(df):
 show_set(df)
 
 
-dfnew = df[['turned', 'occluded', 'expressive', 'tilted']].copy()
+target_cols = ['turned', 'occluded', 'expressive', 'tilted']
+dfnew = df[target_cols].copy()
 nparray = dfnew.to_numpy()
 
 #Trying to see which combinations of the targets come up
@@ -47,5 +48,12 @@ def show_combos(nparray):
     plt.imshow(nparray, aspect='auto')
     plt.show()
 
+possible_combos = set([f'{i:b}'.rjust(4,'0') for i in range(16)])
+found_combos = set([key for key,value in see_combos(nparray).items()])
+unseen_combos = possible_combos.difference(found_combos)
+print('unseen_combos:\n\t' + '\n\t'.join(unseen_combos))
+
+for i in range(16):
+    print(format(i,'b'))
 print(see_combos(nparray))
 show_combos(nparray)

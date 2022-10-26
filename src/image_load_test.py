@@ -20,80 +20,103 @@ from scipy.interpolate import griddata
 from scipy.interpolate import interp1d
 from scipy.interpolate import UnivariateSpline
 
-base_dir = './data' # assuming cwd is the location of this script
-base_url = 'https://coe.northeastern.edu/Research/AClab/InfAnFace/images/'
-
 class Feature:
     def __init__(self, desc, idx):
         self.desc = desc
         self.idx = idx
 
-features = [
-    Feature('right_cheek', range(8)),
-    Feature('chin', range(7,10)), # center at 8
-    Feature('left_cheek', range(9,17)),
-    Feature('right_brow', range(17,22)),
-    Feature('left_brow', range(22,27)),
-    Feature('nose_v', range(27,31)),
-    Feature('nose_h', range(31,36)),
-    Feature('right_eye_top', range(36,40)),
-    Feature('right_eye_bot', [*range(39,42),36]),
-    Feature('left_eye_top', range(42,46)),
-    Feature('left_eye_bot', [*range(45,48),42]),
-    Feature('out_lip_top_right', range(48,51)),
-    Feature('philtrum', range(50,53)), # center at 51
-    Feature('out_lip_top_left', range(52,55)),
-    Feature('out_lip_bot', range(55,60)),
-    Feature('lip_in_top', range(60,65)),
-    Feature('lip_in_bot', [*range(64,68),60]),
-]
-f_per_desc = {f.desc: f for f in features}
+class LandmarkModel:
+    def __init__(self,features):
+        self.features = features
+        self.per_desc = {f.desc for f in features}
+
+landmark68 = LandmarkModel(
+    [
+        Feature('right_cheek', range(8)), # overlaps chin by 1
+        Feature('chin', range(7,10)), # center at 8
+        Feature('left_cheek', range(9,17)), # overlaps chin by 1
+        Feature('right_brow', range(17,22)),
+        Feature('left_brow', range(22,27)),
+        Feature('nose_v', range(27,31)),
+        Feature('nose_h', range(31,36)),
+        Feature('right_eye_top', range(36,40)),
+        Feature('right_eye_bot', [*range(39,42),36]),
+        Feature('left_eye_top', range(42,46)),
+        Feature('left_eye_bot', [*range(45,48),42]),
+        Feature('lip_out_top_right', range(48,51)), # overlaps philtrum by 1
+        Feature('philtrum', range(50,53)), # center at 51
+        Feature('lip_out_top_left', range(52,55)), # overlaps philtrum by 1
+        Feature('lip_out_bot', range(55,60)),
+        Feature('lip_in_top', range(60,65)),
+        Feature('lip_in_bot', [*range(64,68),60]),
+    ]
+)
+
+class LocalCache:
+    def __init__(
+            self,
+            base_dir='./data',
+            base_url='https://coe.northeastern.edu/Research/AClab/InfAnFace'
+    ):
+        self.base_dir = base_dir
+        self.base_url = base_url
+        self.meta = pd.read_csv(self.get_file('labels.csv'))
+    
+    def get_meta(self):
+        return self.meta.copy()
+    
+    def get_file(self,file,url=None,local_path=None):
+        print(f'trying to get file "{file}" from url "{url} "to local "{local_path}"')
+        local_path = Path(local_path or self.base_dir)
+        local_file = Path(f'{local_path}/{file}')
+        if not url:
+            url = f'{self.base_url}/{file}'
+            print(f'derived url: {url}')
+        if not local_path.exists():
+            os.makedirs(local_path)
+        elif not local_file.exists():
+            with \
+                    urllib.request.urlopen(url) as infile, \
+                    open(local_file, 'wb') as outfile:
+                outfile.write(infile.read())
+                while True:
+                    data = infile.read(1e5)
+                    if len(data) < 1: break
+                    outfile.write(data)
+        return local_file
+
+    def get_local(self,file):
+        return f'{self.base_dir}/{file}'
+    
+    def get_image(self,row_id=None,path=None,file=None):
+        if row_id is not None:
+            path = self.meta['image-set'].iloc[row_id]
+            file = self.meta['filename'].iloc[row_id]
+        
+        image_file = self.get_file(
+            file,
+            url=f'{self.base_url}/images/{path}/{file}',
+            local_path=f'{self.base_dir}/images/{path}',
+        )
+        return Image.open(image_file)
 
 
-def load_file(file,url=None,path=base_dir):
-    local_path = Path(path)
-    local_file = Path(f'{path}/{file}')
-    if not url:
-        url = f'{base_url}/file'
-    if not local_path.exists():
-        os.makedirs(local_path)
-    elif not local_file.exists():
-        with \
-                urllib.request.urlopen(url) as infile, \
-                open(local_file, 'wb') as outfile:
-            outfile.write(infile.read())
-            while True:
-                data = infile.read(1e5)
-                if len(data) < 1: break
-                outfile.write(data)
-    return local_file
+class ImagePlus:
+    def __init__(self,img,model):
+        self.img = img
+        self.model = model
 
 # load the labels data
 # NOTE: It's a little awkward, but this _must_ be done between
 #       declaring these two functions...
-df = pd.read_csv(load_file('labels.csv'))
-targets = ['turned', 'occluded', 'tilted', 'expressive']
+data = LocalCache()
+df = data.get_meta()
+target_cols = ['turned', 'occluded', 'tilted', 'expressive']
 x_cols = [col for col in df if col.startswith('gt-x')]
 y_cols = [col for col in df if col.startswith('gt-y')]
 
-def get_image(row_id=None,path=None,file=None):
-    if row_id is not None:
-        path = df['image-set'].iloc[row_id]
-        file = df['filename'].iloc[row_id]
-    
-    image_file = load_file(
-        file,
-        url=f'{base_url}/{path}/{file}',
-        path=f'{base_dir}/images/{path}',
-    )
-    return Image.open(image_file)
-
-
-def to_image(series):
-    return get_image(
-        path=series['image-set'],
-        file=series['filename'],
-    )
+other = pd.read_csv(data.get_local('300w_infanface_train.csv'))
+# other.dtypes
 
 def plot_image(
         row_id=None,
@@ -109,13 +132,18 @@ def plot_image(
     if row_id is not None:
         title += f' (row {row_id})'
     
-    img = to_image(series)
+    # get the image data
+    img = data.get_image(
+        path=series['image-set'],
+        file=series['filename'],
+    )
+    
     fig, ax = plt.subplots()
     ax.imshow(img)
     
     if annotate:
         if annotate.startswith('spline'):
-            for f in features:
+            for f in landmark68.features:
                 # f = f_per_desc['left_eye_top']# problematic for 3-spline
                 
                 # print('trying feature: ' + f.desc)
@@ -172,7 +200,7 @@ def plot_image(
             ax.scatter(
                 series[x_cols],
                 series[y_cols],
-                s=10,
+                s=6,
                 linewidth=.5,
                 c='lime',
                 edgecolors='black',
@@ -204,16 +232,16 @@ def plot_image(
 
 #-- scrape all images
 # for i in range(df.shape[0]):
-#     get_image(i)
+#     data.get_image(i)
 
 #-- try a few plots
-for i in range(10):
+for i in [4]:#range(10):
     for annotate in [None,'scatter','scatternum','spline','splinelabel']:
         plot_image(i,annotate=annotate,save_fig=False)
 
 
-print(f'target counts:\n{df.loc[:,targets].sum()}\n')
+print(f'target counts:\n{df.loc[:,target_cols].sum()}\n')
 
-no_targets = reduce(iand, [df[col] == 0 for col in targets])
+no_targets = reduce(iand, [df[col] == 0 for col in target_cols])
 print(f'no targets:  {df[no_targets].shape}')
 print(f'one or more: {df[~no_targets].shape}')
