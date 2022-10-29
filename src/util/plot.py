@@ -132,7 +132,7 @@ def plot_image(
     plt.title(title)
     plt.tight_layout()
     if save_fig:
-        path = f'./figs/temp/images/{image_set}'
+        path = f'./figs/images/{image_set}'
         if not Path(path).exists():
             os.makedirs(path)
         # NOTE: File names would look nicer if we remove the original
