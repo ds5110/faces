@@ -13,57 +13,68 @@ import matplotlib.pyplot as plt
 # intra-project
 from util.model import AnnoImg
 
+pi_2 = np.pi/2.
 to_deg = 180./np.pi
 to_rad = np.pi/180.
 id_2d = np.array([[1,0],[0,1]])
 
 class Sym:
-    def __init__(self,desc,ii,weight=1.):
+    def __init__(self,desc,pairs,weight=1.):
         self.desc = desc
-        ii = np.array(ii)
+        self.pairs = np.array(pairs)
         self.weight = weight
-        self.weight_tot = len(ii) * weight
-        self.pairs = ii.T
+        self.weight_tot = len(self.pairs) * weight
     def get_left(self):
-        return self.pairs.T[0]
+        return self.pairs[:,0]
     def get_right(self):
-        return self.pairs.T[1]
+        return self.pairs[:,1]
 
 syms = [
-    # Sym('cheeks', ((i, 16 - i) for i in range(8))),
-    # just the corners of the eyes seem like a good way to normalize tilt
+    # Sym(
+    #     'cheeks',
+    #     ((i, 16 - i) for i in range(8)),
+    #     .5,
+    # ),
+    # just the corners of the eyes seem like a good-enough way to normalize tilt
     Sym(
-        'eyes',
+        'eyes_corners',
         [
             [36, 45],
             [39, 42],
         ],
-        4.
+        4. # higher weight for fewer points
     ),
-    # Sym(
-    #     'eyes',
-    #     [
-    #         [36, 45],
-    #         [37, 44],
-    #         [38, 43],
-    #         [39, 42],
-    #         [40, 47],
-    #         [41, 46],
-    #     ],
-    #     2.
-    # ),
+    Sym(
+        'eyes',
+        [
+            # [36, 45],
+            [37, 44],
+            [38, 43],
+            # [39, 42],
+            [40, 47],
+            [41, 46],
+        ],
+        .5, # due to squinting/expressions and number of points
+    ),
 ]
 
 def __get_angle(anno,sym):
-    xx_left = anno.get_x()[sym.pairs[0]]
-    xx_right = anno.get_x()[sym.pairs[1]]
-    yy_left = anno.get_y()[sym.pairs[0]]
-    yy_right = anno.get_y()[sym.pairs[1]]
-    xx = np.array(xx_right) - np.array(xx_left)
-    yy = np.array(yy_left) - np.array(yy_right)
+    # calculate diffs per pair
+    left, right = np.squeeze(np.split(anno.get_coords()[sym.pairs.T],2))
+    xx, yy = np.squeeze(np.split((right-left).T,2))
     hypots = np.sqrt(xx**2 + yy**2)
-    angles = np.arcsin(yy/hypots)
-    angle = np.sum(angles * hypots)/np.sum(hypots)
+    weight_tot = np.sum(hypots)
+    
+    # calculate angle
+    angles = np.arcsin(-yy/hypots) # neg y because image y starts at top
+    angle = np.sum(angles * hypots)/weight_tot
+    
+    # check for upside down (not likely, eh)
+    angles = np.arccos(xx/hypots)
+    upside_down = np.sign(np.sum(angles * hypots)) == -1
+    if upside_down:
+        angle = np.pi - angle
+    
     return angle, sym.weight_tot
 
 def get_angle(anno,deg=False):
