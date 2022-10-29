@@ -56,17 +56,23 @@ class AnnoImg:
     ):
         self.image_set = image_set
         self.filename = filename
-        self.coords = coords
+        self.__coords = coords
+        self.__face = np.stack([[vv[nose_i] for vv in [self.get_x(), self.get_y()]]])
         self.im_fun = im_fun
-        self.face = np.stack([[vv[nose_i] for vv in [self.get_x(), self.get_y()]]])
         self.row_id = row_id
         self.desc = desc
     
     def get_image(self):
         return self.im_fun()
+    
+    def get_coords(self):
+        return np.copy(self.__coords)
+    
+    def get_face_center(self):
+        return np.copy(self.__face)
 
     def get_x(self):
-        return self.coords[0]
+        return np.copy(self.__coords[:,0])
     
     def get_y(self):
-        return self.coords[1]
+        return np.copy(self.__coords[:,1])

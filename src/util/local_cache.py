@@ -59,19 +59,10 @@ class LocalCache:
             url=f'{self.base_url}/images/{path}/{file}',
             local_path=f'{self.base_dir}/images/{path}',
         )
-        return Image.open(image_file)
-    
-    def get_image2(self,row_id=None,path=None,file=None):
-        if row_id is not None:
-            path = self.meta['image-set'].iloc[row_id]
-            file = self.meta['filename'].iloc[row_id]
-        
-        image_file = self.get_file(
-            file,
-            url=f'{self.base_url}/images/{path}/{file}',
-            local_path=f'{self.base_dir}/images/{path}',
+        coords = np.stack(
+            [self.meta[cols].loc[row_id,:].values for cols in [x_cols, y_cols]],
+            1
         )
-        coords = np.stack([self.meta[cols].loc[row_id,:].values for cols in [x_cols, y_cols]])
         return AnnoImg(
             path,
             file,

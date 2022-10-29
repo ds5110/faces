@@ -82,7 +82,7 @@ def plot_image(
                 if not distance[-1]: continue;
                 
                 distance = np.insert(distance, 0, 0)/distance[-1]
-                splines = [UnivariateSpline(distance, point, k=2, s=.1) for point in points]
+                splines = [UnivariateSpline(distance, point, k=2, s=.2) for point in points]
                 points_fitted = np.vstack(
                     [spline(np.linspace(0, 1, 64)) for spline in splines]
                 )

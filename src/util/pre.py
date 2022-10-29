@@ -87,37 +87,41 @@ def rotate(anno):
     
     # get image and calculate translation
     def _rot():
-        coords = np.copy(anno.coords)
-        face = anno.face
         img = anno.get_image()
+        face_cen = anno.get_face_center()
+        center = np.array([[img.width/2, img.height/2]])
+        coords = anno.get_coords()
         
         # TODO handle cropping
-        buff = Image.new(img.mode, (img.width*1.5, img.height*1.5))
-        
-        center = np.array([[img.width/2, img.height/2]])
-        cen = img.transform(
-            img.size,
+        buff = Image.new(img.mode, (img.width*3, img.height*3))
+        buff.paste(img, (img.width, img.height))
+        buff_face = face_cen + np.array([[img.width,img.height]])
+        buff_cen = np.array([[buff.width/2, buff.height/2]])
+        cen = buff.transform(
+            buff.size,
             method=Image.Transform.AFFINE,
-            data=np.append(id_2d, (face-center).T, 1).ravel(),
+            data=np.append(id_2d, (buff_face-buff_cen).T, 1).ravel(),
         )
-        plt.imshow(cen)
         
         # calculate rotation
-        coords -= face.T # move coordinates to the origin to rotate
+        coords = coords - face_cen # move coordinates to the origin to rotate
         angle = get_angle(anno)
         angle_deg = angle * to_deg
         cos = np.cos(angle)
         sin = np.sin(angle)
         rotx = np.array([[cos,sin],[-sin,cos]])
-        # coords = rotx@coords
-        coords = (coords.T@rotx).T
-        coords += center.T # move coordinates back to the center
+        coords = coords@rotx
+        coords = coords + center # move coordinates back to the center
         
         rot = cen.rotate(
             -angle_deg,
-            center=(center[0,0],center[0,1]),
+            center=tuple(buff_cen.ravel()),
         )
-        return rot, coords
+        
+        # crop back to original size
+        crop = rot.crop((img.width,img.height,img.width*2,img.height*2))
+        
+        return crop, coords
     def _img():
         rot, coords = _rot()
         return rot
