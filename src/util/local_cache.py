@@ -76,7 +76,8 @@ class LocalCache:
             path,
             file,
             coords,
-            lambda: Image.open(image_file)
+            lambda: Image.open(image_file),
+            row_id=row_id,
         )
 
 cache = LocalCache() # default cache

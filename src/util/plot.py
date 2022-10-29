@@ -16,25 +16,17 @@ from scipy.interpolate import UnivariateSpline
 from util.model import landmark68, x_cols, y_cols
 
 def plot_image(
-        img,
-        df,
-        row_id=None,
-        series=None,
+        anno,
         annotate=None,
-        save_fig=False
+        cross=False,
+        save_fig=False,
 ):
     '''
     Either df/row_id or series is required, to provide landmark points.
     Parameters
     ----------
-    img : Pillow Image
+    anno : AnnoImg
         The image to render.
-    df : Pandas DataFrame
-        The data frame.
-    row_id : int, optional
-        The row index (per iloc). The default is None.
-    series : Pandas Series, optional
-        The row. The default is None.
     annotate : str, optional
         The type of annotations to draw on the image:
             - 'scatter': the landmark points
@@ -50,25 +42,33 @@ def plot_image(
     None.
 
     '''
-    if not series:
-        series = df.iloc[row_id,:]
-    category = series['image-set']
-    filename = series['filename']
-    title = f'{category}/{filename}'
-    if row_id is not None:
-        title += f' (row {row_id})'
+    image_set = anno.image_set
+    filename = anno.filename
+    desc = f' (row {anno.row_id})' if anno.row_id is not None else ''
+    if anno.desc:
+        desc += f' {anno.desc}'
+    title = f'{image_set}/{filename}' + desc
+    if anno.desc:
+        title += f' {anno.desc}'
+    X = anno.get_x()
+    Y = anno.get_y()
+    img = anno.get_image()
     
     # get the image data
     # img.convert('YCbCr')
     
     fig, ax = plt.subplots(figsize=(10, 10))
     ax.imshow(img)
+    if cross:
+        center= np.array([img.width/2, img.height/2])
+        ax.axhline(y=center[1])
+        ax.axvline(x=center[0])
     
     if annotate:
         if annotate.startswith('spline'):
             for f in landmark68.features:
-                xx = series[[f'gt-x{i}' for i in f.idx]].astype(float).values
-                yy = series[[f'gt-y{i}' for i in f.idx]].astype(float).values
+                xx = anno.get_x()[f.idx]
+                yy = anno.get_y()[f.idx]
                 if pd.isna(xx).any(): continue;
                 if pd.isna(yy).any(): continue;
                 
@@ -115,24 +115,24 @@ def plot_image(
                     )
         if annotate and annotate.startswith('scatter'):
             ax.scatter(
-                series[x_cols],
-                series[y_cols],
+                X,
+                Y,
                 s=6,
                 linewidth=.5,
                 c='lime',
                 edgecolors='black',
             )
             if 'scatternum' == annotate:
-                for i, x_col in enumerate(x_cols):
+                for i in range(len(X)):
                     ax.annotate(
                         f'{i}',
-                        (series[x_col], series[y_cols[i]]),
+                        (X[i], Y[i]),
                         fontsize=6,
                     )
     plt.title(title)
     plt.tight_layout()
     if save_fig:
-        path = f'./figs/temp/images/{category}'
+        path = f'./figs/temp/images/{image_set}'
         if not Path(path).exists():
             os.makedirs(path)
         # NOTE: File names would look nicer if we remove the original
@@ -140,6 +140,8 @@ def plot_image(
         #       original image if we don't.
         if annotate:
             filename += f'_{annotate}'
+        if anno.desc:
+            filename += f'_{anno.desc}'
         plt.savefig(
             f'{path}/{filename}.png',
             dpi=300,

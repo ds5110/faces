@@ -21,7 +21,7 @@ class LandmarkModel:
         self.features = features
         self.per_desc = {f.desc for f in features}
 
-nose_i = 27
+nose_i = 33
 landmark68 = LandmarkModel(
     [
         Feature('right_cheek', range(8)), # overlaps chin by 1
@@ -51,12 +51,16 @@ class AnnoImg:
             filename,
             coords,
             im_fun,
+            row_id=None,
+            desc=None,
     ):
         self.image_set = image_set
         self.filename = filename
         self.coords = coords
         self.im_fun = im_fun
         self.face = np.stack([[vv[nose_i] for vv in [self.get_x(), self.get_y()]]])
+        self.row_id = row_id
+        self.desc = desc
     
     def get_image(self):
         return self.im_fun()
@@ -65,4 +69,4 @@ class AnnoImg:
         return self.coords[0]
     
     def get_y(self):
-        return self.coords[0]
+        return self.coords[1]

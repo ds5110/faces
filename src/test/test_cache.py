@@ -27,6 +27,7 @@ if __name__ == '__main__':
     #-- scrape all images (fetch into cache)
     # for i in range(df.shape[0]):
     #     cache.get_image(i)
+    cache.get_image2(1).filename
     
     no_cats = reduce(iand, [df[col] == 0 for col in cat_cols])
     print(f'no categories:  {df[no_cats].shape}')
