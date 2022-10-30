@@ -8,7 +8,6 @@ Created on Fri Oct 28 16:41:53 2022
 
 import numpy as np
 from PIL import Image
-import matplotlib.pyplot as plt
 
 # intra-project
 from util.model import AnnoImg
@@ -103,7 +102,8 @@ def rotate(anno):
         center = np.array([[img.width/2, img.height/2]])
         coords = anno.get_coords()
         
-        # TODO handle cropping
+        # NOTE: We add a buffer around the image
+        #       to avoid cropping content during centering
         buff = Image.new(img.mode, (img.width*3, img.height*3))
         buff.paste(img, (img.width, img.height))
         buff_face = face_cen + np.array([[img.width,img.height]])

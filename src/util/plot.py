@@ -13,7 +13,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.interpolate import UnivariateSpline
 
-from util.model import landmark68, x_cols, y_cols
+from util.model import landmark68
 
 def plot_image(
         anno,
