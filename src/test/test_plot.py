@@ -59,7 +59,7 @@ def annotated_plot():
                 save_fig=False,
             )
             plot_image(
-                rotate(anno), # rotated images have a distinct 'desc'
+                rotate(anno),
                 annotate=annotate,
                 cross=True,
                 save_fig=False,

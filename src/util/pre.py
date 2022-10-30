@@ -138,10 +138,12 @@ def rotate(anno):
         return rot
     rot, coords = _rot()
     
+    # add 'rotated' to the image description
+    desc = ' '.join(d for d in [anno.desc, 'rotated'] if d is not None)
     return AnnoImg(
         anno.image_set,
         anno.filename,
         coords,
         _img,
-        desc='rotated'
+        desc=desc
     )
