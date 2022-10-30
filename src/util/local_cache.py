@@ -49,10 +49,9 @@ class LocalCache:
     def get_local(self,file):
         return f'{self.base_dir}/{file}'
     
-    def get_image(self,row_id=None,path=None,file=None):
-        if row_id is not None:
-            path = self.meta['image-set'].iloc[row_id]
-            file = self.meta['filename'].iloc[row_id]
+    def get_image(self,row_id,desc=None):
+        path = self.meta['image-set'].iloc[row_id]
+        file = self.meta['filename'].iloc[row_id]
         
         image_file = self.get_file(
             file,
@@ -69,6 +68,7 @@ class LocalCache:
             coords,
             lambda: Image.open(image_file),
             row_id=row_id,
+            desc=desc,
         )
 
 cache = LocalCache() # default cache

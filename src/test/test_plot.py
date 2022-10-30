@@ -6,17 +6,16 @@ Created on Fri Oct 28 17:10:06 2022
 @author: jhautala
 """
 
+from functools import reduce
+
 # intra-project
 from util.local_cache import cache
 from util.plot import plot_image
 from util.pre import rotate
+from util.model import cat_cols
 
 # load the labels data
 df = cache.get_meta()
-
-def scrape_all():
-    for i in range(df.shape[0]):
-        cache.get_image(i)
 
 def annotated_plot():
     types = [None,'scatter','scatternum','spline','splinelabel']
@@ -35,7 +34,27 @@ def annotated_plot():
                 cross=True,
                 save_fig=False,
             )
-    
+
+def test_challenging():
+    # [f'{i:b}'.rjust(4,'0') for i in range(1,16)]
+    masks = [df[col] == 1 for i, col in enumerate(cat_cols)]
+    for combo in [f'{i:b}'.rjust(4,'0') for i in range(1,16)]:
+        desc = ', '.join(col for i, col in enumerate(cat_cols) if combo[i] == '1')
+        mask = [m if combo[i] == '1' else ~m for i, m in enumerate(masks)]
+        tmp = df[reduce(lambda a,b: a & b, mask)]
+        if tmp.shape[0] == 0:
+            print(f'no rows found for combination! {desc}')
+            continue;
+        print(f'found {tmp.shape[0]} rows ({desc})')
+        
+        anno = cache.get_image(tmp.index[0],desc)
+        plot_image(
+            rotate(anno),
+            annotate='spline',
+            cross=True,
+            save_fig=False,
+        )
+
 if __name__ == '__main__':
-    # scrape_all()
-    annotated_plot()
+    # annotated_plot()
+    test_challenging()

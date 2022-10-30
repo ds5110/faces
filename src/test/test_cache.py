@@ -22,13 +22,19 @@ class ImagePlus:
 
 # load the labels data
 df = cache.get_meta()
-    
-if __name__ == '__main__':
-    #-- scrape all images (fetch into cache)
-    # for i in range(df.shape[0]):
-    #     cache.get_image(i)
-    cache.get_image(1).filename
-    
+
+def scrape_all():
+    for i in range(df.shape[0]):
+        cache.get_image(i)
+
+def check_categories():
     no_cats = reduce(iand, [df[col] == 0 for col in cat_cols])
     print(f'no categories:  {df[no_cats].shape}')
     print(f'one or more:    {df[~no_cats].shape}')
+
+def get_image_by_name():
+    cache.get_image(path='ads',file='1072.Still005.jpg')
+    
+if __name__ == '__main__':
+    # scrape_all()
+    check_categories()

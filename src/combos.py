@@ -48,12 +48,5 @@ def show_combos(nparray):
     plt.imshow(nparray, aspect='auto')
     plt.show()
 
-possible_combos = set([f'{i:b}'.rjust(4,'0') for i in range(16)])
-found_combos = set([key for key,value in see_combos(nparray).items()])
-unseen_combos = possible_combos.difference(found_combos)
-print('unseen_combos:\n\t' + '\n\t'.join(unseen_combos))
-
-for i in range(16):
-    print(format(i,'b'))
 print(see_combos(nparray))
 show_combos(nparray)

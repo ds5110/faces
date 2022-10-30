@@ -44,6 +44,8 @@ landmark68 = LandmarkModel(
     ]
 )
 
+# NOTE: This model provides access to image data through an injected
+#       supplier function to reduce its memory cost.
 class AnnoImg:
     def __init__(
             self,
@@ -56,8 +58,8 @@ class AnnoImg:
     ):
         self.image_set = image_set
         self.filename = filename
-        self.__coords = coords
-        self.__face = np.stack([[vv[nose_i] for vv in [self.get_x(), self.get_y()]]])
+        self._coords = coords
+        self._face = np.stack([[vv[nose_i] for vv in [self.get_x(), self.get_y()]]])
         self.im_fun = im_fun
         self.row_id = row_id
         self.desc = desc
@@ -66,13 +68,13 @@ class AnnoImg:
         return self.im_fun()
     
     def get_coords(self):
-        return np.copy(self.__coords)
+        return np.copy(self._coords)
     
     def get_face_center(self):
-        return np.copy(self.__face)
+        return np.copy(self._face)
 
     def get_x(self):
-        return np.copy(self.__coords[:,0])
+        return np.copy(self._coords[:,0])
     
     def get_y(self):
-        return np.copy(self.__coords[:,1])
+        return np.copy(self._coords[:,1])

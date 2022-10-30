@@ -28,28 +28,33 @@ class Sym:
     def get_right(self):
         return self.pairs[:,1]
 
-syms = [
+default_syms = [
+    # NOTE: I haven't tested this a lot, but I don't expect
+    #       it will be a great/reliable way to address tilt...
     # Sym(
     #     'cheeks',
     #     ((i, 16 - i) for i in range(8)),
     #     .5,
     # ),
-    # just the corners of the eyes seem like a good-enough way to normalize tilt
+    # NOTE: The corners of the eyes seem good-enough on their own
+    #       for the purpose of normalizing yaw
     Sym(
-        'eyes_corners',
+        'canthi',
         [
             [36, 45],
             [39, 42],
         ],
         4. # higher weight for fewer points
     ),
+    # NOTE: This is probably not worth keeping, especially
+    #       since its weight is so low...
     Sym(
-        'eyes',
+        'eyelids',
         [
-            # [36, 45],
+            # [36, 45], # already included in eyes corners
             [37, 44],
             [38, 43],
-            # [39, 42],
+            # [39, 42], # already included in eyes corners
             [40, 47],
             [41, 46],
         ],
@@ -57,10 +62,32 @@ syms = [
     ),
 ]
 
-def __get_angle(anno,sym):
+def _get_angle(anno,sym):
+    '''
+    This function calculates the angle offset based on the given 
+
+    Parameters
+    ----------
+    anno : AnnoImg
+        The image to check.
+    sym : Sym
+        The basis of symmetry (essentially a combination of point pairs).
+
+    Returns
+    -------
+    angle : float
+        The estimated angle of rotation (in radians).
+    weight_tot: float 
+        The total weight of the estimate,
+        the total distance between all point pairs.
+
+    '''
     # calculate diffs per pair
+    # NOTE: left and right here refer to viewer's perspective
     left, right = np.squeeze(np.split(anno.get_coords()[sym.pairs.T],2))
     xx, yy = np.squeeze(np.split((right-left).T,2))
+    
+    # calculate pair distances
     hypots = np.sqrt(xx**2 + yy**2)
     weight_tot = np.sum(hypots)
     
@@ -76,12 +103,11 @@ def __get_angle(anno,sym):
     
     return angle, sym.weight_tot
 
-def get_angle(anno,deg=False):
-    # NOTE: left and right here refer to orientation in the image, not anatomy
+def get_angle(anno,syms=default_syms,deg=False):
     angles = []
     weights = []
     for sym in syms:
-        angle, weight = __get_angle(anno,sym)
+        angle, weight = _get_angle(anno,sym)
         angles.append(angle)
         weights.append(weight)
     angles = np.array(angles)
