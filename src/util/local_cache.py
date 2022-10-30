@@ -26,6 +26,16 @@ class LocalCache:
         self.meta = pd.read_csv(self.get_file('labels.csv'))
     
     def get_meta(self):
+        '''
+        To help avoid side-effects, this method creates a new copy
+        of the image metadata for each call.
+
+        Returns
+        -------
+        DataFrame
+            A DataFrame containing all the InfAnFace metadata.
+
+        '''
         return self.meta.copy()
     
     def get_file(self,file,url=None,local_path=None):

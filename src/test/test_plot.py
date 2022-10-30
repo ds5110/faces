@@ -17,8 +17,9 @@ from util.model import cat_cols
 # load the labels data
 df = cache.get_meta()
 
-def annotated_plot():
-    types = [None,'scatter','scatternum','spline','splinelabel']
+def annotated_plot(types=None):
+    if types is None:
+        types = [None,'scatter','scatternum','spline','splinelabel']
     for i in range(10):
         anno = cache.get_image(i)
         for annotate in types:
@@ -57,4 +58,5 @@ def test_challenging():
 
 if __name__ == '__main__':
     # annotated_plot()
+    # annotated_plot(['spline'])
     test_challenging()
