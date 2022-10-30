@@ -48,8 +48,6 @@ def plot_image(
     if anno.desc:
         desc += f' {anno.desc}'
     title = f'{image_set}/{filename}' + desc
-    if anno.desc:
-        title += f' {anno.desc}'
     X = anno.get_x()
     Y = anno.get_y()
     img = anno.get_image()
