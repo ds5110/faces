@@ -53,6 +53,7 @@ def test_challenging():
             rotate(anno),
             annotate='spline',
             cross=True,
+            grayscale=True,
             save_fig=False,
         )
 

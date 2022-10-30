@@ -12,6 +12,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.interpolate import UnivariateSpline
+from PIL import ImageOps
 
 from util.model import landmark68
 
@@ -19,6 +20,7 @@ def plot_image(
         anno,
         annotate=None,
         cross=False,
+        grayscale=False,
         save_fig=False,
 ):
     '''
@@ -51,6 +53,11 @@ def plot_image(
     X = anno.get_x()
     Y = anno.get_y()
     img = anno.get_image()
+    if grayscale:
+        # NOTE: Extracting luma component produces the same result
+        #       as ImageOps.grayscale.
+        # y,u,v = img.convert('YCbCr').split()
+        img = ImageOps.grayscale(img)
     
     # get the image data
     # img.convert('YCbCr')
