@@ -56,16 +56,16 @@ def annotated_plot():
                 anno,
                 annotate=annotate,
                 cross=False,
-                save_fig=True,
+                save_fig=False,
             )
             plot_image(
                 rotate(anno), # rotated images have a distinct 'desc'
                 annotate=annotate,
                 cross=True,
-                save_fig=True,
+                save_fig=False,
             )
     
 if __name__ == '__main__':
     # scrape_all()
-    simple_plot(scatter=True,cross=True)
-    # annotated_plot()
+    # simple_plot(scatter=True,cross=True)
+    annotated_plot()
