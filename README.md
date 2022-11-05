@@ -10,15 +10,15 @@ There is also a convenience utility for loading these files, wrapped up in a uti
 
 ## Preprocessing
 
-In our initial exploration we tried plotting the landmarks on a frontal view example image:
+In our initial exploration we tried plotting landmarks on a frontal view example image:
 
 <img src="figs/images/ads/14998.Still056.jpg_scatternum.png" width=600>
 
-Then we tried drawing splines between subsets of points, to make the detected features more clear:
+Then we tried drawing splines between subsets of points, to make detected features more clear:
 
 <img src="figs/images/ads/14998.Still056.jpg_spline.png" width=600>
 
-We also tried to standardize the orientation by centering and rotating about the z-axis (using expected symmetry between the eye landmarks to calculate the angle of rotation):
+We also tried to standardize the orientation by centering and rotating about the z-axis (using expected symmetry between eye landmarks to calculate the angle of rotation):
 
 <img src="figs/images/ads/14998.Still056.jpg_rotated.png" width=600>
 
@@ -27,4 +27,4 @@ To confirm this, we applied this rotation/centering on a few other images:
 <img src="figs/images/ads/13555.Still049.jpg_scatter_rotated.png" width=600>
 <img src="figs/images/ads/1072.Still005.jpg_splinelabel_rotated.png" width=600>
 
-Depending on the type of models we are training, this type of preprocessing may be useful.
+Depending on the input data and type of models we are training, this type of preprocessing may be useful.
