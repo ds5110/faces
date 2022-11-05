@@ -26,3 +26,5 @@ To confirm this, we applied this rotation/centering on a few other images:
 
 <img src="figs/images/ads/13555.Still049.jpg_scatter_rotated.png" width=600>
 <img src="figs/images/ads/1072.Still005.jpg_splinelabel_rotated.png" width=600>
+
+Depending on the type of models we are training, this type of preprocessing may be useful.

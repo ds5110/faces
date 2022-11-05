@@ -59,5 +59,5 @@ def test_challenging():
 
 if __name__ == '__main__':
     # annotated_plot()
-    # annotated_plot(['spline'])
-    test_challenging()
+    annotated_plot(['spline'])
+    # test_challenging()
