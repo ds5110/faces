@@ -39,3 +39,7 @@ We preformed a check using `plot_shape.py` to see if the images were all the sam
 
 <img src="figs/hist.png" width=900>
 <img src="figs/scatter.png" width=900>
+
+Because one idea for this project is creating a classifier of adult and infant faces, we also wanted to explore some of the adult face data. Using a similar script to `plot_gxgy.py`, we used `plot_adult.py` to plot the features.
+
+<img src="figs/adult.png" width=900>
