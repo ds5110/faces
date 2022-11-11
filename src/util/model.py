@@ -10,6 +10,9 @@ import numpy as np
 
 cat_cols = ['turned', 'occluded', 'tilted', 'expressive']
 x_cols, y_cols = [[f'gt-{axis}{i}' for i in range(68)] for axis in ['x','y']]
+cenrot_cols = [[f'cenrot-{axis}{i}' for i in range(68)] for axis in ['x','y']]
+norm_cols = [[f'norm_cenrot-{axis}{i}' for i in range(68)] for axis in ['x','y']]
+
 
 class Feature:
     def __init__(self, desc, idx):

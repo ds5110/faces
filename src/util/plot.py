@@ -21,6 +21,7 @@ def plot_image(
         annotate=None,
         cross=False,
         grayscale=False,
+        skip_img=False,
         save_fig=False,
 ):
     '''
@@ -63,7 +64,8 @@ def plot_image(
     # img.convert('YCbCr')
     
     fig, ax = plt.subplots(figsize=(10, 10))
-    ax.imshow(img)
+    if not skip_img:
+        ax.imshow(img)
     if cross:
         center= np.array([img.width/2, img.height/2])
         ax.axhline(y=center[1])
@@ -72,8 +74,8 @@ def plot_image(
     if annotate:
         if annotate.startswith('spline'):
             for f in landmark68.features:
-                xx = anno.get_x()[f.idx]
-                yy = anno.get_y()[f.idx]
+                xx = X[f.idx]
+                yy = Y[f.idx]
                 if pd.isna(xx).any(): continue;
                 if pd.isna(yy).any(): continue;
                 
@@ -134,6 +136,8 @@ def plot_image(
                         (X[i], Y[i]),
                         fontsize=6,
                     )
+    if skip_img:
+        ax.set_ylim(ax.get_ylim()[::-1])
     plt.title(title)
     plt.tight_layout()
     if save_fig:
@@ -147,6 +151,126 @@ def plot_image(
             filename += f'_{annotate}'
         if anno.desc:
             filename += f'_{anno.desc}'
+        plt.savefig(
+            f'{path}/{filename}.png',
+            dpi=300,
+            bbox_inches='tight'
+        )
+    plt.show()
+
+def plot_coords(
+        coords,
+        width,
+        height,
+        save_fig=False,
+):
+    '''
+    Either df/row_id or series is required, to provide landmark points.
+    Parameters
+    ----------
+    anno : AnnoImg
+        The image to render.
+    annotate : str, optional
+        The type of annotations to draw on the image:
+            - 'scatter': the landmark points
+            - 'scaternum': landmark points with indices
+            - 'spline': best-fit splines between landmark points
+            - 'splinelabel': best-fit splines with feature names
+        The default is None.
+    save_fig : bool, optional
+        Pass True to save result to 'figs' directory. The default is False.
+
+    Returns
+    -------
+    None.
+
+    '''
+    image_set = 'test'
+    filename = 'cenrot'
+    title = f'{image_set}/{filename}'
+    X = coords[:,0]
+    Y = coords[:,1]
+    
+    fig, ax = plt.subplots(figsize=(10, 10))
+    center= np.array([width/2, height/2])
+    ax.axhline(y=center[1])
+    ax.axvline(x=center[0])
+    
+    for f in landmark68.features:
+        xx = X[f.idx]
+        yy = X[f.idx]
+        if pd.isna(xx).any(): continue;
+        if pd.isna(yy).any(): continue;
+        
+        points = np.stack((xx,yy))
+        distance = np.cumsum(
+            np.sqrt(np.sum(
+                np.diff(points.T, axis=0)**2,
+                axis=1
+            ))
+        )
+        if not distance[-1]: continue;
+        
+        distance = np.insert(distance, 0, 0)/distance[-1]
+        splines = [UnivariateSpline(distance, point, k=2, s=.2) for point in points]
+        points_fitted = np.vstack(
+            [spline(np.linspace(0, 1, 64)) for spline in splines]
+        )
+        
+        # # plot splines
+        # plt.plot(
+        #     *points_fitted,
+        #     linestyle='-',
+        #     linewidth='1',
+        #     c='fuchsia',
+        # )
+        
+        # # plot spline labels
+        # # TODO: come up with a way to avoid overlapping labels
+        # mid_x = xx[len(xx)//2]
+        # if len(xx) % 2 == 0:
+        #     mid_x = (mid_x + xx[len(xx)//2 - 1])/2
+        # mid_y = yy[len(yy)//2]
+        # if len(yy) % 2 == 0:
+        #     mid_y = (mid_y + yy[len(yy)//2 - 1])/2
+        # ax.annotate(
+        #     f'{f.desc}',
+        #     (mid_x, mid_y),
+        #     fontsize=6,
+        # )
+        
+        # # plot landmarks as white dots
+        # plt.plot(
+        #     *points,
+        #     'o',
+        #     markersize=1,
+        #     c='white',
+        # )
+        
+        # plot landmarks as green dots
+        ax.scatter(
+            X,
+            Y,
+            s=6,
+            linewidth=.5,
+            c='lime',
+            edgecolors='black',
+        )
+        
+        # plot landmark numbers
+        for i in range(len(X)):
+            ax.annotate(
+                f'{i}',
+                (X[i], Y[i]),
+                fontsize=6,
+            )
+    ax.set_ylim(ax.get_ylim()[::-1])
+    plt.title(title)
+    plt.tight_layout()
+    if save_fig:
+        path = f'./figs/images/{image_set}'
+        if not Path(path).exists():
+            os.makedirs(path)
         plt.savefig(
             f'{path}/{filename}.png',
             dpi=300,
