@@ -38,6 +38,12 @@ class LocalCache:
         '''
         return self.meta.copy()
     
+    def save_meta(self,df,desc):
+        df.to_csv(
+            f'{self.base_dir}/labels_{desc}.csv',
+            index=False,
+        )
+    
     def get_file(self,file,url=None,local_path=None):
         local_path = Path(local_path or self.base_dir)
         local_file = Path(f'{local_path}/{file}')

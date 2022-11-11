@@ -28,6 +28,45 @@ class Sym:
     def get_right(self):
         return self.pairs[:,1]
 
+h_syms = [
+    [36, 45], # outer canthus
+    [39, 42], # inner canthus
+    
+    # eyelids
+    [37, 44],
+    [38, 43],
+    [40, 47],
+    [41, 46],
+    
+    # h_nose
+    [31, 35],
+    [32, 34],
+    
+    # cheeks
+    *[[i,16-i] for i in range(8)],
+    
+    # brows
+    *[[17+i, 26-i] for i in range(5)],
+    
+    # mouth
+    *[[48+i, 54-i] for i in range(3)],
+    *[[60+i, 64-i] for i in range(2)],
+    [67, 65],
+    *[[59-i, 55+i] for i in range(2)],
+]
+
+v_line = [
+    *[28+i for i in range(4)],
+    34,
+    52,
+    63,
+    67,
+    58,
+    9,
+]
+
+
+
 default_syms = [
     # NOTE: I haven't tested this a lot, but I don't expect
     #       it will be a great/reliable way to address tilt...
@@ -44,7 +83,7 @@ default_syms = [
             [36, 45],
             [39, 42],
         ],
-        4. # higher weight for fewer points
+        2. # higher weight for canthi
     ),
     # NOTE: This is probably not worth keeping, especially
     #       since its weight is so low...
@@ -58,13 +97,14 @@ default_syms = [
             [40, 47],
             [41, 46],
         ],
-        .5, # due to squinting/expressions and number of points
+        .5, # due to expressions (e.g. squinting)
     ),
 ]
 
 def _get_angle(anno,sym):
     '''
-    This function calculates the angle offset based on the given 
+    This function calculates the angle offset based on the given
+    image and expected symmetric point pairs.
 
     Parameters
     ----------
@@ -77,9 +117,6 @@ def _get_angle(anno,sym):
     -------
     angle : float
         The estimated angle of rotation (in radians).
-    weight_tot: float 
-        The total weight of the estimate,
-        the total distance between all point pairs.
 
     '''
     # calculate diffs per pair
@@ -89,7 +126,7 @@ def _get_angle(anno,sym):
     
     # calculate pair distances
     hypots = np.sqrt(xx**2 + yy**2)
-    weight_tot = np.sum(hypots)
+    weight_tot = np.sum(hypots) # use pair distance as weight
     
     # calculate angle
     angles = np.arcsin(-yy/hypots) # neg y because image y starts at top
@@ -101,15 +138,15 @@ def _get_angle(anno,sym):
     if upside_down:
         angle = np.pi - angle
     
-    return angle, sym.weight_tot
+    return angle
 
 def get_angle(anno,syms=default_syms,deg=False):
     angles = []
     weights = []
     for sym in syms:
-        angle, weight = _get_angle(anno,sym)
+        angle = _get_angle(anno,sym)
         angles.append(angle)
-        weights.append(weight)
+        weights.append(sym.weight_tot)
     angles = np.array(angles)
     weights = np.array(weights)
     angle = np.sum(angles * weights) / np.sum(weights)
@@ -118,15 +155,30 @@ def get_angle(anno,syms=default_syms,deg=False):
     else:
         return angle
 
-def rotate(anno):
-    # extract data
-    
+def get_rotate_data(anno):
     # get image and calculate translation
-    def _rot():
+    img = anno.get_image()
+    face_cen = anno.get_face_center()
+    center = np.array([[img.width/2, img.height/2]])
+    coords = anno.get_coords()
+    
+    # calculate rotation
+    angle = get_angle(anno)
+    cos = np.cos(angle)
+    sin = np.sin(angle)
+    rotx = np.array([[cos,sin],[-sin,cos]])
+    
+    # perform rotation
+    coords = coords - face_cen # move coordinates to the origin to rotate
+    coords = coords@rotx # apply roatation matrix
+    coords = coords + center # move coordinates back to the center
+    
+    return face_cen, angle, coords
+
+def rotate(anno):
+    def _img():
         img = anno.get_image()
-        face_cen = anno.get_face_center()
-        center = np.array([[img.width/2, img.height/2]])
-        coords = anno.get_coords()
+        face_cen, angle, coords = get_rotate_data(anno)
         
         # NOTE: We add a buffer around the image
         #       to avoid cropping content during centering
@@ -140,16 +192,7 @@ def rotate(anno):
             data=np.append(id_2d, (buff_face-buff_cen).T, 1).ravel(),
         )
         
-        # calculate rotation
-        coords = coords - face_cen # move coordinates to the origin to rotate
-        angle = get_angle(anno)
         angle_deg = angle * to_deg
-        cos = np.cos(angle)
-        sin = np.sin(angle)
-        rotx = np.array([[cos,sin],[-sin,cos]])
-        coords = coords@rotx
-        coords = coords + center # move coordinates back to the center
-        
         rot = cen.rotate(
             -angle_deg,
             center=tuple(buff_cen.ravel()),
@@ -158,11 +201,9 @@ def rotate(anno):
         # crop back to original size
         crop = rot.crop((img.width,img.height,img.width*2,img.height*2))
         
-        return crop, coords
-    def _img():
-        rot, coords = _rot()
-        return rot
-    rot, coords = _rot()
+        return crop
+    
+    _, _, coords = get_rotate_data(anno)
     
     # add 'rotated' to the image description
     desc = ' '.join(d for d in [anno.desc, '(rotated)'] if d is not None)
