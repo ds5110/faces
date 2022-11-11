@@ -42,4 +42,9 @@ for i in range(all_coo.shape[1]):
     )
     df = pd.concat([df,tmp_df], axis=1)
 
+for dim in ['x','y']:
+    for col in df.columns:
+        if col.startswith(f'cenrot-{dim}'):
+            df[col] = df[col] - df[f'center-{dim}']
+
 cache.save_meta(df,'decorated')
