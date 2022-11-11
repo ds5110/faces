@@ -173,12 +173,12 @@ def get_rotate_data(anno):
     coords = coords@rotx # apply roatation matrix
     coords = coords + center # move coordinates back to the center
     
-    return face_cen, angle, coords
+    return face_cen, center.ravel(), angle, coords
 
 def rotate(anno):
     def _img():
         img = anno.get_image()
-        face_cen, angle, coords = get_rotate_data(anno)
+        face_cen, center, angle, coords = get_rotate_data(anno)
         
         # NOTE: We add a buffer around the image
         #       to avoid cropping content during centering
@@ -203,7 +203,7 @@ def rotate(anno):
         
         return crop
     
-    _, _, coords = get_rotate_data(anno)
+    _, _, _, coords = get_rotate_data(anno)
     
     # add 'rotated' to the image description
     desc = ' '.join(d for d in [anno.desc, '(rotated)'] if d is not None)

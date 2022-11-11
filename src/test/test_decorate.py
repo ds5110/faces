@@ -23,8 +23,8 @@ all_coo = []
 if __name__ == '__main__':
     for i in range(df.shape[0]):
         anno = cache.get_image(i)
-        face_cen, angle, coords = get_rotate_data(anno)
-        all_cen.append(face_cen)
+        face_cen, center, angle, coords = get_rotate_data(anno)
+        all_cen.append(center)
         all_ang.append(angle)
         all_coo.append(coords)
 
