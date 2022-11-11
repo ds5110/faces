@@ -156,9 +156,31 @@ def get_angle(anno,syms=default_syms,deg=False):
         return angle
 
 def get_rotate_data(anno):
+    '''
+    Extract image metadata associated with center/rotate logic.
+
+    Parameters
+    ----------
+    anno : AnnoImg
+        the image to analyze.
+
+    Returns
+    -------
+    width number
+        image width.
+    height number
+        image height.
+    face : array of number
+        coordinates of the center of the face.
+    angle : number
+        estimated angle of rotation (in radians).
+    coords : number(68,2)
+        new landmark coordinates, rotated and centered.
+
+    '''
     # get image and calculate translation
     img = anno.get_image()
-    face_cen = anno.get_face_center()
+    face = anno.get_face_center()
     center = np.array([[img.width/2, img.height/2]])
     coords = anno.get_coords()
     
@@ -169,22 +191,22 @@ def get_rotate_data(anno):
     rotx = np.array([[cos,sin],[-sin,cos]])
     
     # perform rotation
-    coords = coords - face_cen # move coordinates to the origin to rotate
+    coords = coords - face # move coordinates to the origin to rotate
     coords = coords@rotx # apply roatation matrix
     coords = coords + center # move coordinates back to the center
     
-    return face_cen, center.ravel(), angle, coords
+    return img.width, img.height, face, angle, coords
 
 def rotate(anno):
     def _img():
         img = anno.get_image()
-        face_cen, center, angle, coords = get_rotate_data(anno)
+        _, _, face, angle, coords = get_rotate_data(anno)
         
         # NOTE: We add a buffer around the image
         #       to avoid cropping content during centering
         buff = Image.new(img.mode, (img.width*3, img.height*3))
         buff.paste(img, (img.width, img.height))
-        buff_face = face_cen + np.array([[img.width,img.height]])
+        buff_face = face + np.array([[img.width,img.height]])
         buff_cen = np.array([[buff.width/2, buff.height/2]])
         cen = buff.transform(
             buff.size,
@@ -203,7 +225,7 @@ def rotate(anno):
         
         return crop
     
-    _, _, _, coords = get_rotate_data(anno)
+    _, _, _, _, coords = get_rotate_data(anno)
     
     # add 'rotated' to the image description
     desc = ' '.join(d for d in [anno.desc, '(rotated)'] if d is not None)

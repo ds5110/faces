@@ -13,5 +13,9 @@ df = cache.get_meta('decorated')
 
 cols = [col for col in df.columns if col.startswith(f'norm_cenrot-')]
 df[cols].describe()
+
+#-- these should all be zeros
 df[[f'norm_cenrot-{dim}{nose_i}' for dim in ['x','y']]].describe()
+
+#-- these might be interesting?
 df[[f'cenrot-{dim}{nose_i}' for dim in ['x','y']]].describe()

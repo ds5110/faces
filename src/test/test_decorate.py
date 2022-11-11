@@ -17,36 +17,39 @@ from util.pre import get_rotate_data
 # load the labels data
 df = cache.get_meta()
 
-all_cen = []
-all_ang = []
-all_coo = []
+widths = []
+heights = []
+angles = []
+all_coords = []
 if __name__ == '__main__':
     for i in range(df.shape[0]):
         anno = cache.get_image(i)
-        face_cen, center, angle, coords = get_rotate_data(anno)
-        all_cen.append(center)
-        all_ang.append(angle)
-        all_coo.append(coords)
+        width, height, face, angle, coords = get_rotate_data(anno)
+        widths.append(width)
+        heights.append(height)
+        angles.append(angle)
+        all_coords.append(coords)
 
-df['yaw'] = all_ang
+# add angle of rotation (in radians)
+df['yaw'] = angles
 
-all_cen = np.array(all_cen)
-df['center-x'] = all_cen[:,0]
-df['center-y'] = all_cen[:,1]
-
-all_coo = np.array(all_coo)
-for i in range(all_coo.shape[1]):
+all_coords = np.array(all_coords)
+for i in range(all_coords.shape[1]):
     tmp_df = pd.DataFrame(
-        data=all_coo[:,i,:],
+        data=all_coords[:,i,:],
         columns=[f'cenrot-{dim}{i}' for dim in ['x','y']]
     )
     df = pd.concat([df,tmp_df], axis=1)
 
+df['width'] = widths
+df['height'] = heights
+all_dims = np.stack([widths,heights]).T
 
-# TODO figure out a more elegant way?
-for dim in ['x','y']:
-    for col in df.columns:
-        if col.startswith(f'cenrot-{dim}'):
-            df[f'norm_{col}'] = df[col] - df[f'center-{dim}']
+for i in range(all_coords.shape[1]):
+    tmp_df = pd.DataFrame(
+        data=all_coords[:,i,:]/all_dims - .5,
+        columns=[f'norm_cenrot-{dim}{i}' for dim in ['x','y']]
+    )
+    df = pd.concat([df,tmp_df], axis=1)
 
 cache.save_meta(df,'decorated')

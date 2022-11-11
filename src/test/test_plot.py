@@ -15,7 +15,7 @@ from util.pre import rotate
 from util.model import cat_cols
 
 # load the labels data
-df = cache.get_meta()
+df = cache.get_meta('decorated')
 
 def annotated_plot(types=None):
     if types is None:
