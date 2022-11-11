@@ -19,13 +19,15 @@ class LocalCache:
     def __init__(
             self,
             base_dir='./data',
-            base_url='https://coe.northeastern.edu/Research/AClab/InfAnFace'
+            scratch_dir='./scratch',
+            base_url='https://coe.northeastern.edu/Research/AClab/InfAnFace',
     ):
         self.base_dir = base_dir
+        self.scratch_dir = scratch_dir
         self.base_url = base_url
         self.meta = pd.read_csv(self.get_file('labels.csv'))
     
-    def get_meta(self):
+    def get_meta(self,desc=None):
         '''
         To help avoid side-effects, this method creates a new copy
         of the image metadata for each call.
@@ -36,11 +38,15 @@ class LocalCache:
             A DataFrame containing all the InfAnFace metadata.
 
         '''
+        if desc is not None:
+            filepath = f'{self.scratch_dir}/labels_{desc}.csv'
+            return pd.read_csv(filepath)
+        
         return self.meta.copy()
     
     def save_meta(self,df,desc):
         df.to_csv(
-            f'{self.base_dir}/labels_{desc}.csv',
+            f'{self.scratch_dir}/labels_{desc}.csv',
             index=False,
         )
     
