@@ -82,4 +82,4 @@ def test_challenging(code=None,save_fig=False):
 if __name__ == '__main__':
     # annotated_plot()
     # annotated_plot(['spline'])
-    test_challenging(14)
+    test_challenging(11)

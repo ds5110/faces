@@ -14,6 +14,8 @@ import pandas as pd
 from util.local_cache import cache
 from util.pre import get_rotate_data
 
+
+
 if __name__ == '__main__':
     # load the labels data
     df = cache.get_meta()
@@ -22,20 +24,40 @@ if __name__ == '__main__':
     heights = []
     angles = []
     cenrots = []
+    raws = []
+    faces = []
     
     # calculate rotation/etc for each image
     for i in range(df.shape[0]):
         anno = cache.get_image(i)
-        width, height, face, angle, coords = get_rotate_data(anno)
+        raws.append(anno.get_coords())
+        width, height, face, angle, cenrot = get_rotate_data(anno)
+        faces.append(face)
         widths.append(width)
         heights.append(height)
         angles.append(angle)
-        cenrots.append(coords)
+        cenrots.append(cenrot)
 
+    # add image dimensions
+    df['width'] = widths
+    df['height'] = heights
+    
     # add angle of rotation (in radians)
     df['yaw'] = angles
     
-    # add centered/rotated coordinates
+    # add normalized landmarks
+    raws = np.array(raws)
+    mins = np.amin(raws,axis=1)
+    maxs = np.amax(raws,axis=1)
+    extents = maxs-mins
+    for i in range(raws.shape[1]):
+        tmp_df = pd.DataFrame(
+            data=(raws[:,i,:] - faces)/extents,
+            columns=[f'norm-{dim}{i}' for dim in ['x','y']]
+        )
+        df = pd.concat([df,tmp_df], axis=1)
+    
+    # add centered/rotated landmarks
     cenrots = np.array(cenrots)
     for i in range(cenrots.shape[1]):
         tmp_df = pd.DataFrame(
@@ -49,9 +71,7 @@ if __name__ == '__main__':
     maxs = np.amax(cenrots,axis=1)
     extents = maxs-mins
     
-    # extract width/height and calculate centers
-    df['width'] = widths
-    df['height'] = heights
+    # calculate centers
     all_dims = np.stack([widths,heights]).T
     centers = all_dims/2.
     

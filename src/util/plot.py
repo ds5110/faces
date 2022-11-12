@@ -196,26 +196,27 @@ def plot_coords(
     ax.axhline(y=center[1])
     ax.axvline(x=center[0])
     
-    for f in landmark68.features:
-        xx = X[f.idx]
-        yy = X[f.idx]
-        if pd.isna(xx).any(): continue;
-        if pd.isna(yy).any(): continue;
+    # for f in landmark68.features:
+    #     xx = X[f.idx]
+    #     yy = X[f.idx]
+    #     if pd.isna(xx).any(): continue;
+    #     if pd.isna(yy).any(): continue;
         
-        points = np.stack((xx,yy))
-        distance = np.cumsum(
-            np.sqrt(np.sum(
-                np.diff(points.T, axis=0)**2,
-                axis=1
-            ))
-        )
-        if not distance[-1]: continue;
+        #------ calculate splines
+        # points = np.stack((xx,yy))
+        # distance = np.cumsum(
+        #     np.sqrt(np.sum(
+        #         np.diff(points.T, axis=0)**2,
+        #         axis=1
+        #     ))
+        # )
+        # if not distance[-1]: continue;
         
-        distance = np.insert(distance, 0, 0)/distance[-1]
-        splines = [UnivariateSpline(distance, point, k=2, s=.2) for point in points]
-        points_fitted = np.vstack(
-            [spline(np.linspace(0, 1, 64)) for spline in splines]
-        )
+        # distance = np.insert(distance, 0, 0)/distance[-1]
+        # splines = [UnivariateSpline(distance, point, k=2, s=.2) for point in points]
+        # points_fitted = np.vstack(
+        #     [spline(np.linspace(0, 1, 64)) for spline in splines]
+        # )
         
         # # plot splines
         # plt.plot(
@@ -247,23 +248,23 @@ def plot_coords(
         #     c='white',
         # )
         
-        # plot landmarks as green dots
-        ax.scatter(
-            X,
-            Y,
-            s=6,
-            linewidth=.5,
-            c='lime',
-            edgecolors='black',
+    # plot landmarks as green dots
+    ax.scatter(
+        X,
+        Y,
+        s=6,
+        linewidth=.5,
+        c='lime',
+        edgecolors='black',
+    )
+    
+    # plot landmark numbers
+    for i in range(len(X)):
+        ax.annotate(
+            f'{i}',
+            (X[i], Y[i]),
+            fontsize=6,
         )
-        
-        # plot landmark numbers
-        for i in range(len(X)):
-            ax.annotate(
-                f'{i}',
-                (X[i], Y[i]),
-                fontsize=6,
-            )
     ax.set_ylim(ax.get_ylim()[::-1])
     plt.title(title)
     plt.tight_layout()
