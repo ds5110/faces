@@ -15,3 +15,6 @@ clean:
 	rm data/labels.csv &&\
 	rm data/300w_infanface_train.csv &&\
 	rm data/300w_valid.csv
+
+challenging:
+	PYTHONPATH=./src python -m src.test.test_plot

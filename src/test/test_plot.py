@@ -37,8 +37,9 @@ def annotated_plot(types=None):
                 save_fig=False,
             )
 
-def test_challenging(save_fig=False):
+def test_challenging(n=15,save_fig=False):
     # [f'{i:b}'.rjust(4,'0') for i in range(1,16)]
+    remaining = n
     masks = [df[col] == 1 for i, col in enumerate(cat_cols)]
     for combo in [f'{i:b}'.rjust(4,'0') for i in range(1,16)]:
         desc = ', '.join(col for i, col in enumerate(cat_cols) if combo[i] == '1')
@@ -78,8 +79,11 @@ def test_challenging(save_fig=False):
             tmp.loc[row_id,:]['height'],
             save_fig=save_fig,
         )
+        remaining -= 1
+        if remaining == 0:
+            break
 
 if __name__ == '__main__':
     # annotated_plot()
     # annotated_plot(['spline'])
-    test_challenging()
+    test_challenging(1)
