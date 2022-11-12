@@ -92,14 +92,5 @@ class LocalCache:
             row_id=row_id,
             desc=desc,
         )
-    
-    def get_image_file(self,row_id,desc=None):
-        path = self.meta['image-set'].iloc[row_id]
-        file = self.meta['filename'].iloc[row_id]
-        return self.get_file(
-            file,
-            url=f'{self.base_url}/images/{path}/{file}',
-            local_path=f'{self.base_dir}/images/{path}',
-        )
 
 cache = LocalCache() # default cache

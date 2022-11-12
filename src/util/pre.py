@@ -7,10 +7,14 @@ Created on Fri Oct 28 16:41:53 2022
 """
 
 import numpy as np
+import pandas as pd
 from PIL import Image
+from scipy.spatial import ConvexHull
+from scipy.interpolate import UnivariateSpline
+import skimage
 
 # intra-project
-from util.model import AnnoImg
+from util.model import AnnoImg, landmark68
 
 pi_2 = np.pi/2.
 to_deg = 180./np.pi
@@ -228,11 +232,59 @@ def rotate(anno):
     _, _, _, _, coords = get_rotate_data(anno)
     
     # add 'rotated' to the image description
-    desc = ' '.join(d for d in [anno.desc, '(rotated)'] if d is not None)
+    desc = anno.desc.copy() if anno.desc is not None else []
+    desc.append('rotated')
     return AnnoImg(
         anno.image_set,
         anno.filename,
         coords,
+        _img,
+        desc=desc
+    )
+
+def crop(anno):
+    def _img():
+        image = np.array(anno.get_image()) # convert to skimage
+        coords = anno.get_coords()
+        
+        X = []
+        Y = []
+        for f in landmark68.features:
+            # f = landmark68.features[0]
+            data = coords[f.idx]
+            if np.any(np.isnan(data)): continue;
+            points = data.T
+            [xx, yy] = points
+            distance = np.cumsum(
+                np.sqrt(np.sum(
+                    np.diff(points.T, axis=0)**2,
+                    axis=1
+                ))
+            )
+            if not distance[-1]: continue;
+            
+            distance = np.insert(distance, 0, 0)/distance[-1]
+            splines = [UnivariateSpline(distance, point, k=2, s=.2) for point in points]
+            points_fitted = np.vstack(
+                [spline(np.linspace(0, 1, 64)) for spline in splines]
+            )
+            points_fitted.shape
+            X.extend(points_fitted[0])
+            Y.extend(points_fitted[1])
+        
+        data = np.stack([X,Y],axis=1)
+        poly = data[ConvexHull(data).vertices]
+        X, Y = skimage.draw.polygon(poly[:,0], poly[:,1])
+        cropped = np.zeros(image.shape, dtype=np.uint8)
+        cropped[Y, X] = image[Y, X]
+        return Image.fromarray(cropped)
+    
+    desc = anno.desc.copy() if anno.desc is not None else []
+    desc.append('cropped')
+    return AnnoImg(
+        anno.image_set,
+        anno.filename,
+        anno.get_coords(),
         _img,
         desc=desc
     )

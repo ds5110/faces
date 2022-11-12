@@ -12,7 +12,7 @@ import numpy as np
 # intra-project
 from util.local_cache import cache
 from util.plot import plot_image, plot_coords
-from util.pre import rotate
+from util.pre import rotate, crop
 from util.model import cat_cols, cenrot_cols
 
 # load the labels data
@@ -30,8 +30,16 @@ def annotated_plot(types=None):
                 cross=False,
                 save_fig=False,
             )
+            rotated = rotate(anno)
             plot_image(
-                rotate(anno),
+                rotated,
+                annotate=annotate,
+                cross=True,
+                save_fig=False,
+            )
+            cropped = crop(rotated)
+            plot_image(
+                cropped,
                 annotate=annotate,
                 cross=True,
                 save_fig=False,
@@ -41,7 +49,7 @@ def test_challenging(code=None,save_fig=False):
     codes = range(1,16) if code is None else [code]
     masks = [df[col] == 1 for i, col in enumerate(cat_cols)]
     for combo in [f'{i:b}'.rjust(4,'0') for i in codes]:
-        desc = ', '.join(col for i, col in enumerate(cat_cols) if combo[i] == '1')
+        desc = [col for i, col in enumerate(cat_cols) if combo[i] == '1']
         mask = [m if combo[i] == '1' else ~m for i, m in enumerate(masks)]
         tmp = df[reduce(lambda a,b: a & b, mask)]
         if tmp.shape[0] == 0:
@@ -51,8 +59,9 @@ def test_challenging(code=None,save_fig=False):
         
         row_id = tmp.index[0]
         anno = cache.get_image(row_id,desc)
+        rotated = rotate(anno)
         plot_image(
-            rotate(anno),
+            rotated,
             annotate='spline',
             cross=True,
             grayscale=True,
@@ -61,13 +70,15 @@ def test_challenging(code=None,save_fig=False):
         
         # plot geometry without image, to verify coords
         plot_image(
-            rotate(anno),
+            rotated,
             annotate='spline',
             cross=True,
             grayscale=True,
             skip_img=True,
             save_fig=save_fig,
         )
+        
+        # plot coords
         coords = np.stack(
             [tmp[cols].loc[row_id,:].values for cols in cenrot_cols],
             1
@@ -76,6 +87,18 @@ def test_challenging(code=None,save_fig=False):
             coords,
             tmp.loc[row_id,:]['width'],
             tmp.loc[row_id,:]['height'],
+            save_fig=save_fig,
+        )
+        
+        # try simple crop
+        # TODO crop to splines!
+        cropped = crop(rotated)
+        plot_image(
+            cropped,
+            annotate='spline',
+            cross=True,
+            grayscale=True,
+            # skip_img=True,
             save_fig=save_fig,
         )
 

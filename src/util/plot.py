@@ -48,8 +48,8 @@ def plot_image(
     image_set = anno.image_set
     filename = anno.filename
     desc = f' (row {anno.row_id})' if anno.row_id is not None else ''
-    if anno.desc:
-        desc += f' {anno.desc}'
+    if anno.desc is not None:
+        desc += f' ({", ".join(anno.desc)})'
     title = f'{image_set}/{filename}' + desc
     X = anno.get_x()
     Y = anno.get_y()
@@ -149,8 +149,8 @@ def plot_image(
         #       original image if we don't.
         if annotate:
             filename += f'_{annotate}'
-        if anno.desc:
-            filename += f'_{anno.desc}'
+        if anno.desc is not None:
+            filename += f'_({"_".join(anno.desc)})'
         plt.savefig(
             f'{path}/{filename}.png',
             dpi=300,
