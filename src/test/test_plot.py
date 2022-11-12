@@ -41,7 +41,7 @@ def test_challenging(n=15,save_fig=False):
     # [f'{i:b}'.rjust(4,'0') for i in range(1,16)]
     remaining = n
     masks = [df[col] == 1 for i, col in enumerate(cat_cols)]
-    for combo in [f'{i:b}'.rjust(4,'0') for i in range(1,16)]:
+    for combo in [f'{i:b}'.rjust(4,'0') for i in range(15,0,-1)]:
         desc = ', '.join(col for i, col in enumerate(cat_cols) if combo[i] == '1')
         mask = [m if combo[i] == '1' else ~m for i, m in enumerate(masks)]
         tmp = df[reduce(lambda a,b: a & b, mask)]
