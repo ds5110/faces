@@ -46,7 +46,7 @@ def test_challenging(n=15,save_fig=False):
         mask = [m if combo[i] == '1' else ~m for i, m in enumerate(masks)]
         tmp = df[reduce(lambda a,b: a & b, mask)]
         if tmp.shape[0] == 0:
-            print(f'no rows found for combination! {desc}')
+            print(f'no rows found for combination! ({desc})')
             continue;
         print(f'found {tmp.shape[0]} rows ({desc})')
         
@@ -86,4 +86,4 @@ def test_challenging(n=15,save_fig=False):
 if __name__ == '__main__':
     # annotated_plot()
     # annotated_plot(['spline'])
-    test_challenging(1)
+    test_challenging()
