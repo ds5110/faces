@@ -12,8 +12,7 @@ import pandas as pd
 
 # intra-project
 from util.local_cache import cache
-from util.pre import get_rotate_data
-
+from util.pre import get_rotate_data, h_syms, v_line
 
 
 if __name__ == '__main__':
@@ -57,6 +56,14 @@ if __name__ == '__main__':
         )
         df = pd.concat([df,tmp_df], axis=1)
     
+    # calculate distance between expected symmetric points (raw)
+    for i, [p1, p2] in enumerate(h_syms):
+        tmp_df = pd.DataFrame(
+            data=np.squeeze(np.diff(raws[:,[p1,p2],:],axis=1)),
+            columns=[f'sym_diff-{dim}{p1}' for dim in ['x','y']]
+        )
+        df = pd.concat([df,tmp_df], axis=1)
+    
     # add centered/rotated landmarks
     cenrots = np.array(cenrots)
     for i in range(cenrots.shape[1]):
@@ -66,7 +73,7 @@ if __name__ == '__main__':
         )
         df = pd.concat([df,tmp_df], axis=1)
     
-    # calculate extents of landmarks
+    # calculate extents of landmarks (rotated)
     mins = np.amin(cenrots,axis=1)
     maxs = np.amax(cenrots,axis=1)
     extents = maxs-mins
@@ -83,4 +90,11 @@ if __name__ == '__main__':
         )
         df = pd.concat([df,tmp_df], axis=1)
     
+    # calculate distance between expected symmetric points (rotated)
+    for i, [p1, p2] in enumerate(h_syms):
+        tmp_df = pd.DataFrame(
+            data=np.squeeze(np.diff(cenrots[:,[p1,p2],:],axis=1)),
+            columns=[f'rot_sym_diff-{dim}{p1}' for dim in ['x','y']]
+        )
+        df = pd.concat([df,tmp_df], axis=1)
     cache.save_meta(df,'decorated')

@@ -14,7 +14,6 @@ landmark_cols = [x_cols, y_cols]
 cenrot_cols = [[f'cenrot-{axis}{i}' for i in range(68)] for axis in ['x','y']]
 norm_cols = [[f'norm_cenrot-{axis}{i}' for i in range(68)] for axis in ['x','y']]
 
-
 class Feature:
     def __init__(self, desc, idx):
         self.desc = desc

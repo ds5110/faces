@@ -28,7 +28,7 @@ class Sym:
     def get_right(self):
         return self.pairs[:,1]
 
-h_syms = [
+h_syms = np.array([
     [36, 45], # outer canthus
     [39, 42], # inner canthus
     
@@ -53,9 +53,9 @@ h_syms = [
     *[[60+i, 64-i] for i in range(2)],
     [67, 65],
     *[[59-i, 55+i] for i in range(2)],
-]
+])
 
-v_line = [
+v_line = np.array([
     *[28+i for i in range(4)],
     34,
     52,
@@ -63,7 +63,7 @@ v_line = [
     67,
     58,
     9,
-]
+])
 
 
 
