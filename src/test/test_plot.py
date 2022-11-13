@@ -143,7 +143,8 @@ def test_challenging(
             print(f'no rows found for combination! ({desc})')
             continue;
         print(f'found {tmp.shape[0]} rows ({desc})')
-        for i in range(tmp.shape[0]):
+        n = tmp.shape[0] if all_occurrences else 1
+        for i in range(n):
             row_id = tmp.index[i]
             anno = cache.get_image(row_id,desc)
             plot_stuff(anno)
