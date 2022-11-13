@@ -12,7 +12,7 @@ import numpy as np
 # intra-project
 from util.local_cache import cache
 from util.plot import plot_image, plot_coords
-from util.pre import rotate, crop, cheeks
+from util.pre import rotate, crop, cheeks, to_deg
 from util.model import cat_cols, cenrot_cols
 
 # load the labels data
@@ -196,7 +196,7 @@ if __name__ == '__main__':
     #------ basic usage
     # annotated_plot()
     # annotated_plot(['spline'])
-    test_challenging(11)
+    # test_challenging(11)
     # test_challenging(all_occurrences=True)
     # plot_crossing()
     #-- plot all images
@@ -263,15 +263,21 @@ if __name__ == '__main__':
     #     save_fig=True,
     # )
     
-    # #-- looking for true face center
+    #-- looking for true face center
     # rotated = rotate(cache.get_image(0))
     # coords = rotated.get_coords()
-    # tmp = rotated.get_coords()[cheeks.ravel(),:]
-    # mid = np.mean(tmp,axis=0)
+    # mid_y = coords[cheeks[0,0],1]
+    # xx = coords[cheeks.ravel(),0]
+    # min_x = np.min(xx)
+    # radius = (np.max(xx) - min_x)/2
+    # mid_x = min_x + radius
+    # face = rotated.get_face_center()
+    # angle = np.arctan((face[0]-mid_x)/radius)
+    # angle*to_deg
     # plot_image(
     #     rotated,
     #     annotate='scatternum',
-    #     ref_point=mid,
+    #     ref_point=[mid_x,mid_y],
     #     cross=True,
     #     grayscale=True,
     #     save_fig=False,
