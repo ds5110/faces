@@ -258,7 +258,21 @@ if __name__ == '__main__':
     # plot_image(
     #     rotate(cache.get_image(80)),
     #     annotate='scatternum',
-    #     points=[36, 45, 39, 42],
+    #     scatter_points=[36, 45, 39, 42],
     #     cross=True,
     #     save_fig=True,
+    # )
+    
+    # #-- looking for true face center
+    # rotated = rotate(cache.get_image(0))
+    # coords = rotated.get_coords()
+    # tmp = rotated.get_coords()[cheeks.ravel(),:]
+    # mid = np.mean(tmp,axis=0)
+    # plot_image(
+    #     rotated,
+    #     annotate='scatternum',
+    #     ref_point=mid,
+    #     cross=True,
+    #     grayscale=True,
+    #     save_fig=False,
     # )

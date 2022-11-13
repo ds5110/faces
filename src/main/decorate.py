@@ -55,6 +55,7 @@ if __name__ == '__main__':
     df['yaw'] = angles
     
     # add normalized landmarks
+    # this is the distance from nose as a proportion of landmarks' extents
     mins = np.amin(raws,axis=1)
     maxs = np.amax(raws,axis=1)
     extents = maxs-mins
@@ -114,27 +115,28 @@ if __name__ == '__main__':
         )
         df = pd.concat([df,tmp_df], axis=1)
     
-    # # more targeted roll estimate
-    # tmp = raws[:2,cheeks[0],:]
-    # # sample 1
-    # # array([[[ 390., 1026.], point 1
-    # #         [ 719.,  215.]], point 2
-    # #           x       y
-    # #        [[1069.,  548.],
-    # #         [1183.,  940.]]])
-    # tmp
-    # np.diff(tmp,axis=1) # somehow, it chooses latter - prior
+    # more targeted roll estimate
+    tmp = raws[:2,cheeks[0],:]
+    # sample 1
+    # array([[[ 390., 1026.], point 1
+    #         [ 719.,  215.]], point 2
+    #           x       y
+    #        [[1069.,  548.],
+    #         [1183.,  940.]]])
+    tmp
+    np.diff(tmp,axis=1) # somehow, it chooses latter - prior
     
-    # tmp = cenrot[:2,:,:]
-    # np.min(tmp[:,cheeks[:,0],:],axis=1)
-    # row_ids = set()
-    # for i in cheeks[:,1]:
-    #     col = f'cenrot-x{i}'
-    #     tmp = df[df[col] <= df['cenrot-x33']]
-    #     for i in range(tmp.shape[0]):
-    #         row_id = tmp.index[i]
-    #         row_ids.add(row_id)
-    #         print(f'{row_id}: {col}')
-    # print(sorted(list(row_ids)))
+    cenrots.shape
+    tmp = cenrots[:2,:,:]
+    np.min(tmp[:,cheeks[:,0],:],axis=1)
+    row_ids = set()
+    for i in cheeks[:,1]:
+        col = f'cenrot-x{i}'
+        tmp = df[df[col] <= df['cenrot-x33']]
+        for i in range(tmp.shape[0]):
+            row_id = tmp.index[i]
+            row_ids.add(row_id)
+            print(f'{row_id}: {col}')
+    print(sorted(list(row_ids)))
     
     cache.save_meta(df,'decorated')

@@ -33,7 +33,8 @@ def fix_axes(X,Y,ax,flip_y=True):
     
 def plot_image(
         anno,
-        points=None,
+        scatter_points=None,
+        ref_point=None,
         annotate=None,
         cross=False,
         grayscale=False,
@@ -61,6 +62,14 @@ def plot_image(
     None.
 
     '''
+    
+    # anno=rotated
+    # annotate='scatternum'
+    # annotate='spline'
+    # ref_point=mid
+    # cross=True
+    # grayscale=True
+    # save_fig=False
     image_set = anno.image_set
     filename = anno.filename
     desc = f' (row {anno.row_id})' if anno.row_id is not None else ''
@@ -137,24 +146,30 @@ def plot_image(
                         c='white',
                     )
         if annotate and annotate.startswith('scatter'):
-            if points is None:
-                points = range(68)
+            if scatter_points is None:
+                scatter_points = range(68)
             ax.scatter(
-                X[points],
-                Y[points],
+                X[scatter_points],
+                Y[scatter_points],
                 s=6,
                 linewidth=.5,
                 c='lime',
                 edgecolors='black',
             )
             if 'scatternum' == annotate:
-                for i in points:
-                    print(f'add num: {i}')
+                for i in scatter_points:
                     ax.annotate(
                         f'{i}',
                         (X[i], Y[i]),
                         fontsize=6,
                     )
+    if ref_point is not None:
+        ax.scatter(
+            [ref_point[0]],
+            [ref_point[1]],
+            s=10,
+            c='white'
+        )
     if skip_img:
         fix_axes(X,Y,ax)
     plt.title(title)
