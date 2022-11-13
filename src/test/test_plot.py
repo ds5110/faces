@@ -192,13 +192,16 @@ def plot_crossing():
     plot_row_ids(sorted(list(row_ids)),'right_cheek')
 
 if __name__ == '__main__':
-    #-- basic usage
+    #------ basic usage
     # annotated_plot()
     # annotated_plot(['spline'])
-    # test_challenging(11)
+    test_challenging(11)
     # test_challenging(all_occurrences=True)
     # plot_crossing()
+    #-- plot all images
+    # plot_row_ids(range(df.shape[0]))
     
+    #------ troubleshooting junk
     # #-- spline issues
     # spline_warn = [
     #     101,
@@ -227,8 +230,19 @@ if __name__ == '__main__':
     #     # 49,
     #     237,
     # ]
+    # rot_fail = [
+    #     49,
+    #     80,
+    #     81,
+    #     99,
+    #     141,
+    #     286,
+    #     319,
+    #     237,
+    #     239,
+    # ]
     # plot_row_ids(rot_fail,'rot_fail')
-    plot_row_ids(range(df.shape[0]))
+    # plot_row_ids(range(df.shape[0]))
     # plot_row_ids([6])
     
     #-- other one-off stuff
