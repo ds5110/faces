@@ -59,11 +59,14 @@ if __name__ == '__main__':
     
     # roll estimate
     mid_y = cenrots[cheeks[0,0],1]
-    xx = cenrots[:,cheeks.ravel(),0]
-    min_x = np.min(xx,axis=1)
-    radius = (np.max(xx,axis=1) - min_x)/2
+    cheeks_x = cenrots[:,cheeks.ravel(),0]
+    min_x = np.min(cheeks_x,axis=1)
+    radius = (np.max(cheeks_x,axis=1) - min_x)/2
     mid_x = min_x + radius
-    # df['roll'] = np.arctan((cenrots[:,nose_i,0]-mid_x)/radius)
+    df['roll'] = np.arctan((cenrots[:,nose_i,0]-mid_x)/radius)
+    
+    for col in ['yaw','roll']:
+        df[f'{col}_abs'] = np.abs(df[col])
     
     # add normalized landmarks
     # this is the distance from nose as a proportion of landmarks' extents
@@ -125,29 +128,5 @@ if __name__ == '__main__':
             columns=[f'norm_cenrot_sym_diff-{dim}{p1}' for dim in ['x','y']]
         )
         df = pd.concat([df,tmp_df], axis=1)
-    
-    
-    # tmp = raws[:2,cheeks[0],:]
-    # # sample 1
-    # # array([[[ 390., 1026.], point 1
-    # #         [ 719.,  215.]], point 2
-    # #           x       y
-    # #        [[1069.,  548.],
-    # #         [1183.,  940.]]])
-    # tmp
-    # np.diff(tmp,axis=1) # somehow, it chooses latter - prior
-    
-    # cenrots.shape
-    # tmp = cenrots[:2,:,:]
-    # np.min(tmp[:,cheeks[:,0],:],axis=1)
-    # row_ids = set()
-    # for i in cheeks[:,1]:
-    #     col = f'cenrot-x{i}'
-    #     tmp = df[df[col] <= df['cenrot-x33']]
-    #     for i in range(tmp.shape[0]):
-    #         row_id = tmp.index[i]
-    #         row_ids.add(row_id)
-    #         print(f'{row_id}: {col}')
-    # print(sorted(list(row_ids)))
     
     cache.save_meta(df,'decorated')
