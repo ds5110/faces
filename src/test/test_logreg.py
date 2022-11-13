@@ -65,23 +65,31 @@ other_pred = sorted(list(set(all_pred) - set(subset_pred)))
 # test_dummy(tmp,'t')
 
 def test_logreg(df,pred,target):
-    print(f'looking at "{target} "per {pred}')
-    logreg = LogisticRegression()
     X = df[pred]
     y = df[target]
+    print(
+        f'looking at "{target} "per {pred} '
+        f'(n: {X.shape[0]}; p: {X.shape[1]})'
+    )
+    
+    # train/test split
     X_train, X_test, y_train, y_test = train_test_split(
         X,
         y,
     )
+    
+    # fit logreg
+    logreg = LogisticRegression()
     logreg.fit(X_train, y_train)
     
     # y_hat = linreg.predict(X)
     # score = accuracy_score(y, y_hat)
     score = logreg.score(X_test, y_test)
     print(
-        f'\tlogreg score (n: {X.shape[0]}; p: {X.shape[1]}): '
+        f'\tlogreg score: '
         f'{score:.3f}')
     
+    # fit uniform dummy, to compare
     dummy = DummyClassifier(strategy='uniform')
     dummy.fit(X_train,y_train)
     y_hat = dummy.predict(X_test)
