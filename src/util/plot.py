@@ -18,6 +18,7 @@ from util.model import landmark68
 
 def plot_image(
         anno,
+        points=None,
         annotate=None,
         cross=False,
         grayscale=False,
@@ -48,7 +49,7 @@ def plot_image(
     image_set = anno.image_set
     filename = anno.filename
     desc = f' (row {anno.row_id})' if anno.row_id is not None else ''
-    if anno.desc is not None:
+    if len(anno.desc):
         desc += f' ({", ".join(anno.desc)})'
     title = f'{image_set}/{filename}' + desc
     X = anno.get_x()
@@ -121,16 +122,19 @@ def plot_image(
                         c='white',
                     )
         if annotate and annotate.startswith('scatter'):
+            if points is None:
+                points = range(68)
             ax.scatter(
-                X,
-                Y,
+                X[points],
+                Y[points],
                 s=6,
                 linewidth=.5,
                 c='lime',
                 edgecolors='black',
             )
             if 'scatternum' == annotate:
-                for i in range(len(X)):
+                for i in points:
+                    print(f'add num: {i}')
                     ax.annotate(
                         f'{i}',
                         (X[i], Y[i]),

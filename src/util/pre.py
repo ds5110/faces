@@ -32,6 +32,8 @@ class Sym:
     def get_right(self):
         return self.pairs[:,1]
 
+cheeks = np.array([[i,16-i] for i in range(8)])
+brows = np.array([[17+i, 26-i] for i in range(5)])
 h_syms = np.array([
     [36, 45], # outer canthus
     [39, 42], # inner canthus
@@ -47,10 +49,10 @@ h_syms = np.array([
     [32, 34],
     
     # cheeks
-    *[[i,16-i] for i in range(8)],
+    *cheeks,
     
     # brows
-    *[[17+i, 26-i] for i in range(5)],
+    *brows,
     
     # mouth
     *[[48+i, 54-i] for i in range(3)],
@@ -87,7 +89,7 @@ default_syms = [
             [36, 45],
             [39, 42],
         ],
-        2. # higher weight for canthi
+        4. # higher weight for canthi
     ),
     # NOTE: This is probably not worth keeping, especially
     #       since its weight is so low...
@@ -105,15 +107,15 @@ default_syms = [
     ),
 ]
 
-def _get_angle(anno,sym):
+def _get_yaw(coords,sym):
     '''
     This function calculates the angle offset based on the given
-    image and expected symmetric point pairs.
+    coordinates and expected symmetric point pairs.
 
     Parameters
     ----------
-    anno : AnnoImg
-        The image to check.
+    coords : number with shape(landmarks,dimensions)
+        the landmark coordinates to check.
     sym : Sym
         The basis of symmetry (essentially a combination of point pairs).
 
@@ -123,32 +125,53 @@ def _get_angle(anno,sym):
         The estimated angle of rotation (in radians).
 
     '''
+    # anno = cache.get_image(237)
+    # coords = anno.get_coords()
+    # sym = default_syms[1]
+    
     # calculate diffs per pair
-    # NOTE: left and right here refer to viewer's perspective
-    left, right = np.squeeze(np.split(anno.get_coords()[sym.pairs.T],2))
+    left, right = np.squeeze(np.split(coords[sym.pairs.T],2))
     xx, yy = np.squeeze(np.split((right-left).T,2))
+    yy = -yy # neg y because image y starts at top
     
     # calculate pair distances
     hypots = np.sqrt(xx**2 + yy**2)
     weight_tot = np.sum(hypots) # use pair distance as weight
     
+    x = np.sum(xx * hypots)/weight_tot
+    y = np.sum(yy * hypots)/weight_tot
+    
     # calculate angle
-    angles = np.arcsin(-yy/hypots) # neg y because image y starts at top
-    angle = np.sum(angles * hypots)/weight_tot
+    y_neg = np.sign(y) == -1
+    if x == 0:
+        angle = -pi_2 if y_neg else pi_2
+    else:
+        angle = np.arctan(y/x)
+        x_neg = np.sign(x) == -1
+        if x_neg:
+            if y_neg:
+                angle -= np.pi
+            else:
+                angle += np.pi
     
-    # check for upside down (not likely, eh)
-    angles = np.arccos(xx/hypots)
-    upside_down = np.sign(np.sum(angles * hypots)) == -1
-    if upside_down:
-        angle = np.pi - angle
-    
+    # angle*to_deg
+    # np.arctan(y/x) * to_deg
+    # (angle - np.pi)*to_deg
+    # np.sum(hypots * xx)/weight_tot
+    # np.sum(hypots * yy)/weight_tot
+    # np.arctan(y/x) * to_deg
+    # np.arcsin(yy/hypots) * to_deg
+    # np.arccos(xx/hypots) * to_deg
+    # np.arctan(yy/xx) * to_deg
+    print(f'angle: {angle*to_deg}')
     return angle
 
-def get_angle(anno,syms=default_syms,deg=False):
+def get_yaw(anno,syms=default_syms,deg=False):
+    coords = anno.get_coords()
     angles = []
     weights = []
     for sym in syms:
-        angle = _get_angle(anno,sym)
+        angle = _get_yaw(coords,sym)
         angles.append(angle)
         weights.append(sym.weight_tot)
     angles = np.array(angles)
@@ -159,7 +182,7 @@ def get_angle(anno,syms=default_syms,deg=False):
     else:
         return angle
 
-def get_rotate_data(anno):
+def get_yaw_data(anno):
     '''
     Extract image metadata associated with center/rotate logic.
 
@@ -189,7 +212,7 @@ def get_rotate_data(anno):
     coords = anno.get_coords()
     
     # calculate rotation
-    angle = get_angle(anno)
+    angle = get_yaw(anno)
     cos = np.cos(angle)
     sin = np.sin(angle)
     rotx = np.array([[cos,sin],[-sin,cos]])
@@ -204,7 +227,7 @@ def get_rotate_data(anno):
 def rotate(anno):
     def _img():
         img = anno.get_image()
-        _, _, face, angle, coords = get_rotate_data(anno)
+        _, _, face, angle, coords = get_yaw_data(anno)
         
         # NOTE: We add a buffer around the image
         #       to avoid cropping content during centering
@@ -229,62 +252,65 @@ def rotate(anno):
         
         return crop
     
-    _, _, _, _, coords = get_rotate_data(anno)
+    _, _, _, _, coords = get_yaw_data(anno)
     
     # add 'rotated' to the image description
-    desc = anno.desc.copy() if anno.desc is not None else []
-    desc.append('rotated')
+    desc = anno.desc.copy().append('rotated')
     return AnnoImg(
         anno.image_set,
         anno.filename,
         coords,
         _img,
+        anno.row_id,
         desc=desc
     )
 
-def crop(anno):
+def crop(anno,use_splines=False):
     def _img():
         image = np.array(anno.get_image()) # convert to skimage
         coords = anno.get_coords()
-        
-        X = []
-        Y = []
-        for f in landmark68.features:
-            # f = landmark68.features[0]
-            data = coords[f.idx]
-            if np.any(np.isnan(data)): continue;
-            points = data.T
-            [xx, yy] = points
-            distance = np.cumsum(
-                np.sqrt(np.sum(
-                    np.diff(points.T, axis=0)**2,
-                    axis=1
-                ))
-            )
-            if not distance[-1]: continue;
+        if use_splines:
+            X = []
+            Y = []
+            for f in landmark68.features:
+                # f = landmark68.features[0]
+                data = coords[f.idx]
+                if np.any(np.isnan(data)): continue;
+                points = data.T
+                [xx, yy] = points
+                distance = np.cumsum(
+                    np.sqrt(np.sum(
+                        np.diff(points.T, axis=0)**2,
+                        axis=1
+                    ))
+                )
+                if not distance[-1]: continue;
+                
+                distance = np.insert(distance, 0, 0)/distance[-1]
+                splines = [UnivariateSpline(distance, point, k=2, s=.2) for point in points]
+                points_fitted = np.vstack(
+                    [spline(np.linspace(0, 1, 64)) for spline in splines]
+                )
+                points_fitted.shape
+                X.extend(points_fitted[0])
+                Y.extend(points_fitted[1])
             
-            distance = np.insert(distance, 0, 0)/distance[-1]
-            splines = [UnivariateSpline(distance, point, k=2, s=.2) for point in points]
-            points_fitted = np.vstack(
-                [spline(np.linspace(0, 1, 64)) for spline in splines]
-            )
-            points_fitted.shape
-            X.extend(points_fitted[0])
-            Y.extend(points_fitted[1])
-        
-        data = np.stack([X,Y],axis=1)
+            data = np.stack([X,Y],axis=1)
+        else:
+            data = coords
+        data = data[~np.isnan(data).any(axis=1),:]
         poly = data[ConvexHull(data).vertices]
         X, Y = skimage.draw.polygon(poly[:,0], poly[:,1])
         cropped = np.zeros(image.shape, dtype=np.uint8)
         cropped[Y, X] = image[Y, X]
         return Image.fromarray(cropped)
     
-    desc = anno.desc.copy() if anno.desc is not None else []
-    desc.append('cropped')
+    desc = anno.desc.copy().append('cropped')
     return AnnoImg(
         anno.image_set,
         anno.filename,
         anno.get_coords(),
         _img,
+        anno.row_id,
         desc=desc
     )

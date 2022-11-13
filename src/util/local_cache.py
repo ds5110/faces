@@ -84,6 +84,7 @@ class LocalCache:
             [self.meta[cols].loc[row_id,:].values for cols in [x_cols, y_cols]],
             1
         )
+        desc = [desc] if isinstance(desc, str) else desc
         return AnnoImg(
             path,
             file,

@@ -12,7 +12,7 @@ import pandas as pd
 
 # intra-project
 from util.local_cache import cache
-from util.pre import get_rotate_data, h_syms, v_line
+from util.pre import get_yaw_data, h_syms, v_line, cheeks
 
 
 if __name__ == '__main__':
@@ -30,13 +30,17 @@ if __name__ == '__main__':
     for i in range(df.shape[0]):
         anno = cache.get_image(i)
         raws.append(anno.get_coords())
-        width, height, face, angle, cenrot = get_rotate_data(anno)
+        width, height, face, angle, cenrot = get_yaw_data(anno)
         faces.append(face)
         widths.append(width)
         heights.append(height)
         angles.append(angle)
         cenrots.append(cenrot)
-
+    
+    # convert to numpy
+    raws = np.array(raws)
+    cenrots = np.array(cenrots)
+    
     # add image dimensions
     df['width'] = widths
     df['height'] = heights
@@ -45,7 +49,6 @@ if __name__ == '__main__':
     df['yaw'] = angles
     
     # add normalized landmarks
-    raws = np.array(raws)
     mins = np.amin(raws,axis=1)
     maxs = np.amax(raws,axis=1)
     extents = maxs-mins
@@ -65,7 +68,6 @@ if __name__ == '__main__':
         df = pd.concat([df,tmp_df], axis=1)
     
     # add centered/rotated landmarks
-    cenrots = np.array(cenrots)
     for i in range(cenrots.shape[1]):
         tmp_df = pd.DataFrame(
             data=cenrots[:,i,:],
@@ -97,4 +99,28 @@ if __name__ == '__main__':
             columns=[f'rot_sym_diff-{dim}{p1}' for dim in ['x','y']]
         )
         df = pd.concat([df,tmp_df], axis=1)
+    
+    # more targeted roll estimate
+    tmp = raws[:2,cheeks[0],:]
+    # sample 1
+    # array([[[ 390., 1026.], point 1
+    #         [ 719.,  215.]], point 2
+    #           x       y
+    #        [[1069.,  548.],
+    #         [1183.,  940.]]])
+    tmp
+    np.diff(tmp,axis=1) # somehow, it chooses latter - prior
+    
+    tmp = cenrot[:2,:,:]
+    np.min(tmp[:,cheeks[:,0],:],axis=1)
+    row_ids = set()
+    for i in cheeks[:,1]:
+        col = f'cenrot-x{i}'
+        tmp = df[df[col] <= df['cenrot-x33']]
+        for i in range(tmp.shape[0]):
+            row_id = tmp.index[i]
+            row_ids.add(row_id)
+            print(f'{row_id}: {col}')
+    print(sorted(list(row_ids)))
+    
     cache.save_meta(df,'decorated')

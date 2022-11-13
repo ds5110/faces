@@ -12,38 +12,102 @@ import numpy as np
 # intra-project
 from util.local_cache import cache
 from util.plot import plot_image, plot_coords
-from util.pre import rotate, crop
+from util.pre import rotate, crop, cheeks
 from util.model import cat_cols, cenrot_cols
 
 # load the labels data
 df = cache.get_meta('decorated')
 
-def annotated_plot(types=None):
+def annotated_plot(types=None,save_fig=False,n=10):
     if types is None:
         types = [None,'scatter','scatternum','spline','splinelabel']
-    for i in range(10):
+    for i in range(n):
         anno = cache.get_image(i)
         for annotate in types:
             plot_image(
                 anno,
                 annotate=annotate,
                 cross=False,
-                save_fig=False,
+                save_fig=save_fig,
             )
             rotated = rotate(anno)
             plot_image(
                 rotated,
                 annotate=annotate,
                 cross=True,
-                save_fig=False,
+                save_fig=save_fig,
             )
             cropped = crop(rotated)
             plot_image(
                 cropped,
                 annotate=annotate,
                 cross=True,
-                save_fig=False,
+                save_fig=save_fig,
             )
+
+def plot_stuff(
+        anno,annotate='spline',
+        save_fig=False,
+):
+    plot_image(
+        anno,
+        # annotate=annotate,
+        cross=False,
+        save_fig=save_fig,
+    )
+    
+    rotated = rotate(anno)
+    plot_image(
+        rotated,
+        annotate=annotate,
+        cross=True,
+        grayscale=True,
+        save_fig=save_fig,
+    )
+    
+    # # plot geometry without image, to verify coords
+    # plot_image(
+    #     rotated,
+    #     annotate=annotate,
+    #     cross=True,
+    #     grayscale=True,
+    #     skip_img=True,
+    #     save_fig=save_fig,
+    # )
+    
+    # # plot coords
+    # coords = np.stack(
+    #     [tmp[cols].loc[row_id,:].values for cols in cenrot_cols],
+    #     1
+    # )
+    # plot_coords(
+    #     coords,
+    #     tmp.loc[row_id,:]['width'],
+    #     tmp.loc[row_id,:]['height'],
+    #     save_fig=save_fig,
+    # )
+    
+    # # try simple crop
+    # cropped = crop(rotated)
+    # plot_image(
+    #     cropped,
+    #     annotate=annotate,
+    #     cross=True,
+    #     grayscale=True,
+    #     # skip_img=True,
+    #     save_fig=save_fig,
+    # )
+    
+    # try crop to splines
+    cropped = crop(rotated,use_splines=True)
+    plot_image(
+        cropped,
+        annotate=annotate,
+        cross=True,
+        grayscale=True,
+        # skip_img=True,
+        save_fig=save_fig,
+    )
 
 def test_challenging(code=None,save_fig=False):
     codes = range(1,16) if code is None else [code]
@@ -56,53 +120,92 @@ def test_challenging(code=None,save_fig=False):
             print(f'no rows found for combination! ({desc})')
             continue;
         print(f'found {tmp.shape[0]} rows ({desc})')
-        
-        row_id = tmp.index[0]
-        anno = cache.get_image(row_id,desc)
-        rotated = rotate(anno)
-        plot_image(
-            rotated,
-            annotate='spline',
-            cross=True,
-            grayscale=True,
-            save_fig=save_fig,
-        )
-        
-        # plot geometry without image, to verify coords
-        plot_image(
-            rotated,
-            annotate='spline',
-            cross=True,
-            grayscale=True,
-            skip_img=True,
-            save_fig=save_fig,
-        )
-        
-        # plot coords
-        coords = np.stack(
-            [tmp[cols].loc[row_id,:].values for cols in cenrot_cols],
-            1
-        )
-        plot_coords(
-            coords,
-            tmp.loc[row_id,:]['width'],
-            tmp.loc[row_id,:]['height'],
-            save_fig=save_fig,
-        )
-        
-        # try simple crop
-        # TODO crop to splines!
-        cropped = crop(rotated)
-        plot_image(
-            cropped,
-            annotate='spline',
-            cross=True,
-            grayscale=True,
-            # skip_img=True,
-            save_fig=save_fig,
+        for i in range(tmp.shape[0]):
+            row_id = tmp.index[i]
+            anno = cache.get_image(row_id,desc)
+            plot_stuff(anno)
+    
+def plot_row_ids(row_ids,desc=None):
+    suff = f' (desc: {desc})' if desc is not None else ''
+    for row_id in row_ids:
+        print(f'plotting {row_id}{suff}')
+        plot_stuff(
+            cache.get_image(row_id),
+            f'{desc + " " if desc else ""} ({row_id})'
         )
 
+def plot_extreme_diffs(save_fig=False):
+    # col =[col for col in df.columns if col.startswith('rot_sym_diff-x')][0]
+    for col in [col for col in df.columns if col.startswith('rot_sym_diff-')]:
+        anno_min = cache.get_image(df[col].idxmin(),f'min {col}')
+        anno_max = cache.get_image(df[col].idxmax(),f'max {col}')
+        plot_stuff(anno_min)
+        plot_stuff(anno_max)
+
+def plot_crossing():
+    '''
+    check for cheek points crossing the centerline (center of nose)
+
+    Returns
+    -------
+    None.
+
+    '''
+    row_ids = set()
+    for i in cheeks[:,1]:
+        col = f'cenrot-x{i}'
+        tmp = df[df[col] <= df['cenrot-x33']]
+        for i in range(tmp.shape[0]):
+            row_id = tmp.index[i]
+            row_ids.add(row_id)
+    plot_row_ids(sorted(list(row_ids)),'left_cheek')
+
+    row_ids = set()
+    for i in cheeks[:,0]:
+        col = f'cenrot-x{i}'
+        tmp = df[df[col] >= df['cenrot-x33']]
+        for i in range(tmp.shape[0]):
+            row_id = tmp.index[i]
+            row_ids.add(row_id)
+    plot_row_ids(sorted(list(row_ids)),'right_cheek')
+
 if __name__ == '__main__':
+    
     # annotated_plot()
     # annotated_plot(['spline'])
     test_challenging(11)
+    # test_challenging()
+    # plot_crossing()
+    # rot_fail = [
+    #     80,
+    #     # 81, # ok
+    #     # 99, # ok, just weird
+    #     141,
+    #     286,
+    #     319,
+    #     239,
+    # ]
+    
+    # cute = [
+    #     387,
+    # ]
+    # rot_fail = [
+    #     # 49,
+    #     237,
+    # ]
+    # plot_row_ids(rot_fail,'rot_fail')
+    # plot_row_ids(range(df.shape[0]))
+    
+    # plot_stuff(
+    #     cache.get_image(80),
+    #     annotate='scatternum',
+    #     save_fig=True
+    # )
+    
+    # plot_image(
+    #     rotate(cache.get_image(80)),
+    #     annotate='scatternum',
+    #     points=[36, 45, 39, 42],
+    #     cross=True,
+    #     save_fig=True,
+    # )
