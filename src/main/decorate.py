@@ -101,8 +101,8 @@ if __name__ == '__main__':
     # calculate distance between expected symmetric points (rotated)
     for i, [p1, p2] in enumerate(h_syms):
         tmp_df = pd.DataFrame(
-            data=np.squeeze(np.diff(cenrots[:,[p1,p2],:],axis=1)),
-            columns=[f'rot_sym_diff-{dim}{p1}' for dim in ['x','y']]
+            data=np.squeeze(np.diff(cenrots[:,[p1,p2],:],axis=1))/extents,
+            columns=[f'norm_cenrot_sym_diff-{dim}{p1}' for dim in ['x','y']]
         )
         df = pd.concat([df,tmp_df], axis=1)
     
