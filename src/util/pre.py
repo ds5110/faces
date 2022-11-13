@@ -125,10 +125,6 @@ def _get_yaw(coords,sym):
         The estimated angle of rotation (in radians).
 
     '''
-    # anno = cache.get_image(237)
-    # coords = anno.get_coords()
-    # sym = default_syms[1]
-    
     # calculate diffs per pair
     left, right = np.squeeze(np.split(coords[sym.pairs.T],2))
     xx, yy = np.squeeze(np.split((right-left).T,2))
@@ -154,16 +150,6 @@ def _get_yaw(coords,sym):
             else:
                 angle += np.pi
     
-    # angle*to_deg
-    # np.arctan(y/x) * to_deg
-    # (angle - np.pi)*to_deg
-    # np.sum(hypots * xx)/weight_tot
-    # np.sum(hypots * yy)/weight_tot
-    # np.arctan(y/x) * to_deg
-    # np.arcsin(yy/hypots) * to_deg
-    # np.arccos(xx/hypots) * to_deg
-    # np.arctan(yy/xx) * to_deg
-    print(f'angle: {angle*to_deg}')
     return angle
 
 def get_yaw(anno,syms=default_syms,deg=False):

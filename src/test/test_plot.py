@@ -170,7 +170,6 @@ def plot_crossing():
     plot_row_ids(sorted(list(row_ids)),'right_cheek')
 
 if __name__ == '__main__':
-    
     # annotated_plot()
     # annotated_plot(['spline'])
     test_challenging(11)
