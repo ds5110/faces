@@ -46,7 +46,8 @@ def annotated_plot(types=None,save_fig=False,n=10):
             )
 
 def plot_stuff(
-        anno,annotate='spline',
+        anno,
+        annotate='spline',
         save_fig=False,
 ):
     plot_image(
@@ -65,25 +66,26 @@ def plot_stuff(
         save_fig=save_fig,
     )
     
-    # # plot geometry without image, to verify coords
-    # plot_image(
-    #     rotated,
-    #     annotate=annotate,
-    #     cross=True,
-    #     grayscale=True,
-    #     skip_img=True,
-    #     save_fig=save_fig,
-    # )
+    # plot geometry without image, to verify coords
+    plot_image(
+        rotated,
+        annotate=annotate,
+        cross=True,
+        grayscale=True,
+        skip_img=True,
+        save_fig=save_fig,
+    )
     
     # # plot coords
+    # row_id = anno.row_id
     # coords = np.stack(
-    #     [tmp[cols].loc[row_id,:].values for cols in cenrot_cols],
+    #     [df[cols].loc[row_id,:].values for cols in cenrot_cols],
     #     1
     # )
     # plot_coords(
     #     coords,
-    #     tmp.loc[row_id,:]['width'],
-    #     tmp.loc[row_id,:]['height'],
+    #     df.loc[row_id,:]['cenrot_width'],
+    #     df.loc[row_id,:]['cenrot_height'],
     #     save_fig=save_fig,
     # )
     
@@ -109,7 +111,28 @@ def plot_stuff(
         save_fig=save_fig,
     )
 
-def test_challenging(code=None,save_fig=False):
+def test_challenging(
+        code=None,
+        all_occurrences=False,
+        save_fig=False,
+):
+    '''
+    loop over images per categorical combinations
+
+    Parameters
+    ----------
+    code : int from [0,16], optional
+        DESCRIPTION. The default is None.
+    all_occurrences : bool, optional
+        whether to loop over all occurrences per combo. The default is False.
+    save_fig : bool, optional
+        whether to save the output. The default is False.
+
+    Returns
+    -------
+    None.
+
+    '''
     codes = range(1,16) if code is None else [code]
     masks = [df[col] == 1 for i, col in enumerate(cat_cols)]
     for combo in [f'{i:b}'.rjust(4,'0') for i in codes]:
@@ -130,8 +153,7 @@ def plot_row_ids(row_ids,desc=None):
     for row_id in row_ids:
         print(f'plotting {row_id}{suff}')
         plot_stuff(
-            cache.get_image(row_id),
-            f'{desc + " " if desc else ""} ({row_id})'
+            cache.get_image(row_id,desc),
         )
 
 def plot_extreme_diffs(save_fig=False):
@@ -170,11 +192,28 @@ def plot_crossing():
     plot_row_ids(sorted(list(row_ids)),'right_cheek')
 
 if __name__ == '__main__':
+    #-- basic usage
     # annotated_plot()
     # annotated_plot(['spline'])
-    test_challenging(11)
-    # test_challenging()
+    # test_challenging(11)
+    # test_challenging(all_occurrences=True)
     # plot_crossing()
+    
+    # #-- spline issues
+    # spline_warn = [
+    #     101,
+    #     159,
+    #     288,
+    #     348,
+    # ]
+    
+    #-- cenrot issue (content out of frame)
+    # crop_issues = [
+    #     118,
+    # ]
+    # plot_row_ids(crop_issues,'crop_issues')
+    
+    #-- junk around testing yaw caclulation
     # rot_fail = [
     #     80,
     #     # 81, # ok
@@ -184,23 +223,23 @@ if __name__ == '__main__':
     #     319,
     #     239,
     # ]
-    
-    # cute = [
-    #     387,
-    # ]
     # rot_fail = [
     #     # 49,
     #     237,
     # ]
     # plot_row_ids(rot_fail,'rot_fail')
-    # plot_row_ids(range(df.shape[0]))
+    plot_row_ids(range(df.shape[0]))
+    # plot_row_ids([6])
     
+    #-- other one-off stuff
+    # cute_crop = [
+    #     387,
+    # ]
     # plot_stuff(
     #     cache.get_image(80),
     #     annotate='scatternum',
     #     save_fig=True
     # )
-    
     # plot_image(
     #     rotate(cache.get_image(80)),
     #     annotate='scatternum',

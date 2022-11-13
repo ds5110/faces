@@ -179,18 +179,20 @@ def get_yaw_data(anno):
 
     Returns
     -------
-    width number
-        image width.
-    height number
-        image height.
+    in_dims 2-item array of number
+        original image dimensions.
+    margin 2-item array of number
+        margin size to fit features such that in_dims + 2*margin = out_dims.
     face : array of number
-        coordinates of the center of the face.
+        original coordinates of the center of the face.
     angle : number
         estimated angle of rotation (in radians).
     coords : number(68,2)
         new landmark coordinates, rotated and centered.
 
     '''
+    # anno = cache.get_image(118)
+    
     # get image and calculate translation
     img = anno.get_image()
     face = anno.get_face_center()
@@ -208,12 +210,29 @@ def get_yaw_data(anno):
     coords = coords@rotx # apply roatation matrix
     coords = coords + center # move coordinates back to the center
     
-    return img.width, img.height, face, angle, coords
+    # calculate buffer
+    mins = np.amin(coords,axis=0)
+    maxs = np.amax(coords,axis=0)
+    in_dims = np.array([img.width, img.height])
+    margin = []
+    for i in range(2):
+        max_buff = 0
+        lo_buff = 0 - mins[i]
+        if lo_buff > max_buff:
+            max_buff = lo_buff
+        hi_buff = maxs[i] - in_dims[i]
+        if hi_buff > max_buff:
+            max_buff = hi_buff
+        margin.append(max_buff + max_buff if max_buff > 0 else 0)
+    
+    margin = np.array(margin)
+    coords += margin
+    return in_dims, margin, face, angle, coords
 
 def rotate(anno):
     def _img():
         img = anno.get_image()
-        _, _, face, angle, coords = get_yaw_data(anno)
+        in_dims, margin, face, angle, coords = get_yaw_data(anno)
         
         # NOTE: We add a buffer around the image
         #       to avoid cropping content during centering
@@ -234,7 +253,14 @@ def rotate(anno):
         )
         
         # crop back to original size
-        crop = rot.crop((img.width,img.height,img.width*2,img.height*2))
+        crop = rot.crop(
+            (
+                img.width - margin[0],
+                img.height - margin[1],
+                img.width*2 + margin[0],
+                img.height*2 + margin[1]
+            )
+        )
         
         return crop
     

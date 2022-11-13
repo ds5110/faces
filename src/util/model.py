@@ -70,7 +70,6 @@ class AnnoImg:
         
         self.im_fun = im_fun
         self.row_id = row_id
-        print(f'{row_id} using {type(desc)}: {desc}')
         self.desc = desc if desc is not None else []
     
     def get_image(self):

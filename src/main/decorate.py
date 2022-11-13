@@ -25,15 +25,19 @@ if __name__ == '__main__':
     cenrots = []
     raws = []
     faces = []
+    cenrot_widths = []
+    cenrot_heights = []
     
     # calculate rotation/etc for each image
     for i in range(df.shape[0]):
         anno = cache.get_image(i)
         raws.append(anno.get_coords())
-        width, height, face, angle, cenrot = get_yaw_data(anno)
+        in_dims, margin, face, angle, cenrot = get_yaw_data(anno)
         faces.append(face)
-        widths.append(width)
-        heights.append(height)
+        widths.append(in_dims[0])
+        heights.append(in_dims[1])
+        cenrot_widths.append(widths[-1] + margin[0])
+        cenrot_heights.append(heights[-1] + margin[1])
         angles.append(angle)
         cenrots.append(cenrot)
     
@@ -44,6 +48,8 @@ if __name__ == '__main__':
     # add image dimensions
     df['width'] = widths
     df['height'] = heights
+    df['cenrot_width'] = cenrot_widths
+    df['cenrot_height'] = cenrot_heights
     
     # add angle of rotation (in radians)
     df['yaw'] = angles

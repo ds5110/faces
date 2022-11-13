@@ -16,6 +16,26 @@ from PIL import ImageOps
 
 from util.model import landmark68
 
+def fix_axes(X,Y,ax,flip_y=True):
+    print('setting axes...')
+    data = np.stack([X,Y],axis=1)
+    mins = np.amin(data,axis=0)
+    maxs = np.amax(data,axis=0)
+    extents = maxs - mins
+    max_extent = np.max(extents)
+    for i in range(2):
+        buff = (max_extent - extents[i])/2
+        if i == 0:
+            lim = ax.get_xlim()
+            fun = ax.set_xlim
+        else:
+            lim = ax.get_ylim()
+            fun = ax.set_ylim
+        print(f'setting {"x" if i == 0 else "Y"} lims: {(lim[0]-buff,lim[1]+buff)}')
+        fun((lim[0]-buff,lim[1]+buff))
+    if flip_y:
+        ax.set_ylim(ax.get_ylim()[::-1])
+    
 def plot_image(
         anno,
         points=None,
@@ -141,7 +161,7 @@ def plot_image(
                         fontsize=6,
                     )
     if skip_img:
-        ax.set_ylim(ax.get_ylim()[::-1])
+        fix_axes(X,Y,ax)
     plt.title(title)
     plt.tight_layout()
     if save_fig:
@@ -269,7 +289,8 @@ def plot_coords(
             (X[i], Y[i]),
             fontsize=6,
         )
-    ax.set_ylim(ax.get_ylim()[::-1])
+    
+    fix_axes(X,Y,ax)
     plt.title(title)
     plt.tight_layout()
     if save_fig:
