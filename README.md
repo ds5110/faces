@@ -27,7 +27,7 @@ To confirm this, we applied this rotation/centering on a few other images:
 <img src="figs/images/ads/13555.Still049.jpg_scatter_rotated.png" width=600>
 <img src="figs/images/ads/1072.Still005.jpg_splinelabel_rotated.png" width=600>
 
-Depending on the input data and type of models we are training, this type of preprocessing may be useful.
+Depending on the input data and type of models we are training, this type of preprocessing may be useful. See [angular](angular.md) doc for more info on angular transformation analysis.
 
 ## Other EDA
 We also wanted to investigate some basic stats about the data, such as how many images are in the sets, and how many different images have the targets listed. Using the script `combos.py`, we found that there are more images in the adds google and youtube sets, with less in the google2 and youtube2 sets (I think this makes sense as the 2 sets are for testing). We also found out that there are more images with just one of the targets, like just tilted or just expressive. Less images are marked with multiple, and no images are marked with 'turned', 'occluded', and 'expressive'.

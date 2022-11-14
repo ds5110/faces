@@ -58,7 +58,12 @@ if __name__ == '__main__':
     df['yaw'] = angles
     
     # roll estimate
-    mid_y = cenrots[cheeks[0,0],1]
+    # NOTE: this is based on the assumptions:
+    #       * the head is a sphere from cheek to cheek
+    #           (i.e. diameter is the max horizontal distance
+    #           between 'cheeks' landmarks)
+    #       * point 33 is on the surface of the head-sphere
+    #       * point 33 is in the center of the face
     cheeks_x = cenrots[:,cheeks.ravel(),0]
     min_x = np.min(cheeks_x,axis=1)
     radius = (np.max(cheeks_x,axis=1) - min_x)/2
