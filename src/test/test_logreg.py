@@ -82,9 +82,8 @@ def test_logreg(df,pred,target):
     logreg = LogisticRegression()
     logreg.fit(X_train, y_train)
     
-    # y_hat = linreg.predict(X)
-    # score = accuracy_score(y, y_hat)
-    score = logreg.score(X_test, y_test)
+    y_hat = logreg.predict(X_test)
+    score = accuracy_score(y_test, y_hat)
     print(
         f'\tlogreg score: '
         f'{score:.3f}')
