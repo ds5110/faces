@@ -11,19 +11,21 @@ import matplotlib.pyplot as plt
 from util.local_cache import cache
 from util.pre import to_deg
 
-savefig = True
+savefig = False
 
 df = cache.get_meta('decorated')
 
 def plot(use_abs=False,savefig=False):
     label_pre = 'absolute ' if use_abs else ''
     col_suff = '_abs' if use_abs else ''
-    tilted = df['tilted'] == 1
-    turned = df['turned'] == 1
-    both = tilted & turned
-    neither = ~(tilted | turned)
+    tilt = df['tilted'] == 1
+    turn = df['turned'] == 1
+    tilted = tilt & ~turn
+    turned = turn & ~tilt
+    both = tilt & turn
+    neither = ~tilt & ~turn
     for (mask, color, desc) in [
-            (neither, 'tab:gray', 'neither'),
+            (neither, 'black', 'neither'),
             (tilted, 'tab:blue', 'tilted'),
             (turned, 'tab:red', 'turned'),
             (both, 'tab:purple', 'both'),
@@ -33,8 +35,12 @@ def plot(use_abs=False,savefig=False):
             tmp[f'yaw{col_suff}'] * to_deg,
             tmp[f'roll{col_suff}'] * to_deg,
             s=10,
-            c=color,
+            # c=color,
+            marker='x' if desc == 'both' else 'o',
             label=desc,
+            edgecolors=color,
+            facecolors='none' if desc == 'neither' else color,
+            # marker='$O$' if desc == 'neither' else 'o',
         )
     plt.title('estimated angular offsets')
     plt.xlabel(f'{label_pre}yaw (in degrees)')
