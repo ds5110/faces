@@ -95,11 +95,11 @@ def test_logreg(df,pred,target):
     score = accuracy_score(y_test, y_hat)
     print(f'\tdummy score: {score:.3f}')
 
-# test linear regression with random predictor
+# test logistic regression with random predictor
 # tmp = df.copy()
 # tmp['r'] = random_sample((tmp.shape[0],))
 # for t in ['tilted','turned']:
-#     test_linreg(tmp,['r'],t)
+#     test_logreg(tmp,['r'],t)
 
 for t in ['tilted','turned']:
     for pp in [['yaw_abs'],['roll_abs'],['yaw_abs','roll_abs']]:
