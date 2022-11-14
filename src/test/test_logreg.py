@@ -20,7 +20,7 @@ from util.model import cat_cols
 
 df = cache.get_meta('decorated')
 
-
+#------ setup a bunch of column groups
 sz_cols = ['width','height','cenrot-width','cenrot-height']
 meta_cols = ['image-set','filename','partition','subpartition']
 
@@ -35,7 +35,9 @@ cenrot_sym_diff = [col for col in df.columns if col.startswith('cenrot_sym_diff-
 norm_cenrot_sym_diff = [col for col in df.columns if col.startswith('norm_cenrot_sym_diff-')]
 
 # higher-level cols
-summ_cols = ['yaw']
+summ_cols = ['yaw','roll']
+summ_cols_abs = ['yaw_abs','roll_abs']
+all_summ = [*summ_cols,*summ_cols_abs]
 
 # presumed useful
 subset_pred = [*summ_cols,*norm_cenrot_sym_diff,*norm_cenrot]
@@ -89,6 +91,8 @@ def test_logreg(df,pred,target):
         f'{score:.3f}')
     
     # fit uniform dummy, to compare
+    # NOTE: we don't really need to use train/test
+    #       unless we use 'stratified' strategy
     dummy = DummyClassifier(strategy='uniform')
     dummy.fit(X_train,y_train)
     y_hat = dummy.predict(X_test)
