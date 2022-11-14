@@ -39,7 +39,15 @@ def plot(use_abs=False,savefig=False):
     plt.title('estimated angular offsets')
     plt.xlabel(f'{label_pre}yaw (in degrees)')
     plt.ylabel(f'{label_pre}roll (in degrees)')
-    plt.legend(
+    plt.legend()
+    
+    #-- fix the legend
+    ax = plt.gca()
+    intended = ['tilted', 'turned', 'both', 'neither']
+    handles, labels = ax.get_legend_handles_labels()
+    order = [labels.index(l) for l in intended]
+    ax.legend(
+        [handles[i] for i in order], [labels[i] for i in order],
         bbox_to_anchor=(1.02, 1),
         loc='upper left',
         borderaxespad=0.,
