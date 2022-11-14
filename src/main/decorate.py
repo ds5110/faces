@@ -68,7 +68,8 @@ if __name__ == '__main__':
     min_x = np.min(cheeks_x,axis=1)
     radius = (np.max(cheeks_x,axis=1) - min_x)/2
     mid_x = min_x + radius
-    df['roll'] = np.arctan((cenrots[:,nose_i,0]-mid_x)/radius)
+    sins = np.clip((cenrots[:,nose_i,0]-mid_x)/radius,-1,1)
+    df['roll'] = np.arcsin(sins)
     
     for col in ['yaw','roll']:
         df[f'{col}_abs'] = np.abs(df[col])
