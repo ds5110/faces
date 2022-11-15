@@ -17,7 +17,7 @@ We plotted raw estimated angles against given categories "tilted" and "turned":
 
 <img src="figs/roll_yaw.png" width=600>
 
-The classes are (understandably) more seperable when taking absolute values:
+The classes are more linearly seperable when taking absolute values:
 
 <img src="figs/roll_yaw_abs.png" width=600>
 
