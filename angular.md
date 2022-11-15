@@ -20,3 +20,7 @@ We plotted raw estimated angles against given categories "tilted" and "turned":
 The classes are (understandably) more seperable when taking absolute values:
 
 <img src="figs/roll_yaw_abs.png" width=600>
+
+There are a few outliers, e.g. high yaw and not 'tilted' nor 'turned', but they seem to be caused by inconsistent labeling or different ways of interpreting ~90 degree rotations. For example, the maximum absolute yaw score among un-"tilted" and un-"turned images:
+
+<img src="figs/images/youtube2/045.jpg_(big_yaw).png" width=600>

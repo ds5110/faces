@@ -149,12 +149,13 @@ def test_challenging(
             anno = cache.get_image(row_id,desc)
             plot_stuff(anno)
     
-def plot_row_ids(row_ids,desc=None):
+def plot_row_ids(row_ids,desc=None,save_fig=False):
     suff = f' (desc: {desc})' if desc is not None else ''
     for row_id in row_ids:
         print(f'plotting {row_id}{suff}')
         plot_stuff(
             cache.get_image(row_id,desc),
+            save_fig=save_fig,
         )
 
 def plot_extreme_diffs(save_fig=False):
@@ -164,6 +165,17 @@ def plot_extreme_diffs(save_fig=False):
         anno_max = cache.get_image(df[col].idxmax(),f'max {col}')
         plot_stuff(anno_min)
         plot_stuff(anno_max)
+
+def check_big_yaw(save_fig=False):
+    tilt = df['tilted'] == 1
+    turn = df['turned'] == 1
+    i = df[~tilt & ~turn]['yaw_abs'].idxmax()
+    big_yaw = [i]
+    plot_row_ids(
+        big_yaw,
+        'big_yaw',
+        save_fig=save_fig
+    )
 
 def plot_crossing():
     '''
@@ -203,6 +215,7 @@ if __name__ == '__main__':
     # plot_row_ids(range(df.shape[0]))
     
     #------ troubleshooting junk
+    check_big_yaw(save_fig=True)
     # #-- spline issues
     # spline_warn = [
     #     101,
