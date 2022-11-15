@@ -12,9 +12,9 @@ data:
 	curl -LO https://github.com/ostadabbas/Infant-Facial-Landmark-Detection-and-Tracking/raw/master/data/300w/300w_valid.csv
 
 clean:
-	rm data/labels.csv &&\
-	rm data/300w_infanface_train.csv &&\
-	rm data/300w_valid.csv
+	rm -f data/labels.csv &&\
+	rm -f data/300w_infanface_train.csv &&\
+	rm -f data/300w_valid.csv
 
 challenging:
 	PYTHONPATH=./src python -m src.test.test_plot

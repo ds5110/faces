@@ -56,8 +56,10 @@ class LocalCache:
         if not url:
             url = f'{self.base_url}/{file}'
         if not local_path.exists():
+            print(f'creating missing directory: {local_path}')
             os.makedirs(local_path)
-        elif not local_file.exists():
+        if not local_file.exists():
+            print(f'downloading missing file: {local_path}')
             with \
                     urllib.request.urlopen(url) as infile, \
                     open(local_file, 'wb') as outfile:
