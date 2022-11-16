@@ -1,6 +1,6 @@
 ## Derived features
 
-We added some additional metadata to the (original dataframe)[https://coe.northeastern.edu/Research/AClab/InfAnFace/labels.csv].
+We added some additional metadata to the [original dataframe](https://coe.northeastern.edu/Research/AClab/InfAnFace/labels.csv).
 
 ### Derived Landmark Coordinates
 Where `dim` is 'x' or 'y' and `index` is an integer [0-67]
@@ -28,7 +28,7 @@ Where `dim` is 'x' or 'y' and `index` is an integer [0-67] (the left-most point 
 * `roll`: estimated rotation about the y-axis
 * `roll_abs`: magintude of `roll`
 
-### Predictors for distinguishing infants
+### Potential predictors for distinguishing infants
 * `boxratio`: width of min box divided by height of min box
-* `interoc`: distance between outer canthi
+* `interoc`: distance between outer corners of eyes (or outer canthi)
 * `interoc_norm`: `interoc` normalized per width/height of yaw-corrected min box
