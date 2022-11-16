@@ -10,6 +10,8 @@ There is also a convenience utility for loading these files, wrapped up in a uti
 
 ## Preprocessing
 
+(For a full list of derived features, see [derived](derived.md).)
+
 In our initial exploration we tried plotting landmarks on a frontal view example image:
 
 <img src="figs/images/ads/14998.Still056.jpg_scatternum.png" width=600>
