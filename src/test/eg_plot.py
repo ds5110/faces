@@ -215,7 +215,12 @@ if __name__ == '__main__':
     # plot_row_ids(range(df.shape[0]))
     
     #------ troubleshooting junk
-    check_big_yaw(save_fig=True)
+    plot_row_ids(
+        [10],
+        'small-interoc',
+        save_fig=False
+    )
+    # check_big_yaw(save_fig=False)
     # #-- spline issues
     # spline_warn = [
     #     101,
