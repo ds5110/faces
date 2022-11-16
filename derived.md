@@ -31,4 +31,4 @@ Where `dim` is 'x' or 'y' and `index` is an integer [0-67] (the left-most point 
 ### Predictors for distinguishing infants
 * `boxratio`: width of min box divided by height of min box
 * `interoc`: distance between outer canthi
-* `interoc_norm`: `interoc` normalized per width/height of min box
+* `interoc_norm`: `interoc` normalized per width/height of yaw-corrected min box
