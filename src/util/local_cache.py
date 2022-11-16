@@ -59,7 +59,7 @@ class LocalCache:
             print(f'creating missing directory: {local_path}')
             os.makedirs(local_path)
         if not local_file.exists():
-            print(f'downloading missing file: {local_path}')
+            print(f'downloading missing file: {local_path}/{local_file}')
             with \
                     urllib.request.urlopen(url) as infile, \
                     open(local_file, 'wb') as outfile:
