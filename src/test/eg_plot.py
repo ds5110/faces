@@ -111,7 +111,7 @@ def plot_stuff(
         save_fig=save_fig,
     )
 
-def test_challenging(
+def eg_challenging(
         code=None,
         all_occurrences=False,
         save_fig=False,
@@ -141,7 +141,7 @@ def test_challenging(
         tmp = df[reduce(lambda a,b: a & b, mask)]
         if tmp.shape[0] == 0:
             print(f'no rows found for combination! ({desc})')
-            continue;
+            continue
         print(f'found {tmp.shape[0]} rows ({desc})')
         n = tmp.shape[0] if all_occurrences else 1
         for i in range(n):
@@ -190,8 +190,8 @@ def plot_crossing():
     for i in cheeks[:,1]:
         col = f'cenrot-x{i}'
         tmp = df[df[col] <= df['cenrot-x33']]
-        for i in range(tmp.shape[0]):
-            row_id = tmp.index[i]
+        for j in range(tmp.shape[0]):
+            row_id = tmp.index[j]
             row_ids.add(row_id)
     plot_row_ids(sorted(list(row_ids)),'left_cheek')
 
@@ -199,8 +199,8 @@ def plot_crossing():
     for i in cheeks[:,0]:
         col = f'cenrot-x{i}'
         tmp = df[df[col] >= df['cenrot-x33']]
-        for i in range(tmp.shape[0]):
-            row_id = tmp.index[i]
+        for j in range(tmp.shape[0]):
+            row_id = tmp.index[j]
             row_ids.add(row_id)
     plot_row_ids(sorted(list(row_ids)),'right_cheek')
 
@@ -208,8 +208,8 @@ if __name__ == '__main__':
     #------ basic usage
     # annotated_plot()
     # annotated_plot(['spline'])
-    # test_challenging(11)
-    # test_challenging(all_occurrences=True)
+    # eg_challenging(11)
+    # eg_challenging(all_occurrences=True)
     # plot_crossing()
     #-- plot all images
     # plot_row_ids(range(df.shape[0]))
