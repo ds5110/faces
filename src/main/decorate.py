@@ -56,6 +56,7 @@ if __name__ == '__main__':
     # add image dimensions
     df['boxratio'] = cenrot_extents[:, 0] / cenrot_extents[:, 1]
     df['interoc'] = np.sqrt(np.sum(np.power(raws[:, 36, :] - raws[:, 45, :], 2), axis=1))
+    df['interoc_norm'] = np.sqrt(np.sum(np.power((cenrots[:, 36, :] - cenrots[:, 45, :])/cenrot_extents, 2), axis=1))
     df['width'] = widths
     df['height'] = heights
     df['cenrot_width'] = cenrot_widths

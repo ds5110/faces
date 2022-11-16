@@ -29,5 +29,6 @@ Where `dim` is 'x' or 'y' and `index` is an integer [0-67] (the left-most point 
 * `roll_abs`: magintude of `roll`
 
 ### Predictors for distinguishing infants
-* `boxratio`: width divided by height (of min box)
+* `boxratio`: width of min box divided by height of min box
 * `interoc`: distance between outer canthi
+* `interoc_norm`: `interoc` normalized per width/height of min box
