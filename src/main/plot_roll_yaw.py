@@ -5,6 +5,7 @@ Created on Sun Nov 13 20:08:59 2022
 
 @author: jhautala
 """
+
 import matplotlib.pyplot as plt
 
 # project

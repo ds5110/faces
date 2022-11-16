@@ -47,8 +47,15 @@ if __name__ == '__main__':
     # convert to numpy
     raws = np.array(raws)
     cenrots = np.array(cenrots)
-    
+
+    # calculate extents of landmarks (rotated)
+    mins = np.amin(cenrots,axis=1)
+    maxs = np.amax(cenrots,axis=1)
+    extents = maxs-mins
+
     # add image dimensions
+    df['boxratio'] = extents[:, 0] / extents[:, 1]
+    df['interoc'] = np.sqrt(np.sum(np.power(raws[:, 36, :] - raws[:, 45, :], 2), axis=1))
     df['width'] = widths
     df['height'] = heights
     df['cenrot_width'] = cenrot_widths
@@ -102,10 +109,7 @@ if __name__ == '__main__':
         )
         df = pd.concat([df,tmp_df], axis=1)
     
-    # calculate extents of landmarks (rotated)
-    mins = np.amin(cenrots,axis=1)
-    maxs = np.amax(cenrots,axis=1)
-    extents = maxs-mins
+
     
     # calculate centers
     all_dims = np.stack([widths,heights]).T
