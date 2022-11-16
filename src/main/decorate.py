@@ -15,7 +15,6 @@ from util.local_cache import cache
 from util.pre import get_yaw_data, h_syms, v_line, cheeks
 from util.model import nose_i
 
-
 if __name__ == '__main__':
     # load the labels data
     df = cache.get_meta()
@@ -48,13 +47,14 @@ if __name__ == '__main__':
     raws = np.array(raws)
     cenrots = np.array(cenrots)
 
+    # calculate extents of landmarks (raw)
+    extents = np.amax(raws, axis=1) - np.amin(raws, axis=1)
+
     # calculate extents of landmarks (rotated)
-    mins = np.amin(cenrots,axis=1)
-    maxs = np.amax(cenrots,axis=1)
-    extents = maxs-mins
+    cenrot_extents = np.amax(cenrots, axis=1) - np.amin(cenrots, axis=1)
 
     # add image dimensions
-    df['boxratio'] = extents[:, 0] / extents[:, 1]
+    df['boxratio'] = cenrot_extents[:, 0] / cenrot_extents[:, 1]
     df['interoc'] = np.sqrt(np.sum(np.power(raws[:, 36, :] - raws[:, 45, :], 2), axis=1))
     df['width'] = widths
     df['height'] = heights
@@ -83,9 +83,6 @@ if __name__ == '__main__':
     
     # add normalized landmarks
     # this is the distance from nose as a proportion of landmarks' extents
-    mins = np.amin(raws,axis=1)
-    maxs = np.amax(raws,axis=1)
-    extents = maxs-mins
     for i in range(raws.shape[1]):
         tmp_df = pd.DataFrame(
             data=(raws[:,i,:] - faces)/extents,
@@ -118,7 +115,7 @@ if __name__ == '__main__':
     # add normalized landmarks (centered, rotated and scaled per extent)
     for i in range(cenrots.shape[1]):
         tmp_df = pd.DataFrame(
-            data=(cenrots[:,i,:] - cenrots[:,nose_i,:])/extents,
+            data=(cenrots[:,i,:] - cenrots[:,nose_i,:])/cenrot_extents,
             columns=[f'norm_cenrot-{dim}{i}' for dim in ['x','y']]
         )
         df = pd.concat([df,tmp_df], axis=1)
@@ -134,7 +131,7 @@ if __name__ == '__main__':
     # calculate normalized distance between expected symmetric points (rotated)
     for i, [p1, p2] in enumerate(h_syms):
         tmp_df = pd.DataFrame(
-            data=np.squeeze(np.diff(cenrots[:,[p1,p2],:],axis=1))/extents,
+            data=np.squeeze(np.diff(cenrots[:,[p1,p2],:],axis=1))/cenrot_extents,
             columns=[f'norm_cenrot_sym_diff-{dim}{p1}' for dim in ['x','y']]
         )
         df = pd.concat([df,tmp_df], axis=1)
