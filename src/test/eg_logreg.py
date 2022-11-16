@@ -66,7 +66,7 @@ other_pred = sorted(list(set(all_pred) - set(subset_pred)))
 # tmp['r'] = random_sample((1000,))
 # test_dummy(tmp,'t')
 
-def test_logreg(df,pred,target):
+def eg_logreg(df,pred,target):
     X = df[pred]
     y = df[target]
     print(
@@ -107,4 +107,4 @@ def test_logreg(df,pred,target):
 
 for t in ['tilted','turned']:
     for pp in [['yaw_abs'],['roll_abs'],['yaw_abs','roll_abs']]:
-        test_logreg(df,pp,t)
+        eg_logreg(df,pp,t)
