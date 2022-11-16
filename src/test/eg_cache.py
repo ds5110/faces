@@ -15,26 +15,32 @@ from functools import reduce
 from util.local_cache import cache
 from util.model import cat_cols
 
+
 class ImagePlus:
-    def __init__(self,img,model):
+    def __init__(self, img, model):
         self.img = img
         self.model = model
+
 
 # load the labels data
 df = cache.get_meta()
 
+
 def scrape_all():
     for i in range(df.shape[0]):
         cache.get_image(i)
+
 
 def check_categories():
     no_cats = reduce(iand, [df[col] == 0 for col in cat_cols])
     print(f'no categories:  {df[no_cats].shape}')
     print(f'one or more:    {df[~no_cats].shape}')
 
+
 def get_image_by_name():
-    cache.get_image(path='ads',file='1072.Still005.jpg')
-    
+    cache.get_image(path='ads', file='1072.Still005.jpg')
+
+
 if __name__ == '__main__':
     # scrape_all()
     check_categories()
