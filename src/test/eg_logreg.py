@@ -15,8 +15,8 @@ from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 
 # project
-from util.local_cache import cache
-from util.model import cat_cols
+from ..util import cache
+from ..util.model import cat_cols
 
 df = cache.get_meta('decorated')
 
@@ -99,12 +99,18 @@ def test_logreg(df,pred,target):
     score = accuracy_score(y_test, y_hat)
     print(f'\tdummy score: {score:.3f}')
 
-# test logistic regression with random predictor
-# tmp = df.copy()
-# tmp['r'] = random_sample((tmp.shape[0],))
-# for t in ['tilted','turned']:
-#     test_logreg(tmp,['r'],t)
 
-for t in ['tilted','turned']:
-    for pp in [['yaw_abs'],['roll_abs'],['yaw_abs','roll_abs']]:
-        test_logreg(df,pp,t)
+def main():
+    # test logistic regression with random predictor
+    # tmp = df.copy()
+    # tmp['r'] = random_sample((tmp.shape[0],))
+    # for t in ['tilted','turned']:
+    #     test_logreg(tmp,['r'],t)
+
+    for t in ['tilted','turned']:
+        for pp in [['yaw_abs'],['roll_abs'],['yaw_abs','roll_abs']]:
+            test_logreg(df,pp,t)
+
+
+if __name__ == '__main__':
+    main()

@@ -13,7 +13,7 @@ import pandas as pd
 import numpy as np
 from PIL import Image
 
-from util.model import AnnoImg, x_cols, y_cols
+from .model import AnnoImg, x_cols, y_cols
 
 class LocalCache:
     def __init__(

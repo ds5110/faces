@@ -11,11 +11,12 @@ import numpy as np
 import pandas as pd
 
 # intra-project
-from util.local_cache import cache
-from util.pre import get_yaw_data, h_syms, v_line, cheeks
-from util.model import nose_i
+from ..util.local_cache import cache
+from ..util.pre import get_yaw_data, h_syms, v_line, cheeks
+from ..util.model import nose_i
 
-if __name__ == '__main__':
+
+def main():
     # load the labels data
     df = cache.get_meta()
     
@@ -138,3 +139,7 @@ if __name__ == '__main__':
         df = pd.concat([df,tmp_df], axis=1)
     
     cache.save_meta(df,'decorated')
+
+
+if __name__ == '__main__':
+    main()

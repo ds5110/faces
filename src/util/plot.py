@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 from scipy.interpolate import UnivariateSpline
 from PIL import ImageOps
 
-from util.model import landmark68
+from .model import landmark68
 
 def fix_axes(X,Y,ax,flip_y=True):
     data = np.stack([X,Y],axis=1)

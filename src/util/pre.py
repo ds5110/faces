@@ -14,7 +14,7 @@ from scipy.interpolate import UnivariateSpline
 import skimage
 
 # intra-project
-from util.model import AnnoImg, landmark68
+from .model import AnnoImg, landmark68
 
 pi_2 = np.pi/2.
 to_deg = 180./np.pi
