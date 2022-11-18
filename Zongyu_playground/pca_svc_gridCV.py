@@ -20,15 +20,17 @@ y = pd.DataFrame([1] * 410 + [0] * 410)
 y = column_or_1d(y, warn=True)
 
 # Train
-pca = PCA(n_components=50, whiten=True, random_state=42)
+pca = PCA(whiten=True, random_state=42)
 svc = SVC(kernel='rbf', class_weight='balanced')
+n_components = range(5, 70, 5)
 
 model = make_pipeline(pca, svc)
 
 param_grid = {'svc__C': [1, 5, 10, 50],
-              'svc__gamma': [0.0001, 0.0005, 0.001, 0.005]}
+              'svc__gamma': [0.0001, 0.0005, 0.001, 0.005],
+              'pca__n_components': n_components}
 
-grid = GridSearchCV(model, param_grid)
+grid = GridSearchCV(model, param_grid, return_train_score=True, n_jobs=5)
 
 grid.fit(X, y)
 
