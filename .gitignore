@@ -33,6 +33,8 @@ __pycache__/
 
 # Spyder
 .spyproject/
+
+# PyCharm
 .idea/
 
 # local data

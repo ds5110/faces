@@ -6,6 +6,7 @@ Created on Sun Nov 13 18:50:42 2022
 @author: jhautala
 """
 
+import math
 import pandas as pd
 import numpy as np
 from numpy.random import random_sample
@@ -15,10 +16,11 @@ from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 
 # project
-from util.local_cache import cache
+from util import cache
 from util.model import cat_cols
 
 df = cache.get_meta('decorated')
+
 
 #------ setup a bunch of column groups
 sz_cols = ['width','height','cenrot-width','cenrot-height']
@@ -66,7 +68,7 @@ other_pred = sorted(list(set(all_pred) - set(subset_pred)))
 # tmp['r'] = random_sample((1000,))
 # test_dummy(tmp,'t')
 
-def test_logreg(df,pred,target):
+def eg_logreg(df,pred,target):
     X = df[pred]
     y = df[target]
     print(
@@ -107,4 +109,4 @@ def test_logreg(df,pred,target):
 
 for t in ['tilted','turned']:
     for pp in [['yaw_abs'],['roll_abs'],['yaw_abs','roll_abs']]:
-        test_logreg(df,pp,t)
+        eg_logreg(df,pp,t)
