@@ -192,11 +192,11 @@ def get_yaw_data(anno):
 
     '''
     # anno = cache.get_image(118)
-    
+
     # get image and calculate translation
     img = anno.get_image()
     face = anno.get_face_center()
-    center = np.array([[img.width/2, img.height/2]])
+    center = [np.nan, np.nan] if img is None else np.array([[img.width/2, img.height/2]])
     coords = anno.get_coords()
     
     # calculate rotation
@@ -207,26 +207,35 @@ def get_yaw_data(anno):
     
     # perform rotation
     coords = coords - face # move coordinates to the origin to rotate
-    coords = coords@rotx # apply roatation matrix
-    coords = coords + center # move coordinates back to the center
+    coords = coords@rotx # apply rotation matrix
+    if img is not None:
+        coords = coords + center # move coordinates to image center
+    else:
+        # NOTE: This is currently only here support the case where raw image data is unavailable...
+        #       Unfortunately, it complicates user expectations for this function
+        coords = coords + face # move coordinates back to original location
     
     # calculate buffer
     mins = np.amin(coords,axis=0)
     maxs = np.amax(coords,axis=0)
-    in_dims = np.array([img.width, img.height])
-    margin = []
-    for i in range(2):
-        max_buff = 0
-        lo_buff = 0 - mins[i]
-        if lo_buff > max_buff:
-            max_buff = lo_buff
-        hi_buff = maxs[i] - in_dims[i]
-        if hi_buff > max_buff:
-            max_buff = hi_buff
-        margin.append(max_buff + max_buff if max_buff > 0 else 0)
-    
-    margin = np.array(margin)
-    coords += margin
+    if img is None:
+        in_dims = np.array([np.nan, np.nan])
+        margin = np.array([np.nan, np.nan])
+    else:
+        in_dims = np.array([img.width, img.height])
+        margin = []
+        for i in range(2):
+            max_buff = 0
+            lo_buff = 0 - mins[i]
+            if lo_buff > max_buff:
+                max_buff = lo_buff
+            hi_buff = maxs[i] - in_dims[i]
+            if hi_buff > max_buff:
+                max_buff = hi_buff
+            margin.append(max_buff + max_buff if max_buff > 0 else 0)
+
+        margin = np.array(margin)
+        coords += margin
     return in_dims, margin, face, angle, coords
 
 def rotate(anno):

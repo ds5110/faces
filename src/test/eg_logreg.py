@@ -6,6 +6,7 @@ Created on Sun Nov 13 18:50:42 2022
 @author: jhautala
 """
 
+import math
 import pandas as pd
 import numpy as np
 from numpy.random import random_sample
@@ -15,10 +16,11 @@ from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 
 # project
-from util.local_cache import cache
+from util import cache
 from util.model import cat_cols
 
 df = cache.get_meta('decorated')
+
 
 #------ setup a bunch of column groups
 sz_cols = ['width','height','cenrot-width','cenrot-height']

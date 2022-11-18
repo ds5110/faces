@@ -21,15 +21,17 @@ class LocalCache:
             base_dir='data',
             scratch_dir='scratch',
             base_url='https://coe.northeastern.edu/Research/AClab/InfAnFace',
+            meta_filename='labels.csv',
     ):
         self.base_dir = base_dir
         self.scratch_dir = scratch_dir
         self.base_url = base_url
-        self.meta = pd.read_csv(self.get_file('labels.csv'))
+        self.meta_filename = meta_filename
+        self.meta = pd.read_csv(self.get_file(meta_filename))
     
-    def get_meta(self,desc=None):
+    def get_meta(self, desc=None):
         '''
-        To help avoid side-effects, this method creates a new copy
+        To avoid side-effects, this method creates a new copy
         of the image metadata for each call.
 
         Returns
@@ -39,14 +41,17 @@ class LocalCache:
 
         '''
         if desc is not None:
-            filepath = f'{self.scratch_dir}/labels_{desc}.csv'
-            return pd.read_csv(filepath)
+            elems = self.meta_filename.split('.')
+            filename = f'{self.scratch_dir}/{elems[0]}_{desc}.{elems[1]}'
+            return pd.read_csv(filename)
         
         return self.meta.copy()
     
-    def save_meta(self,df,desc):
+    def save_meta(self, df, desc):
+        elems = self.meta_filename.split('.')
+        filename = f'{self.scratch_dir}/{elems[0]}_{desc}.{elems[1]}'
         df.to_csv(
-            f'{self.scratch_dir}/labels_{desc}.csv',
+            filename,
             index=False,
         )
     
