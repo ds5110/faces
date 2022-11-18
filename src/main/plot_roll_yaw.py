@@ -16,6 +16,7 @@ savefig = False
 
 df = cache.get_meta('decorated')
 
+
 def plot(use_abs=False,savefig=False):
     label_pre = 'absolute ' if use_abs else ''
     col_suff = '_abs' if use_abs else ''
@@ -64,5 +65,11 @@ def plot(use_abs=False,savefig=False):
         plt.savefig(f'figs/roll_yaw{col_suff}.png', dpi=300, bbox_inches='tight')
     plt.show()
 
-plot(savefig=savefig)
-plot(use_abs=True,savefig=savefig)
+
+def main():
+    plot(savefig=savefig)
+    plot(use_abs=True,savefig=savefig)
+
+
+if __name__ == '__main__':
+    main()
