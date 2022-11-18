@@ -10,19 +10,19 @@ There is also a convenience utility for loading these files, wrapped up in a uti
 
 ## Local Execution
 
-Due to the project structure (scripts in `main` and `test` packages) there are two main requirements for the smoothest experience:
+Local execution entails a few considerations that may be unintuitive:
 
-* The current working directory is assumed to be the root of the repo
-* The `src` directory should be on the Python path
-
-Command line execution requires running each script as a module and adding `src` to the path, e.g.:
-```
-PYTHONPATH=./src python -m src.test.eg_logreg
-```
-
-There is also a [requirements.txt](requirements.txt) file at the root of the repo, as a convenience for installing dependencies.
-
-*Note: This file is not a minimally sufficient list of dependencies; it includes extraneous packages that have accumulated in my test environment.*
+* The current working directory is assumed to be the root of the repo. The intended location for cached images and metadata files is in the **data** directory. Of course, you can ignore this if you aren't using the [local_cache](src/util/local_cache) module (nor the similar [alt_cache](src/util/alt_cache) module). If you do want to use these, default instances are provided directly in the `util` package util [init](src/util/__init__.py), imported as `from util import cache` (for baby face metadata) and `from util import alt` (for adult face metadata).
+* The **src** directory should be on the Python path, so that the "driver" scripts can locate the "library" modules in `util`. If you don't want to worry about this, you can work on scripts directly located under the **src** directory (Python path automatically includes the directory of the script being run).
+* Command line execution requires running each script as a module and adding **src** to the path, e.g.:
+  ```
+  PYTHONPATH=./src python -m src.test.eg_logreg
+  ```
+* There is also a [requirements.txt](requirements.txt) file at the root of the repo, as a convenience for installing dependencies. It is strongly recommended to create a new virtual environment for this project (see [pip/venv documentation](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/) for details). You can install these locally with pip:
+  ```
+  pip install -r requirements.txt
+  ```
+  *Note: This file is not a minimally sufficient list of dependencies; it most certainly includes extraneous packages that happen to be  environment.*
 
 ## Preprocessing
 
