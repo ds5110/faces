@@ -8,6 +8,22 @@ In order to minimize redundant downloads, this repo includes a [Makefile](Makefi
 
 There is also a convenience utility for loading these files, wrapped up in a utility module [util.local_cache](src/util/local_cache.py) that provides an interface `LocalCache` and default instance `cache` for accessing images and metadata, downloading them if they are not present locally.
 
+## Local Execution
+
+Due to the project structure (scripts in `main` and `test` packages) there are two main requirements for the smoothest experience:
+
+* The current working directory is assumed to be the root of the repo
+* The `src` directory should be on the Python path
+
+Command line execution requires running each script as a module and adding `src` to the path, e.g.:
+```
+PYTHONPATH=./src python -m src.test.eg_logreg
+```
+
+There is also a [requirements.txt](requirements.txt) file at the root of the repo, as a convenience for installing dependencies.
+
+*Note: This file is not a minimally sufficient list of dependencies; it includes extraneous packages that have accumulated in my test environment.*
+
 ## Preprocessing
 
 (For a full list of derived features, see [derived](derived.md).)

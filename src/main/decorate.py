@@ -52,6 +52,14 @@ def get_decorated_meta(cache):
     # calculate extents of landmarks (rotated)
     cenrot_extents = np.amax(cenrots, axis=1) - np.amin(cenrots, axis=1)
 
+    # NOTE: We add new columns by simple assignment here, before the DataFrame
+    #       gets too big, to reduce index fragmentation.
+    # add image name if it's missing
+    if 'image_name' not in df.columns.values\
+            and 'image-set' in df.columns.values\
+            and 'filename' in df.columns.values:
+        df['image_name'] = df[['image-set', 'filename']].agg('/'.join, axis=1)
+
     # add image dimensions
     df['boxratio'] = cenrot_extents[:, 0] / cenrot_extents[:, 1]
     df['width'] = widths
