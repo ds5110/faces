@@ -62,6 +62,7 @@ def get_decorated_meta(cache):
 
     # add image dimensions
     df['boxratio'] = cenrot_extents[:, 0] / cenrot_extents[:, 1]
+    df['boxsize'] = cenrot_extents[:, 0] * cenrot_extents[:, 1]
     df['width'] = widths
     df['height'] = heights
     df['face_width'] = cenrot_extents[:, 0]
@@ -73,6 +74,7 @@ def get_decorated_meta(cache):
     iods = (cenrots[:, 36, :] - cenrots[:, 45, :])
     df['interoc'] = np.sqrt(np.sum(np.power(iods, 2), axis=1))
     df['interoc_norm'] = np.sqrt(np.sum(np.power(iods/cenrot_extents, 2), axis=1))
+    df['boxsize/interoc'] = df['boxsize'] / df['interoc']
 
     # add angle of rotation (in radians)
     df['yaw'] = angles
