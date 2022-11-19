@@ -16,6 +16,14 @@ from PIL import ImageOps
 
 from util.model import landmark68
 
+
+class Case:
+    def __init__(self, name, color, mask):
+        self.name = name
+        self.color = color
+        self.mask = mask
+
+
 def fix_axes(X,Y,ax,flip_y=True):
     data = np.stack([X,Y],axis=1)
     mins = np.amin(data,axis=0)
@@ -62,14 +70,7 @@ def plot_image(
     None.
 
     '''
-    
-    # anno=rotated
-    # annotate='scatternum'
-    # annotate='spline'
-    # ref_point=mid
-    # cross=True
-    # grayscale=True
-    # save_fig=False
+    img = anno.get_image()
     image_set = anno.image_set
     filename = anno.filename
     desc = f' (row {anno.row_id})' if anno.row_id is not None else ''
@@ -78,7 +79,6 @@ def plot_image(
     title = f'{image_set}/{filename}' + desc
     X = anno.get_x()
     Y = anno.get_y()
-    img = anno.get_image()
     if grayscale:
         # NOTE: Extracting luma component produces the same result
         #       as ImageOps.grayscale.
@@ -89,12 +89,12 @@ def plot_image(
     # img.convert('YCbCr')
     
     fig, ax = plt.subplots(figsize=(10, 10))
-    if not skip_img:
+    if img is not None and not skip_img:
         ax.imshow(img)
-    if cross:
-        center= np.array([img.width/2, img.height/2])
-        ax.axhline(y=center[1])
-        ax.axvline(x=center[0])
+        if cross:
+            center = np.array([img.width/2, img.height/2])
+            ax.axhline(y=center[1])
+            ax.axvline(x=center[0])
     
     if annotate:
         if annotate.startswith('spline'):
@@ -309,6 +309,61 @@ def plot_coords(
             os.makedirs(path)
         plt.savefig(
             f'{path}/{filename}.png',
+            dpi=300,
+            bbox_inches='tight'
+        )
+    plt.show()
+
+def scatter(
+        title,
+        filename,
+        df,
+        pred,
+        target,
+        target_name=None,
+        alt_name=None,
+        savefig=False,
+):
+    if target_name is None:
+        target_name = target
+    if alt_name is None:
+        alt_name = f'not {target}'
+    fig = plt.figure(figsize=(8, 8))
+    ax = fig.add_subplot(1, 1, 1)
+    ax.set_xlabel(f'{pred[0]}', fontsize=15)
+    ax.set_ylabel(f'{pred[1]}', fontsize=15)
+    ax.set_title(title)
+
+    t = df[target] == 1
+    f = df[target] == 0
+    p = df[f'{target}_hat'] == 1
+    n = df[f'{target}_hat'] == 0
+    tNeg = f & n
+    tPos = t & p
+    fNeg = t & n
+    fPos = f & p
+
+    cases = []
+    if np.any(tNeg):
+        cases.append(Case(f'True {alt_name}', 'tab:green', tNeg))
+    if np.any(tPos):
+        cases.append(Case(f'True {target_name}', 'tab:blue', tPos))
+    if np.any(fNeg):
+        cases.append(Case(f'False {alt_name}', 'tab:red', fNeg))
+    if np.any(fPos):
+        cases.append(Case(f'False {target_name}', 'tab:orange', fPos))
+    for case in cases:
+        ax.scatter(
+            df[case.mask][pred[0]],
+            df[case.mask][pred[1]],
+            c=case.color,
+            s=50,
+            label=case.name
+        )
+    ax.legend()
+    if savefig:
+        plt.savefig(
+            f'figs/{filename}',
             dpi=300,
             bbox_inches='tight'
         )

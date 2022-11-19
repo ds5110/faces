@@ -24,6 +24,8 @@ _, _, face, angle, coords = get_yaw_data(anno)
 
 # add a bunch of derived columns
 df2 = get_decorated_meta(alt)
+
+
 alt.save_meta(df2, 'decorated')
 
 # reload from disk

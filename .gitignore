@@ -38,6 +38,6 @@ __pycache__/
 .idea/
 
 # local data
-/data/
+/_data/
 
 
