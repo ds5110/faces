@@ -15,6 +15,7 @@ from PIL import Image
 
 from util.model import AnnoImg, x_cols, y_cols
 
+
 class LocalCache:
     def __init__(
             self,
@@ -100,5 +101,3 @@ class LocalCache:
             row_id=row_id,
             desc=desc,
         )
-
-cache = LocalCache() # default cache
