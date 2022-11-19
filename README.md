@@ -17,7 +17,7 @@ from util import alt        # for adult faces
 from util import meta_cache # for the combined dataset
 ```
 
-*Note:* Cached images and metadata files are stored in a **_data** sub-directory, relative to the current working directory. When the current working directory is the root of the repo, this location will not be tracked by Git.
+*Note:* Cached images and metadata files are stored in a **_data** sub-directory, relative to the current working directory by default. When the current working directory is the root of the repo, this location will not be tracked by Git.
 
 ## Local Execution
 

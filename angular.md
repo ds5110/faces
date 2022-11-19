@@ -23,8 +23,6 @@ The classes are more linearly seperable when taking absolute values:
 
 ## Outliers
 
-There are a few outliers, e.g. high yaw and not 'tilted' nor 'turned',
-but they seem to be caused by inconsistent labeling or different ways of interpreting ~90 degree rotations.
-For example, the maximum absolute yaw score among un-"tilted" and un-"turned images:
+There are a few outliers, but they seem to be caused by inconsistent labeling or different ways of interpreting ~90 degree rotations. For example, the face with the maximum absolute yaw score among images labeled neither "tilted" nor "turned" is clearly not upright, presumably "tilted":
 
 <img src="figs/images/youtube2/045.jpg_(big_yaw).png" width=600>
