@@ -32,3 +32,5 @@ Where `dim` is 'x' or 'y' and `index` is an integer [0-67] (the left-most point 
 * `boxratio`: width of min box divided by height of min box
 * `interoc`: distance between outer corners of eyes (or outer canthi)
 * `interoc_norm`: `interoc` normalized per width/height of yaw-corrected min box
+* `boxsize`: area of the bounding box. 
+* `boxsize/interoc`: boxsize divided by interocular distance
