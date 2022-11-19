@@ -56,18 +56,3 @@ To confirm this, we applied this rotation/centering on a few other images:
 <img src="figs/images/ads/1072.Still005.jpg_splinelabel_rotated.png" width=600>
 
 Depending on the input data and type of models we are training, this type of preprocessing may be useful. See [angular.md](angular.md) doc for more info on angular transformation analysis.
-
-## Other EDA
-We also wanted to investigate some basic stats about the data, such as how many images are in the sets, and how many different images have the targets listed. Using the script `combos.py`, we found that there are more images in the adds google and youtube sets, with less in the google2 and youtube2 sets (I think this makes sense as the 2 sets are for testing). We also found out that there are more images with just one of the targets, like just tilted or just expressive. Less images are marked with multiple, and no images are marked with 'turned', 'occluded', and 'expressive'.
-
-<img src="figs/combos1.png" width=900>
-<img src="figs/combos2.png" width=900>
-
-We preformed a check using `plot_shape.py` to see if the images were all the same size (same number of rows and columns) in order to find out if we needed to scale the values for further EDA. We found that they are the same size, see the histogram and scatterplot below. 
-
-<img src="figs/hist.png" width=900>
-<img src="figs/scatter.png" width=900>
-
-Because one idea for this project is creating a classifier of adult and infant faces, we also wanted to explore some of the adult face data. Using a similar script to `plot_gxgy.py`, we used `plot_adult.py` to plot the features.
-
-<img src="figs/adult.png" width=900>
