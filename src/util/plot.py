@@ -332,7 +332,7 @@ def scatter(
     ax = fig.add_subplot(1, 1, 1)
     ax.set_xlabel(f'{pred[0]}', fontsize=15)
     ax.set_ylabel(f'{pred[1]}', fontsize=15)
-    ax.set_title(title, fontsize=20)
+    ax.set_title(title)
 
     t = df[target] == 1
     f = df[target] == 0
