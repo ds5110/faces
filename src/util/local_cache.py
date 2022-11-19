@@ -18,7 +18,7 @@ from util.model import AnnoImg, x_cols, y_cols
 class LocalCache:
     def __init__(
             self,
-            base_dir='data',
+            base_dir='_data',
             scratch_dir='scratch',
             base_url='https://coe.northeastern.edu/Research/AClab/InfAnFace',
             meta_filename='labels.csv',
