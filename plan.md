@@ -26,31 +26,33 @@ Use classical machine learning techniques to classify adult vs infant faces usin
 Sub-goals: (roles and responsibilities)
 * The idea here is to generally break up the tasks so that we all have the space to work on a few things. Then we can all come together and review our approaches and do any tweaking/fine tuning. For some of these, it might be nice to have someone primarily "own" the goal even though we will all be involved (like the checkins, website, etc).
 
-1. Decide how to deal with the class imbalance between the adult and infant data **Sophia?**
-2. Decide on what transformations/preprocessing of the landmarks to do **Jesse?**
+1. Decide how to deal with the class imbalance between the adult and infant data **Sophia**
+  * Learning curve (as we grow training set, how do diff models respond)? **Jesse** Which models are more biased towards inbalanced point? Which preformance metrics should be used per model?
+2. Decide on what transformations/preprocessing of the landmarks to do **Jesse** **Zongyu**
   * Perhaps run the models with and without the updated landmarks?
 3. Test out several ML classifiers
   * Create executable (from command line) and reproducible code/results & upload to repository
   * Keep track of what choices are made, such as:
     * Dimensional reduction (or not) 
+      * fwd feature selection? 
     * Which hyper-parameters are chosen (and why)
     * What works/doesn’t work (and why)
       * Even if model is “bad”, still useful to know
   * Classifier ideas
-    1. Logistic regression **Sophia?**
-    2. Naive bayes 
-    3. SVC **Zongyu?**
-    4. Decision tree **Sophia?**
-    5. Random Forests **Sophia?**
+    1. Logistic regression **Sophia**
+    2. Naive bayes / discriminate analysis **Connor**
+    3. SVC **Zongyu**
+    4. Decision tree **Sophia**
+    5. Random Forests 
     6. More ideas?
 4. Project-check in 
 5. Stakeholder feedback on prototype (incooperate)
-6. Create simple website outlining our chosen ML methods and results 
-7. Final project done final stakeholder feedback session? (incooperate)
+6. Create simple website outlining our chosen ML methods and results **Sophia**
+7. Final stakeholder feedback session? (incooperate)
 
 ### Timeline
 
-* 21 or 22 Nov: "official" project check in **we need to decide this asap**
+* 22 Nov: "official" project check in
   * demonstrated progress on the project goals presented with a walk-through of the project repo
   * should include a submission in canvas with the url of a "checkin" branch in the project repo
 * 28 Nov?: first stakeholder feedback session **we need to decide this asap**
