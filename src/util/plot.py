@@ -62,14 +62,7 @@ def plot_image(
     None.
 
     '''
-    
-    # anno=rotated
-    # annotate='scatternum'
-    # annotate='spline'
-    # ref_point=mid
-    # cross=True
-    # grayscale=True
-    # save_fig=False
+    img = anno.get_image()
     image_set = anno.image_set
     filename = anno.filename
     desc = f' (row {anno.row_id})' if anno.row_id is not None else ''
@@ -78,7 +71,6 @@ def plot_image(
     title = f'{image_set}/{filename}' + desc
     X = anno.get_x()
     Y = anno.get_y()
-    img = anno.get_image()
     if grayscale:
         # NOTE: Extracting luma component produces the same result
         #       as ImageOps.grayscale.
@@ -89,12 +81,12 @@ def plot_image(
     # img.convert('YCbCr')
     
     fig, ax = plt.subplots(figsize=(10, 10))
-    if not skip_img:
+    if img is not None and not skip_img:
         ax.imshow(img)
-    if cross:
-        center= np.array([img.width/2, img.height/2])
-        ax.axhline(y=center[1])
-        ax.axvline(x=center[0])
+        if cross:
+            center = np.array([img.width/2, img.height/2])
+            ax.axhline(y=center[1])
+            ax.axvline(x=center[0])
     
     if annotate:
         if annotate.startswith('spline'):
