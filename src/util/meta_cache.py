@@ -21,6 +21,9 @@ class MetaCache:
         df_adult['baby'] = 0
         self.meta = pd.concat([df_baby, df_adult], ignore_index=True)
 
+    def get_meta(self):
+        return self.meta.copy()
+
     def get_image(self, row_id=0, baby=None):
         if baby is None:
             baby = self.meta.loc[row_id]['baby']

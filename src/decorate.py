@@ -8,11 +8,11 @@ geometric information derived from landmark data.
 """
 
 # intra-project
-from util.local_cache import cache
+from util import cache, alt
 from util.pre import add_derived
 
 
 if __name__ == '__main__':
-    # load the labels data
-    decorated = add_derived(cache)
-    cache.save_meta(decorated, 'decorated')
+    for c in [cache, alt]:
+        decorated = add_derived(c)
+        c.save_meta(decorated, 'decorated')
