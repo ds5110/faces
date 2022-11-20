@@ -16,6 +16,8 @@ import skimage
 # intra-project
 from util.model import AnnoImg, landmark68, nose_i
 
+
+# some constants for coord math (mostly premature optimization)
 pi_2 = np.pi / 2.
 to_deg = 180. / np.pi
 to_rad = np.pi / 180.

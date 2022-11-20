@@ -23,7 +23,7 @@ from util import meta_cache # for the combined dataset
 
 There are a few "driver" scripts, located directly under `src`, that we use to modify and view images and metadata. For example, command line execution to apply a logistic regression model to identify challenging categories 'tilted' and 'turned' on the basis of derived features 'yaw' and 'roll':
 ```
-python src/eg_logreg.py
+python src/angle_labels_logreg.py
 ```
 
 ## Dependencies

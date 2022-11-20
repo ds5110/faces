@@ -13,7 +13,9 @@ import pandas as pd
 import numpy as np
 from PIL import Image
 
+# project
 from util.model import AnnoImg, x_cols, y_cols
+from util.pre import add_derived
 
 
 class LocalCache:

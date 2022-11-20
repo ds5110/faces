@@ -10,26 +10,43 @@ import pandas as pd
 from util.local_cache import LocalCache
 from util.alt_cache import AltCache
 
+data_path = 'data'
+meta_filename = 'merged_landmarks.csv'
+default_baby = LocalCache()
+default_adult = AltCache()
+
 
 class MetaCache:
-    def __init__(self, baby_cache=LocalCache(), adult_cache=AltCache()):
+    def __init__(
+            self,
+            baby_cache=default_baby,
+            adult_cache=default_adult,
+    ):
         self.baby_cache = baby_cache
         self.adult_cache = adult_cache
-        df_baby = self.baby_cache.get_meta('decorated')
-        df_adult = self.adult_cache.get_meta('decorated')
-        df_baby['baby'] = 1
-        df_adult['baby'] = 0
-        self.meta = pd.concat([df_baby, df_adult], ignore_index=True)
+        self.meta = pd.read_csv(
+            f'{data_path}/{meta_filename}',
+            dtype={
+                'image-set': str,
+                'filename': str,
+                'partition': str,
+                'subpartition': str,
+            }
+        )
 
-    def get_meta(self, alt=None, desc=None):
-        if 'baby' == alt:
-            return self.baby_cache.get_meta(desc)
-        if 'adult' == alt:
-            return self.adult_cache.get_meta(desc)
+    def get_meta(self, alt=None):
+        if alt is not None:
+            if alt.startswith('baby'):
+                if alt == 'baby_raw':
+                    return self.baby_cache.get_meta()
+                else:
+                    return self.baby_cache.get_meta('decorated')
+            if alt.startswith('adult'):
+                if alt == 'adult_raw':
+                    return self.adult_cache.get_meta()
+                else:
+                    return self.adult_cache.get_meta('decorated')
         return self.meta.copy()
-
-    def save_meta(self):
-        self.meta.to_csv('data/combined.csv', index=False)
 
     def get_image(self, row_id=0, baby=None):
         if baby is None:
