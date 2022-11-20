@@ -1,10 +1,12 @@
 #
 
+from regex import F
 from read_data import get_data
 
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+import numpy as np
 
 def explore_shape(df):
     df_baby = df[df['baby']==1]
@@ -22,9 +24,23 @@ def explore_shape(df):
 
     return df_baby, df_adult
 
+def histo(df_predictors):
+    fig, axes = plt.subplots(2, 3, figsize=(14, 8))
+    fig.suptitle('1 row x 2 columns axes with no data')
+    sns.histplot(ax=axes[0, 0], data=df_predictors, x='boxratio',hue='baby')
+    sns.histplot(ax=axes[0, 1], data=df_predictors, x='interoc',hue='baby')
+    sns.histplot(ax=axes[0, 2], data=df_predictors, x='interoc_norm', hue='baby')
+    sns.histplot(ax=axes[1, 0], data=df_predictors, x='boxsize', hue='baby')
+    sns.histplot(ax=axes[1, 1], data=df_predictors, x='boxsize/interoc', hue='baby')
+    plt.show()
+
 def main():
     df = get_data()
     explore_shape(df)
+
+    #selecting certain columns as predictors:
+    df_predictors = df.loc[:, ['image_name','boxratio', 'interoc','interoc_norm','boxsize','boxsize/interoc','baby']]
+    histo(df_predictors)
 
 if __name__ == "__main__":
     main()
