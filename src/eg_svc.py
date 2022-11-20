@@ -4,6 +4,7 @@
 Created on Thu Nov 17 23:17:59 2022
 
 @author: jhautala
+@author: Zongyu Wu
 """
 import numpy as np
 import pandas as pd
