@@ -22,9 +22,9 @@ def explore_shape(df):
 
     return df_baby, df_adult
 
-def histo(df_predictors):
+def histo_main_predictors(df_predictors):
     fig, axes = plt.subplots(2, 3, figsize=(14, 8))
-    fig.suptitle('1 row x 2 columns axes with no data')
+    fig.suptitle('Comparing distrobution of "potential predictors"')
     sns.histplot(ax=axes[0, 0], data=df_predictors, x='boxratio',hue='baby')
     sns.histplot(ax=axes[0, 1], data=df_predictors, x='interoc',hue='baby')
     sns.histplot(ax=axes[0, 2], data=df_predictors, x='interoc_norm', hue='baby')
@@ -32,13 +32,27 @@ def histo(df_predictors):
     sns.histplot(ax=axes[1, 1], data=df_predictors, x='boxsize/interoc', hue='baby')
     plt.show()
 
+def histo_angle_off(df_predictors):
+    fig, axes = plt.subplots(2, 4, figsize=(14, 8))
+    fig.suptitle('Comparing distrobution of "angular offsets"')
+    sns.histplot(ax=axes[0, 0], data=df_predictors, x='yaw',hue='baby')
+    sns.histplot(ax=axes[0, 1], data=df_predictors, x='yaw_abs',hue='baby')
+    sns.histplot(ax=axes[0, 2], data=df_predictors, x='roll', hue='baby')
+    sns.histplot(ax=axes[1, 0], data=df_predictors, x='roll_abs', hue='baby')
+    plt.show()
+
+# def both(df):
+    
+
+
+
+
 def main():
     df = get_data()
-    explore_shape(df)
-
-    #selecting certain columns as predictors:
-    df_predictors = df.loc[:, ['image_name','boxratio', 'interoc','interoc_norm','boxsize','boxsize/interoc','baby']]
-    histo(df_predictors)
+    # explore_shape(df)
+    # histo_main_predictors(df)
+    # histo_angle_off(df)
+    # both(df)
 
 if __name__ == "__main__":
     main()
