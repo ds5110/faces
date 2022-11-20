@@ -10,7 +10,6 @@ reference https://elitedatascience.com/imbalanced-classes
 '''
 
 from read_data import get_data
-from logreg import logreg
 from helpers import get_Xy, class_report
 
 import pandas as pd
@@ -23,8 +22,10 @@ def split_df(df):
 
     return df_baby, df_adult
 
-def upsample(df_adult,df_baby):
+def upsample(df):
     '''Up-sampling is the process of randomly duplicating observations from the minority class in order to reinforce its signal.'''
+    df_baby, df_adult = split_df(df)
+    
     #Resample with replacement
     print(df_adult['baby'].value_counts())
     #Separate majority and minority classes
@@ -43,7 +44,10 @@ def upsample(df_adult,df_baby):
 
     return df_upsampled
 
-def downsample(df_adult,df_baby):
+def downsample(df):
+
+    df_baby, df_adult = split_df(df)
+
     #Separate majority and minority classes
     df_majority = df_adult
     df_minority = df_baby
@@ -61,29 +65,29 @@ def downsample(df_adult,df_baby):
     return df_downsampled
     
 def main():
+    from logreg import logreg
     #testing out the different sampling options with logreg
     #get data
     df = get_data()
-    #split into baby and adult for sampling purposes
-    df_baby, df_adult = split_df(df)
+    predictors_list = ['boxratio']
 
-    #first trying with no sampling changes (unbalanced)
-    df_predictors = df.loc[:, ['image_name','boxratio','baby']]
-    X,y = get_Xy(df_predictors)
+
+    #testing
+    print('Trying with no sampling changes (unbalanced)')
+   
+    X,y = get_Xy(df,predictors_list)
     y_pred, ytest, fitted = logreg(X,y)
     class_report(ytest,y_pred,'logreg')
 
-    #now trying with upsampling
-    upsample_df = upsample(df_adult,df_baby)
-    df_predictors = upsample_df.loc[:, ['image_name','boxratio','baby']]
-    X,y = get_Xy(df_predictors)
+    print('Trying with upsampling')
+    upsample_df = upsample(df)
+    X,y = get_Xy(upsample_df,predictors_list)
     y_pred, ytest, fitted = logreg(X,y)
     class_report(ytest,y_pred,'logreg')
 
-    #and with downsampling
-    downsample_df = downsample(df_adult,df_baby)
-    df_predictors = downsample_df.loc[:, ['image_name','boxratio','baby']]
-    X,y = get_Xy(df_predictors)
+    print('Trying with downsampling')
+    downsample_df = downsample(df)
+    X,y = get_Xy(downsample_df,predictors_list)
     y_pred, ytest, fitted = logreg(X,y)
     class_report(ytest,y_pred,'logreg')
 
