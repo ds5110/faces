@@ -2,10 +2,11 @@
 #File is intended to read df and select some general groupings of features
 
 import pandas as pd
+import numpy as np
 
 #gets the whole dataset
-def get_data():    
-    df = pd.read_csv('data/merged_landmarks.csv',dtype={
+def get_data(data='data/merged_landmarks.csv'):    
+    df = pd.read_csv(data,dtype={
         'image-set': str,
         'filename': str,
         'partition': str,
@@ -33,29 +34,34 @@ def get_categories(df):
     #Potential predictors for distinguishing infants
     main_predictors = ['boxratio', 'interoc','interoc_norm','boxsize','boxsize/interoc']
     
-    # #Derived Landmark Coordinates
-    # #normalized to the minimum bounding box of landmarks
-    # df1 = df.loc[:, df.columns.str.startswith('cenrot_sym_diff')]
-    # norm = list(df1.columns)
-    # #transformed to correct yaw and position
-    # cenrot = 
-    # #transformed to correct yaw and position
-    # #normalized to the new minimum bounding box
-    # norm_cenrot =
+    #Derived Landmark Coordinates
+    #transformed to correct yaw and position & normalized to the new minimum bounding box
+    df1 = df.loc[:, df.columns.str.startswith('norm_cenrot-')]
+    norm_cenrot = list(df1.columns)
 
-    #Differences of expected symmetric landmarks
-    #Difference of yaw-corrected coordinates
-    df1 = df.loc[:, df.columns.str.startswith('cenrot_sym_diff')]
-    cenrot_sym_diff = list(df1.columns)
-    #Difference of yaw-corrected coordinates, normalized per min box
+    #Difference of expected symmetric landmarks, yaw-corrected coordinates, normalized per min box
     df1 = df.loc[:, df.columns.str.startswith('norm_cenrot_sym_diff')]
     norm_cenrot_sym_diff = list(df1.columns)
-    
-    return orig_coords, angle_off, main_predictors,cenrot_sym_diff,norm_cenrot_sym_diff
 
-def main():
-    df = get_data()
-    orig_coords, angle_off, main_predictors,cenrot_sym_diff,norm_cenrot_sym_diff = get_categories(df)
+    #Euc distance of all coords (yaw and box corrected)
+    #all of them
+    df1 = df.loc[:, df.columns.str.startswith('dist_')]
+    all_d_coords = list(df1.columns)
+    '''a minimal set of coords with one xy point for: 
+    leye,reye
+    lbrow,rbrow
+    lear,rear
+    lcheek,rcheek
+    mouth
+    nose
+    chin
+    '''
+    selected_d_coords = [0,16,19,24,37,44,29,3,13,8,66]
+    f_num_list = np.sort(selected_d_coords)
+    selected_d_coords = []
+    for i in f_num_list:
+        for j in f_num_list:
+            if ('dist_{}_{}'.format(i,j) not in selected_d_coords) and (('dist_{}_{}'.format(j,i) not in selected_d_coords)) and i!=j:
+                selected_d_coords.append('dist_{}_{}'.format(i,j))
 
-if __name__ == "__main__":
-    main()
+    return orig_coords, angle_off, main_predictors,norm_cenrot_sym_diff, norm_cenrot,all_d_coords, selected_d_coords
