@@ -13,6 +13,7 @@ x_cols, y_cols = [[f'gt-{axis}{i}' for i in range(68)] for axis in ['x','y']]
 landmark_cols = [x_cols, y_cols]
 cenrot_cols = [[f'cenrot-{axis}{i}' for i in range(68)] for axis in ['x','y']]
 norm_cols = [[f'norm_cenrot-{axis}{i}' for i in range(68)] for axis in ['x','y']]
+nose_i = 33  # the center of the horizontal line under nose
 
 class Feature:
     def __init__(self, desc, idx):
@@ -24,7 +25,7 @@ class LandmarkModel:
         self.features = features
         self.per_desc = {f.desc for f in features}
 
-nose_i = 33
+
 landmark68 = LandmarkModel(
     [
         Feature('right_cheek', range(8)), # overlaps chin by 1
@@ -47,6 +48,7 @@ landmark68 = LandmarkModel(
     ]
 )
 
+
 # NOTE: This model provides access to image data through an injected
 #       supplier function to reduce its memory cost.
 class AnnoImg:
@@ -63,7 +65,7 @@ class AnnoImg:
         self.filename = filename
         self._coords = coords
         
-        #-- extract face center as center of nose_h
+        # - extract face center as center of nose_h
         xx, yy = [coords[:,i] for i in range(2)]
         nose_x, nose_y = [vv[nose_i] for vv in [xx, yy]]
         self._face = np.stack([nose_x, nose_y])
