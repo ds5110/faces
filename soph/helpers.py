@@ -10,8 +10,11 @@ from sklearn.metrics import classification_report
 
 
 #Splits the data into X(data) and y(target)
-def get_Xy(df):
-    X = df.iloc[:, 1:-1]
+def get_Xy(df,predictors=None):
+    if predictors is not None:
+        in_list = predictors+['baby']
+        df = df.loc[:, in_list]
+    X = df.iloc[:, :-1]
     y = df.iloc[:, -1:]
     X = X.to_numpy()
     y = y.to_numpy()
