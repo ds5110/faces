@@ -1,4 +1,5 @@
-#
+#Sophia Cofone 11/19 
+#File is intended to read df
 
 import pandas as pd
 

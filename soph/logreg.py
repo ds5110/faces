@@ -1,4 +1,5 @@
-#
+#Sophia Cofone 11/19 
+#File is intended for trying out logistic regression
 
 from read_data import get_data
 from helpers import get_Xy, tt_split, plot_cm, class_report

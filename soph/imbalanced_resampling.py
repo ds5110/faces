@@ -1,4 +1,5 @@
 #Sophia Cofone 11/18/22
+#File is intended to house functions used for up and downsampling
 
 '''
 We need to address the fact that we have 689 points in our adult class (0) and  410 points in our baby class (1).

@@ -1,4 +1,5 @@
-#
+#Sophia Cofone 11/19 
+#File is intended to house some helper funtions that multiple models will use
 
 import seaborn as sns
 import matplotlib.pyplot as plt

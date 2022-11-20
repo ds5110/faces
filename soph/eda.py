@@ -1,12 +1,10 @@
-#
+#Sophia Cofone 11/19 
+#File is intended to house eda as I go along trying out models
 
-from regex import F
 from read_data import get_data
 
-import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-import numpy as np
 
 def explore_shape(df):
     df_baby = df[df['baby']==1]
