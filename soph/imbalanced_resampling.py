@@ -74,7 +74,6 @@ def main():
 
     #testing
     print('Trying with no sampling changes (unbalanced)')
-   
     X,y = get_Xy(df,predictors_list)
     y_pred, ytest, fitted = logreg(X,y)
     class_report(ytest,y_pred,'logreg')
