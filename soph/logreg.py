@@ -19,7 +19,7 @@ def logreg(X,y):
     y_pred = fitted.predict(Xtest)
     print('Accuracy of logistic regression classifier on test set: {:.2f}'.format(logreg.score(Xtest, ytest)))
 
-    return y_pred, ytest, fitted
+    return Xtest, ytest, fitted, y_pred
 
 def feature_selection(X,y):
     y_flat = np.ravel(y)
