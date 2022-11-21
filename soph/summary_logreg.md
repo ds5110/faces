@@ -31,3 +31,42 @@ Two feature (`['boxratio', 'interoc']`), downsampling:
 * Recall score baby: 0.96
 
 ## Logistic Regression: Take 2
+We found that the classifier produced a pretty good score with just one feature, the euclidian distance from the left chin to left eye.
+* Accuracy score: 0.83 (downsampling)
+* Recall score adult: 0.92 (downsampling)
+* Recall score baby: 0.74 (downsampling)
+
+Unlike in the previous exploration with the "potential predictors", adding more features did yeild improvements until 4 features.
+
+Second (right eyebrow width)
+* Accuracy score: 0.90 (downsampling)
+* Recall score adult: 0.94 (downsampling)
+* Recall score baby: 0.87 (downsampling)
+
+Third (distance between eyebrows) 
+* Accuracy score: 0.93 (downsampling)
+* Recall score adult: 0.96 (downsampling)
+* Recall score baby: 0.89 (downsampling)
+
+Fourth (distance from mouth to nose)
+* Accuracy score: 0.94 (downsampling)
+* Recall score adult: .92 (downsampling)
+* Recall score baby:  .95 (downsampling)
+
+<img src="figs/images/soph_logreg/algo_baby.png" width=600>
+
+## Logistic Regression: Bringing it together
+In the first iteration of this exploration, we found that `boxratio` was a good predictor, but other single-features didn't add much to the accuracy of the model. In the second iteration, we found other distances that could be useful in classifying baby vs adult faces. Adding these features together (specifically `boxratio` with euclidean distance `'dist_7_41','dist_21_22', 'dist_22_25', 'dist_33_65'`) yeilded a model with:
+* Accuracy score: 0.97
+* Recall score adult: 0.97
+* Recall score baby: 0.96
+
+Interestingly, the feature selection considered all of them important becuase each additonal distance added accuracy to the model. 
+
+<img src="figs/images/soph_logreg/boxplus_f_cv.png" width=600>
+
+I think this is a good model because the accuracy rate and recall scores are quite good and it doesn't require a ton of features (like the 13+ feature models from take 1).
+
+<img src="figs/images/soph_logreg/boxplus_f_cmat.png" width=600>
+
+<img src="figs/images/soph_logreg/boxplus_fd_cmat.png" width=600>

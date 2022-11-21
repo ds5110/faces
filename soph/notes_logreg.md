@@ -1,5 +1,5 @@
 # DS5110 faces: Notes on Logistic Regression Exploration - Sophia
-The purpose of this file is to contain all the notes and testing realted to logreg model exploration.
+The purpose of this file is to contain all the notes and testing realted to logreg model exploration (take 1).
 
 ## EDA
 I plotted the distrubition of the "potential predictors" using histograms for both babys and adults. I was looking to see if any of the features seemed seperable (thinking that would work well for logreg). I noted that the "boxratio" looked alright but the other ones did not look very seperable. 
