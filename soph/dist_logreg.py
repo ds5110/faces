@@ -1,3 +1,9 @@
+#Sophia Cofone 11/20/22
+'''
+This file is intended to calculate additional meta-data for computing the euclidean distances between the coordinate points.
+We use the normalized to the bounding box data as the coord input, then compute the distance between each point and every other point.
+The output is an updated CSV file.
+'''
 
 import numpy as np
 from read_data import get_data
@@ -5,8 +11,6 @@ from read_data import get_data
 import pandas as pd
 import numpy as np
 from sklearn.metrics.pairwise import euclidean_distances as edist
-
-
 
 def get_dist_df(df_cr,f_num_list = range(68)):
     """ 
@@ -48,10 +52,10 @@ def get_dist_df(df_cr,f_num_list = range(68)):
 
 def main():
     df = get_data()
-    df_cr = df.loc[:,df.columns.str.startswith('norm_cenrot-')]
+    df_cr = df.loc[:,df.columns.str.startswith('norm-')]
     df_dist = get_dist_df(df_cr,f_num_list = range(68))
     df = pd.concat([df.copy(),df_dist],axis=1)
-    df.to_csv('merged_landmarks_pairwise')
+    df.to_csv('merged_landmarks_dist')
 
 if __name__ == "__main__":
     main()
