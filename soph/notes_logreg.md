@@ -185,7 +185,8 @@ Confusion matrix:
 <img src="figs/images/soph_logreg/p4_fd_cmat.png" width=600>
 
 ## Reproduce Results
-To reproduce the results from these notes, run the `logreg_ex.py` file (testing).
-To reproduce the data used in these notes, run `?jesse file?`
-To reproduce the eda used in these notes, run `eda_logreg.py`
-To rerpoduce the testing for the sampling used in these notes run `imbalanced_resampling.py`
+* To reproduce the results from these notes, run the `logreg_ex.py` file (testing).
+  * Note that this file has all 5 partitions and multiple combinations (feature selection, no feature selection, sampling, no sampling) so a lot gets output to the console and graphs generated. However it should run quickly and there are print statements that tell you what classificaition report you are looking at, etc.
+* To reproduce the data used in these notes, run `?jesse file?`
+* To reproduce the eda used in these notes, run `eda_logreg.py`
+* To rerpoduce the testing for the sampling used in these notes run `imbalanced_resampling.py`
