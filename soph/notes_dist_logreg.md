@@ -1,10 +1,10 @@
 # DS5110 faces: Notes on Logistic Regression Exploration (euclidean distance) - Sophia
-The purpose of this file is to contain all the notes and testing realted to logreg model exploration (take 2).
+The purpose of this file is to contain all the notes and testing related to logreg model exploration (take 2).
 
 ## EDA
 We had the idea of trying to identify more "distances" between facial features that could help classify adults vs infants. We know from the paper and our original logreg exploration (take 1) that the ratio between the width and height of the head (boxratio) and distance between the eyes are good for this. Could there be more?
 
-The EDA for this idea involved selecting one image and plotting the matrix of the euclidean distances. After generating the new data for all the points, I also attemped a correlation matrix of all the distances. I wanted to see if removing highly correlated points would make feature selection go faster, but I couldn't figure out the right way to do this that would still preserve the accuracy of the model. I ended up trying a new feature selection method (forward feature selection rather than backwards) and just dealing with the fact that it takes a long time to run the more features you consider. 
+The EDA for this idea involved selecting one image and plotting the matrix of the euclidean distances. After generating the new data for all the points, I also attempted a correlation matrix of all the distances. I wanted to see if removing highly correlated points would make feature selection go faster, but I couldn't figure out the right way to do this that would still preserve the accuracy of the model. I ended up trying a new feature selection method (forward feature selection rather than backwards) and just dealing with the fact that it takes a long time to run the more features you consider. 
 
 <img src="figs/images/soph_logreg/mat1.png" width=600>
 
@@ -13,8 +13,8 @@ The EDA for this idea involved selecting one image and plotting the matrix of th
 ## Data used
 Infant and adult raw coordinate data can be found from this repo: [Infant-Facial-Landmark-Detection-and-Tracking](https://github.com/ostadabbas/Infant-Facial-Landmark-Detection-and-Tracking).
 
-## Preprossing
-For this model exploration I created additional metadata which computed the euclidean distances between the coordinate points (using normalized to the bounding box data as the coord input - see this document for information on how the normalized points were generated **link to different readme going over those preprossing steps in more detail?**). Please see the `dist_metadata.py` for details on the calculations. To recreate the dataframe used, simply run `dist_metadata.py` and an updated csv will be created.
+## Preprocessing
+For this model exploration I created additional metadata which computed the euclidean distances between the coordinate points (using normalized to the bounding box data as the coord input - see this document for information on how the normalized points were generated **link to different readme going over those preprocessing steps in more detail?**). Please see the `dist_metadata.py` for details on the calculations. To recreate the dataframe used, simply run `dist_metadata.py` and an updated csv will be created.
 
 ## Results
 We approached this idea from 2 ways. We first wanted to see given **all** the information (euc distance from every point to every other point) what distances/features would the model choose, and how many would the model need until we got to a decent accuracy and recall score? We also were curious about what order it added those features in. 
@@ -116,4 +116,4 @@ Feature selected: ['dist_21_22', 'dist_17_26', 'dist_48_54', 'dist_27_62']
   * Note that this testing uses forward feature selection for the dimentional reduction method, so it does take time to run depending on how many features you ask it to select (still under 5 min on my machine).
 * To reproduce the data used in these notes, run `?jesse file?` and `dist_metadata.py`
 * To reproduce the eda used in these notes, run `eda_dist_logreg.py`
-* To rerpoduce the testing for the sampling used in these notes run `imbalanced_resampling.py`
+* To reproduce the testing for the sampling used in these notes run `imbalanced_resampling.py`
