@@ -1,9 +1,14 @@
+#Sophia Cofone 11/20/22
+'''
+This file is intended to capture the EDA done for the "distance" idea.
+'''
 
+#project
 from read_data import get_data
-
+#basic
 import numpy as np
 import matplotlib.pyplot as plt
-
+#sklearn
 from sklearn.metrics.pairwise import euclidean_distances
 
 
@@ -25,7 +30,6 @@ def cor_mat(df):
     matrix = df_dist.corr().abs()
     plt.imshow(matrix)
     plt.show()
-
 
 def main():
     df = get_data('data/merged_landmarks_dist.csv')
