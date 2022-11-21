@@ -27,7 +27,7 @@ Sub-goals: (roles and responsibilities)
 * The idea here is to generally break up the tasks so that we all have the space to work on a few things. Then we can all come together and review our approaches and do any tweaking/fine tuning. For some of these, it might be nice to have someone primarily "own" the goal even though we will all be involved (like the checkins, website, etc).
 
 1. Decide how to deal with the class imbalance between the adult and infant data **Sophia**
-  * Learning curve (as we grow training set, how do diff models respond)? **Jesse** Which models are more biased towards inbalanced point? Which preformance metrics should be used per model?
+  * Learning curve (as we grow training set, how do diff models respond)? **Jesse** Which models are more biased towards inbalanced data? Which preformance metrics should be used per model?
 2. Decide on what transformations/preprocessing of the landmarks to do **Jesse** **Zongyu**
   * Perhaps run the models with and without the updated landmarks?
 3. Test out several ML classifiers
