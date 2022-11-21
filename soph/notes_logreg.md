@@ -1,4 +1,5 @@
 # DS5110 faces: Notes on Logistic Regression Exploration - Sophia
+The purpose of this file is to contain all the notes and testing realted to logreg model exploration.
 
 ## EDA
 I plotted the distrubition of the "potential predictors" using histograms for both babys and adults. I was looking to see if any of the features seemed seperable (thinking that would work well for logreg). I noted that the "boxratio" looked alright but the other ones did not look very seperable. 
@@ -32,7 +33,7 @@ To learn more about the resampling methods used, see `imbalanced_resampling` for
 
 ## Results
 **Partition 1: The "potential predictors"**
-This partition produced pretty good results after feature selection and downsampling. The 2 features selected were `['boxratio', 'interoc']` (reinforcing paper findings)
+This partition produced pretty good results after feature selection and downsampling. The 2 features selected were `['boxratio', 'interoc']` (reinforcing paper findings).
 
 Without feature selection:
 * Accuracy score: 0.76
@@ -88,7 +89,7 @@ Confusion matrix:
 <img src="figs/images/soph_logreg/p2_fd_cmat.png" width=600>
 
 **Partition 3: The "potential predictors" + "angular offsets"**
-For this partition, I wanted to see if the angular offsets would bring anything helpful to the table. I found that after feature selection the selected features were still `['boxratio', 'interoc']`, so I didn't include the rest of the results (as they are the same as above).
+For this partition, I wanted to see if the angular offsets would bring anything helpful to the table. I found that after feature selection the selected features were still `['boxratio', 'interoc']`, so I didn't include the rest of the results (as they are the same as partition 1 above).
 
 Without feature selection:
 * Accuracy score: 0.76
@@ -111,7 +112,7 @@ CV to tune optimal features:
 <img src="figs/images/soph_logreg/p3_f_cv.png" width=600>
 
 **Partition 4: The "norm_cenrot_sym_diff" column**
-This partition was pretty strong even before feature selection.
+This partition was pretty strong even before feature selection (is overfitting a possibility? It is a lot of features).
 
 Without feature selection:
 * Accuracy score: 0.96
@@ -148,7 +149,7 @@ Confusion matrix:
 <img src="figs/images/soph_logreg/p4_fd_cmat.png" width=600>
 
 **Partition 5: The "norm_cenrot_sym_diff" column**
-This partition was also pretty strong even before feature selection (recall score on baby could be better).
+This partition was also pretty strong even before feature selection (recall score on baby could be better) (is overfitting a possibility? It is a lot of features).
 
 Without feature selection:
 * Accuracy score: 0.95
@@ -187,3 +188,4 @@ Confusion matrix:
 To reproduce the results from these notes, run the `logreg_ex.py` file (testing).
 To reproduce the data used in these notes, run `?jesse file?`
 To reproduce the eda used in these notes, run `eda_logreg.py`
+To rerpoduce the testing for the sampling used in these notes run `imbalanced_resampling.py`
