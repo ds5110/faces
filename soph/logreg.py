@@ -33,7 +33,7 @@ def rec_feature_selection(X,y,predictors_list):
     '''
     Recursive/backward feature selection with CV to see what the optimal number is.
     Produces what it thinks optimal is (max score) and plot so we can go in and choose a different number of features if needed.
-    Returns a boolean list that then can be compared to 
+    Returns a list of selected features.
     '''
     y_flat = np.ravel(y)
     min_features_to_select = 1  # Minimum number of features to consider
@@ -64,6 +64,11 @@ def rec_feature_selection(X,y,predictors_list):
     return selected_features
 
 def fwd_feature_selection(X,y,cols,n_features):
+    '''
+    Forward feature selection.
+    This one doesnt have CV implemented beucase it would take a really long time for it to run (for dimentional reduction of euclidian distances).
+    Returns a list of selected features.
+    '''
     y = np.ravel(y)
     estimator = LogisticRegression(max_iter=1000)
     fwdfs = SequentialFeatureSelector(estimator=estimator, 
@@ -71,6 +76,7 @@ def fwd_feature_selection(X,y,cols,n_features):
     n_jobs = -1)
 
     fwdfs.fit(X, y)
-
+    
     selected_features = [i for (i, v) in zip(cols,list(fwdfs.get_support())) if v]
+
     return selected_features
