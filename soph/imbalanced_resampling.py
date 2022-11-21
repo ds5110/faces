@@ -8,12 +8,12 @@ There are several ways to "deal" with unbalanced data such as up-sampling and un
 We will use logistic regression to see the differences in the sampling methods (for example).
 reference https://elitedatascience.com/imbalanced-classes
 '''
-
+#project
 from read_data import get_data
 from helpers import get_Xy, class_report
-
+#basic
 import pandas as pd
-
+#sklearn
 from sklearn.utils import resample
 
 def split_df(df):
@@ -45,7 +45,7 @@ def upsample(df):
     return df_upsampled
 
 def downsample(df):
-
+    '''randomly removes elements of the majority class'''
     df_baby, df_adult = split_df(df)
 
     #Separate majority and minority classes
@@ -70,8 +70,7 @@ def main():
     #get data
     df = get_data()
     predictors_list = ['boxratio']
-
-
+    
     #testing
     print('Trying with no sampling changes (unbalanced)')
     X,y = get_Xy(df,predictors_list)

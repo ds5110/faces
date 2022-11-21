@@ -3,8 +3,15 @@
 ## EDA
 I plotted the distrubition of the "potential predictors" using histograms for both babys and adults. I was looking to see if any of the features seemed seperable (thinking that would work well for logreg). I noted that the "boxratio" looked alright but the other ones did not look very seperable. 
 
+<img src="figs/images/soph_logreg/dist_p.png" width=600>
+
+<img src="figs/images/soph_logreg/dist_a.png" width=600>
+
 ## Data used
-For this model exploration I used several "partitions" of the data:
+Infant and adult raw coordinate data can be found from this repo: [Infant-Facial-Landmark-Detection-and-Tracking](https://github.com/ostadabbas/Infant-Facial-Landmark-Detection-and-Tracking).
+
+For this model exploration I used several "partitions" of the data. Information on how these partitions were created can be found [here](https://github.com/ds5110/faces/blob/SVC/derived.md).
+
 * Partition 1: The "potential predictors" 
   * Aka `['boxratio', 'interoc','interoc_norm','boxsize','boxsize/interoc']`
 * Partition 2: The "potential predictors" + "angular offsets" 
@@ -14,6 +21,14 @@ For this model exploration I used several "partitions" of the data:
 * Partition 4: The "norm_cenrot_sym_diff" columns
   * Aka the expected symmetric difference of yaw-corrected coordinates, normalized per min box
 
+## Preprossing
+As outlined in the section above, there are several pre-processing steps done to create the "potential predictors" columns and transformed coordinates **(link to different readme going over those preprossing steps in more detail?)**.
+
+We also noticed that the dataset was somewhat unbalanced with more adult data points than baby data points. Generally classificaion models preform better with balanced data, so we wanted to provide some options such as upsampling and downsampling. We also looked at specific metrics such as recall score, and plotted the confusion matrix before and after resampling to see if resampling allowed for less false negatives and false positives.
+
+<img src="figs/images/soph_logreg/unbal.png" width=600>
+
+To learn more about the resampling methods used, see `imbalanced_resampling` for functions and testing. 
 
 ## Results
 **Partition 1: The "potential predictors"**
