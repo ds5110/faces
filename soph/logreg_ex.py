@@ -28,8 +28,8 @@ def with_f(df,predictors_list):
     class_report(ytest,y_pred,'logreg')
 
     print('With feature selection and downsampled')
-    upsample_df = downsample(df)
-    X,y = get_Xy(upsample_df,predictors_list)
+    downsample_df = downsample(df)
+    X,y = get_Xy(downsample_df,predictors_list)
     _, ytest, _, y_pred = logreg(X,y)
     plot_cm(ytest,y_pred,'logreg')
     class_report(ytest,y_pred,'logreg')
@@ -55,35 +55,40 @@ def main():
     df = get_data()
     _, angle_off, main_predictors,norm_cenrot_sym_diff, norm_cenrot,_ = get_categories(df)
 
-    print('Partition 1 - Without feature selection')
-    without_f(df,main_predictors) 
-    print('Partition 1 - With feature selection')
-    selected_features = with_f(df,main_predictors)
+    # print('Partition 1 - Without feature selection')
+    # without_f(df,main_predictors) 
+    # print('Partition 1 - With feature selection')
+    # selected_features = with_f(df,main_predictors)
 
-    print('Partition 2 - With feature selection (choice)')
-    #choosing 1
-    with_f_choice(df,selected_features,1)
+    # print('Partition 2 - With feature selection (choice)')
+    # #choosing 1
+    # with_f_choice(df,selected_features,1)
     
-    print('Partition 3 - Without feature selection')
-    without_f(df,main_predictors+angle_off) 
-    print('Partition 3 - With feature selection')
-    selected_features = with_f(df,main_predictors+angle_off)
-    #choosing 2
-    print('Partition 3 - With feature selection (choice)')
-    with_f_choice(df,selected_features,2)
+    # print('Partition 3 - Without feature selection')
+    # without_f(df,main_predictors+angle_off) 
+    # print('Partition 3 - With feature selection')
+    # selected_features = with_f(df,main_predictors+angle_off)
+    # #choosing 2
+    # print('Partition 3 - With feature selection (choice)')
+    # with_f_choice(df,selected_features,2)
 
-    print('Partition 4 - Without feature selection')
-    without_f(df,norm_cenrot) 
-    print('Partition 4 - With feature selection')
-    selected_features = with_f(df,norm_cenrot)
-    #choosing 66
-    print('Partition 4 - With feature selection (choice)')
-    with_f_choice(df,selected_features,66)
+    # print('Partition 4 - Without feature selection')
+    # without_f(df,norm_cenrot) 
+    # print('Partition 4 - With feature selection')
+    # selected_features = with_f(df,norm_cenrot)
+    # #choosing 66
+    # print('Partition 4 - With feature selection (choice)')
+    # with_f_choice(df,selected_features,66)
 
-    print('Partition 5 - Without feature selection')
-    without_f(df,norm_cenrot_sym_diff) 
-    print('Partition 5 - With feature selection')
-    selected_features = with_f(df,norm_cenrot_sym_diff)
+    # print('Partition 5 - Without feature selection')
+    # without_f(df,norm_cenrot_sym_diff) 
+    # print('Partition 5 - With feature selection')
+    # selected_features = with_f(df,norm_cenrot_sym_diff)
+
+    print('Testing out box + eucdistances')
+    df = get_data('soph/merged_landmarks_dist.csv')
+    predictors_list = ['boxratio','dist_7_41','dist_21_22', 'dist_22_25', 'dist_33_65']
+    with_f(df,predictors_list)
 
 if __name__ == "__main__":
     main()
