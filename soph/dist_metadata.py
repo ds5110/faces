@@ -2,7 +2,7 @@
 '''
 This file is intended to calculate additional meta-data for computing the euclidean distances between the coordinate points.
 We use the normalized to the bounding box data as the coord input, then compute the distance between each point and every other point.
-The output is an updated df, but the  "main" function below puts it into a CSV>.
+The output is an updated df, but the  "main" function below puts it into a CSV.
 '''
 
 #project
