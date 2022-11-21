@@ -4,34 +4,33 @@
 from read_data import get_data, get_categories
 from helpers import get_Xy, plot_cm, class_report
 from imbalanced_resampling import upsample, downsample
-from logreg import logreg, feature_selection
+from logreg import logreg, rec_feature_selection
 
 def test_partition_a(df,predictors_list):
     print('Without feature selection')
     X,y = get_Xy(df,predictors_list)
-    y_pred, ytest, fitted = logreg(X,y)
+    _, ytest, _, y_pred = logreg(X,y)
     plot_cm(ytest,y_pred,'logreg')
     class_report(ytest,y_pred,'logreg')
     
     print('Feature selection')
     X,y = get_Xy(df,predictors_list)
-    bool_features = feature_selection(X,y)
-    selected_features = [i for (i, v) in zip(predictors_list,list(bool_features)) if v]
-
+    selected_features = rec_feature_selection(X,y,predictors_list)
+    
     return selected_features
     
 def test_partition_b(df,selected_features):
     print('With feature selection')
     predictors_list = selected_features
     X,y = get_Xy(df,predictors_list)
-    y_pred, ytest, fitted = logreg(X,y)
+    _, ytest, _, y_pred = logreg(X,y)
     plot_cm(ytest,y_pred,'logreg')
     class_report(ytest,y_pred,'logreg')
 
     print('With feature selection and downsampled')
     upsample_df = downsample(df)
     X,y = get_Xy(upsample_df,predictors_list)
-    y_pred, ytest, fitted = logreg(X,y)
+    _, ytest, _, y_pred = logreg(X,y)
     plot_cm(ytest,y_pred,'logreg')
     class_report(ytest,y_pred,'logreg')
 

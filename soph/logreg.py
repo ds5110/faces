@@ -1,11 +1,15 @@
 #Sophia Cofone 11/19 
-#File is intended for implementing logistic regression
+'''
+File is intended for implementing logistic regression
+Includes both forward and backward (recursive) feature selection
+'''
 
+#project
 from helpers import tt_split
-
+#basic
 import matplotlib.pyplot as plt
 import numpy as np
-
+#sklearn
 from sklearn.linear_model import LogisticRegression
 from sklearn.feature_selection import RFECV
 from sklearn.feature_selection import SequentialFeatureSelector
@@ -13,6 +17,9 @@ from sklearn.model_selection import StratifiedKFold
 
 
 def logreg(X,y):
+    '''
+    Simple logreg function 
+    '''
     y_flat = np.ravel(y)
     Xtrain, Xtest, ytrain, ytest = tt_split(X,y_flat)
     logreg = LogisticRegression(max_iter=1000)
@@ -22,7 +29,12 @@ def logreg(X,y):
 
     return Xtest, ytest, fitted, y_pred
 
-def rec_feature_selection(X,y):
+def rec_feature_selection(X,y,predictors_list):
+    '''
+    Recursive/backward feature selection with CV to see what the optimal number is.
+    Produces what it thinks optimal is (max score) and plot so we can go in and choose a different number of features if needed.
+    Returns a boolean list that then can be compared to 
+    '''
     y_flat = np.ravel(y)
     min_features_to_select = 1  # Minimum number of features to consider
     rfecv = RFECV(
@@ -36,7 +48,6 @@ def rec_feature_selection(X,y):
 
     print("Optimal number of features : %d" % rfecv.n_features_)
     print(f"features selected: {rfecv.ranking_}")
-    print(rfecv.support_)
 
     # Plot number of features VS. cross-validation scores
     plt.figure()
@@ -47,8 +58,10 @@ def rec_feature_selection(X,y):
         rfecv.grid_scores_,
     )
     plt.show()
+    
+    selected_features = [i for (i, v) in zip(predictors_list,list(rfecv.support_)) if v]
 
-    return rfecv.support_
+    return selected_features
 
 def fwd_feature_selection(X,y,cols,n_features):
     y = np.ravel(y)
