@@ -1,8 +1,8 @@
 # DS5110 faces: Notes on Logistic Regression Exploration - Sophia
-The purpose of this file is to contain all the notes and testing realted to logreg model exploration (take 1).
+The purpose of this file is to contain all the notes and testing related to logreg model exploration (take 1).
 
 ## EDA
-I plotted the distrubition of the "potential predictors" using histograms for both babys and adults. I was looking to see if any of the features seemed seperable (thinking that would work well for logreg). I noted that the "boxratio" looked alright but the other ones did not look very seperable. 
+I plotted the distribution of the "potential predictors" using histograms for both babys and adults. I was looking to see if any of the features seemed separable (thinking that would work well for logreg). I noted that the "boxratio" looked alright but the other ones did not look very separable.
 
 <img src="figs/images/soph_logreg/dist_p.png" width=600>
 
@@ -22,10 +22,10 @@ For this model exploration I used several "partitions" of the data. Information 
 * Partition 4: The "norm_cenrot_sym_diff" columns
   * Aka the expected symmetric difference of yaw-corrected coordinates, normalized per min box
 
-## Preprossing
-As outlined in the section above, there are several pre-processing steps done to create the "potential predictors" columns and transformed coordinates **(link to different readme going over those preprossing steps in more detail?)**.
+## Preprocessing
+As outlined in the section above, there are several pre-processing steps done to create the "potential predictors" columns and transformed coordinates **(link to different readme going over those preprocessing steps in more detail?)**.
 
-We also noticed that the dataset was somewhat unbalanced with more adult data points than baby data points. Generally classificaion models preform better with balanced data, so we wanted to provide some options such as upsampling and downsampling. We also looked at specific metrics such as recall score, and plotted the confusion matrix before and after resampling to see if resampling allowed for less false negatives and false positives.
+We also noticed that the dataset was somewhat unbalanced with more adult data points than baby data points. Generally classification models preform better with balanced data, so we wanted to provide some options such as upsampling and downsampling. We also looked at specific metrics such as recall score, and plotted the confusion matrix before and after resampling to see if resampling allowed for less false negatives and false positives.
 
 <img src="figs/images/soph_logreg/unbal.png" width=600>
 
@@ -189,4 +189,4 @@ Confusion matrix:
   * Note that this file has all 5 partitions and multiple combinations (feature selection, no feature selection, sampling, no sampling) so a lot gets output to the console and graphs generated. However it should run quickly and there are print statements that tell you what classificaition report you are looking at, etc.
 * To reproduce the data used in these notes, run `?jesse file?`
 * To reproduce the eda used in these notes, run `eda_logreg.py`
-* To rerpoduce the testing for the sampling used in these notes run `imbalanced_resampling.py`
+* To reproduce the testing for the sampling used in these notes run `imbalanced_resampling.py`
