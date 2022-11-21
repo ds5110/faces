@@ -111,7 +111,7 @@ CV to tune optimal features:
 
 <img src="figs/images/soph_logreg/p3_f_cv.png" width=600>
 
-**Partition 4: The "norm_cenrot_sym_diff" column**
+**Partition 4: The "norm_cenrot" column**
 This partition was pretty strong even before feature selection (is overfitting a possibility? It is a lot of features).
 
 Without feature selection:
@@ -139,7 +139,7 @@ Confusion matrix:
 <img src="figs/images/soph_logreg/p4_f_cmat.png" width=600>
 
 With feature selection & downsampling:
-* Optimal features is 2 (unchanged)
+* Optimal features is 66
 * Accuracy score: 0.94
 * Recall score adult: 0.92
 * Recall score baby: 0.96
@@ -175,7 +175,7 @@ Confusion matrix:
 <img src="figs/images/soph_logreg/p4_f_cmat.png" width=600>
 
 With feature selection & downsampling:
-* Optimal features is 2 (unchanged)
+* Optimal features is 13 (unchanged)
 * Accuracy score: 0.94
 * Recall score adult: 0.92
 * Recall score baby: 0.96
