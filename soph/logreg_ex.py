@@ -53,7 +53,7 @@ def with_f_choice(df,selected_features,choice):
 
 def main():
     df = get_data()
-    _, angle_off, main_predictors,norm_cenrot_sym_diff, norm_cenrot,_,_ = get_categories(df)
+    _, angle_off, main_predictors,norm_cenrot_sym_diff, norm_cenrot,_ = get_categories(df)
 
     print('Partition 1 - Without feature selection')
     without_f(df,main_predictors) 
