@@ -41,18 +41,11 @@ def histo_angle_off(df_predictors):
     sns.histplot(ax=axes[1, 0], data=df_predictors, x='roll_abs', hue='baby')
     plt.show()
 
-# def both(df):
-    
-
-
-
-
 def main():
     df = get_data()
-    # explore_shape(df)
-    # histo_main_predictors(df)
-    # histo_angle_off(df)
-    # both(df)
+    explore_shape(df)
+    histo_main_predictors(df)
+    histo_angle_off(df)
 
 if __name__ == "__main__":
     main()
