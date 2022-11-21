@@ -53,7 +53,7 @@ Fourth (distance from mouth to nose)
 * Recall score adult: .92 (downsampling)
 * Recall score baby:  .95 (downsampling)
 
-<img src="figs/images/soph_logreg/algo_baby.png" width=600>
+<img src="figs/soph_logreg/algo_baby.png" width=600>
 
 ## Logistic Regression: Bringing it together
 In the first iteration of this exploration, we found that `boxratio` was a good predictor, but other single-features didn't add much to the accuracy of the model. In the second iteration, we found other distances that could be useful in classifying baby vs adult faces. Adding these features together (specifically `boxratio` with euclidean distance `'dist_7_41','dist_21_22', 'dist_22_25', 'dist_33_65'`) yeilded a model with:
@@ -63,10 +63,10 @@ In the first iteration of this exploration, we found that `boxratio` was a good 
 
 Interestingly, the feature selection considered all of them important because each additional distance added accuracy to the model. 
 
-<img src="figs/images/soph_logreg/boxplus_f_cv.png" width=600>
+<img src="figs/soph_logreg/boxplus_f_cv.png" width=600>
 
 I think this is a good model because the accuracy rate and recall scores are quite good and it doesn't require a ton of features (like the 13+ feature models from take 1).
 
-<img src="figs/images/soph_logreg/boxplus_f_cmat.png" width=600>
+<img src="figs/soph_logreg/boxplus_f_cmat.png" width=600>
 
-<img src="figs/images/soph_logreg/boxplus_fd_cmat.png" width=600>
+<img src="figs/soph_logreg/boxplus_fd_cmat.png" width=600>

@@ -4,9 +4,9 @@ The purpose of this file is to contain all the notes and testing related to logr
 ## EDA
 I plotted the distribution of the "potential predictors" using histograms for both babys and adults. I was looking to see if any of the features seemed separable (thinking that would work well for logreg). I noted that the "boxratio" looked alright but the other ones did not look very separable.
 
-<img src="figs/images/soph_logreg/dist_p.png" width=600>
+<img src="figs/soph_logreg/dist_p.png" width=600>
 
-<img src="figs/images/soph_logreg/dist_a.png" width=600>
+<img src="figs/soph_logreg/dist_a.png" width=600>
 
 ## Data used
 Infant and adult raw coordinate data can be found from this repo: [Infant-Facial-Landmark-Detection-and-Tracking](https://github.com/ostadabbas/Infant-Facial-Landmark-Detection-and-Tracking).
@@ -27,7 +27,7 @@ As outlined in the section above, there are several pre-processing steps done to
 
 We also noticed that the dataset was somewhat unbalanced with more adult data points than baby data points. Generally classification models preform better with balanced data, so we wanted to provide some options such as upsampling and downsampling. We also looked at specific metrics such as recall score, and plotted the confusion matrix before and after resampling to see if resampling allowed for less false negatives and false positives.
 
-<img src="figs/images/soph_logreg/unbal.png" width=600>
+<img src="figs/soph_logreg/unbal.png" width=600>
 
 To learn more about the resampling methods used, see `imbalanced_resampling` for functions and testing. 
 
@@ -42,7 +42,7 @@ Without feature selection:
 
 Confusion matrix:
 
-<img src="figs/images/soph_logreg/p1_nf_cmat.png" width=600>
+<img src="figs/soph_logreg/p1_nf_cmat.png" width=600>
 
 With feature selection:
 * Optimal features is 2
@@ -52,11 +52,11 @@ With feature selection:
 
 CV to tune optimal features:
 
-<img src="figs/images/soph_logreg/p1_f_cv.png" width=600>
+<img src="figs/soph_logreg/p1_f_cv.png" width=600>
 
 Confusion matrix:
 
-<img src="figs/images/soph_logreg/p1_f_cmat.png" width=600>
+<img src="figs/soph_logreg/p1_f_cmat.png" width=600>
 
 With feature selection & downsampling:
 * Optimal features is 2 (unchanged)
@@ -66,7 +66,7 @@ With feature selection & downsampling:
 
 Confusion matrix:
 
-<img src="figs/images/soph_logreg/p1_fd_cmat.png" width=600>
+<img src="figs/soph_logreg/p1_fd_cmat.png" width=600>
 
 **Partition 2: The "potential predictors"**
 For this partition, I noted that there wasn't a huge increase from 1-2 features from Partition 1, so I decided to just use  `boxratio` to see what would happen. It produced similar results to above.
@@ -77,7 +77,7 @@ For this partition, I noted that there wasn't a huge increase from 1-2 features 
 
 Confusion matrix:
 
-<img src="figs/images/soph_logreg/p2_f_cmat.png" width=600>
+<img src="figs/soph_logreg/p2_f_cmat.png" width=600>
 
 With downsampling:
 * Accuracy score: 0.88
@@ -86,7 +86,7 @@ With downsampling:
 
 Confusion matrix:
 
-<img src="figs/images/soph_logreg/p2_fd_cmat.png" width=600>
+<img src="figs/soph_logreg/p2_fd_cmat.png" width=600>
 
 **Partition 3: The "potential predictors" + "angular offsets"**
 For this partition, I wanted to see if the angular offsets would bring anything helpful to the table. I found that after feature selection the selected features were still `['boxratio', 'interoc']`, so I didn't include the rest of the results (as they are the same as partition 1 above).
@@ -98,7 +98,7 @@ Without feature selection:
 
 Confusion matrix:
 
-<img src="figs/images/soph_logreg/p3_nf_cmat.png" width=600>
+<img src="figs/soph_logreg/p3_nf_cmat.png" width=600>
 
 With feature selection:
 * Optimal features is 7
@@ -109,7 +109,7 @@ With feature selection:
 
 CV to tune optimal features:
 
-<img src="figs/images/soph_logreg/p3_f_cv.png" width=600>
+<img src="figs/soph_logreg/p3_f_cv.png" width=600>
 
 **Partition 4: The "norm_cenrot" column**
 This partition was pretty strong even before feature selection (is overfitting a possibility? It is a lot of features).
@@ -121,7 +121,7 @@ Without feature selection:
 
 Confusion matrix:
 
-<img src="figs/images/soph_logreg/p4_nf_cmat.png" width=600>
+<img src="figs/soph_logreg/p4_nf_cmat.png" width=600>
 
 With feature selection:
 * Optimal features is 81
@@ -132,11 +132,11 @@ With feature selection:
 
 CV to tune optimal features:
 
-<img src="figs/images/soph_logreg/p4_f_cv.png" width=600>
+<img src="figs/soph_logreg/p4_f_cv.png" width=600>
 
 Confusion matrix:
 
-<img src="figs/images/soph_logreg/p4_f_cmat.png" width=600>
+<img src="figs/soph_logreg/p4_f_cmat.png" width=600>
 
 With feature selection & downsampling:
 * Optimal features is 66
@@ -146,7 +146,7 @@ With feature selection & downsampling:
 
 Confusion matrix:
 
-<img src="figs/images/soph_logreg/p4_fd_cmat.png" width=600>
+<img src="figs/soph_logreg/p4_fd_cmat.png" width=600>
 
 **Partition 5: The "norm_cenrot_sym_diff" column**
 This partition was also pretty strong even before feature selection (recall score on baby could be better) (is overfitting a possibility? It is a lot of features).
@@ -158,7 +158,7 @@ Without feature selection:
 
 Confusion matrix:
 
-<img src="figs/images/soph_logreg/p5_nf_cmat.png" width=600>
+<img src="figs/soph_logreg/p5_nf_cmat.png" width=600>
 
 With feature selection:
 * Optimal features is 13
@@ -168,11 +168,11 @@ With feature selection:
 
 CV to tune optimal features:
 
-<img src="figs/images/soph_logreg/p5_f_cv.png" width=600>
+<img src="figs/soph_logreg/p5_f_cv.png" width=600>
 
 Confusion matrix:
 
-<img src="figs/images/soph_logreg/p4_f_cmat.png" width=600>
+<img src="figs/soph_logreg/p4_f_cmat.png" width=600>
 
 With feature selection & downsampling:
 * Optimal features is 13 (unchanged)
@@ -182,7 +182,7 @@ With feature selection & downsampling:
 
 Confusion matrix:
 
-<img src="figs/images/soph_logreg/p4_fd_cmat.png" width=600>
+<img src="figs/soph_logreg/p4_fd_cmat.png" width=600>
 
 ## Reproduce Results
 * To reproduce the results from these notes, run the `logreg_ex.py` file (testing).

@@ -6,9 +6,9 @@ We had the idea of trying to identify more "distances" between facial features t
 
 The EDA for this idea involved selecting one image and plotting the matrix of the euclidean distances. After generating the new data for all the points, I also attempted a correlation matrix of all the distances. I wanted to see if removing highly correlated points would make feature selection go faster, but I couldn't figure out the right way to do this that would still preserve the accuracy of the model. I ended up trying a new feature selection method (forward feature selection rather than backwards) and just dealing with the fact that it takes a long time to run the more features you consider. 
 
-<img src="figs/images/soph_logreg/mat1.png" width=600>
+<img src="figs/soph_logreg/mat1.png" width=600>
 
-<img src="figs/images/soph_logreg/mat2.png" width=600>
+<img src="figs/soph_logreg/mat2.png" width=600>
 
 ## Data used
 Infant and adult raw coordinate data can be found from this repo: [Infant-Facial-Landmark-Detection-and-Tracking](https://github.com/ostadabbas/Infant-Facial-Landmark-Detection-and-Tracking).
@@ -47,7 +47,7 @@ Feature selected: ['dist_7_41', 'dist_21_22', 'dist_22_25', 'dist_33_65'] (new i
 * Recall score adult: 1.00 (downsampling)
 * Recall score baby: 0.97 (downsampling)
 
-<img src="figs/images/soph_logreg/algo_baby.png" width=600>
+<img src="figs/soph_logreg/algo_baby.png" width=600>
 
 We then wanted to see given only some distances, would the classifier be able to generate a good score? We heuristically chose these landmarks based on what we thought would be valuable. The distances chosen are as follows:
 Left(L) brow width(W)
@@ -79,7 +79,7 @@ Chin to Mouth
 
 Visual representation of what we picked:
 
-<img src="figs/images/soph_logreg/h_baby.png" width=600>
+<img src="figs/soph_logreg/h_baby.png" width=600>
 
 **One feature**
 Feature selected: ['dist_21_22'] (distance between inner brows)
@@ -109,7 +109,7 @@ Feature selected: ['dist_21_22', 'dist_17_26', 'dist_48_54', 'dist_27_62']
 * Recall score adult: .92 (downsampling)
 * Recall score baby:  .95 (downsampling)
 
-<img src="figs/images/soph_logreg/myh_baby.png" width=600>
+<img src="figs/soph_logreg/myh_baby.png" width=600>
 
 ## Reproduce Results
 * To reproduce the results from these notes, run the `logreg_dist_ex.py` file (testing).
