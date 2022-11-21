@@ -1,11 +1,12 @@
 #Sophia Cofone 11/18/22
-#File is intended to house functions used for up and downsampling
-
 '''
+File is intended to house functions used for up and downsampling.
+
 We need to address the fact that we have 689 points in our adult class (0) and  410 points in our baby class (1).
 This is not a wild imbalance, but ideally for classificiation tasks we would have balanced dataset.
 There are several ways to "deal" with unbalanced data such as up-sampling and undersampling.
 We will use logistic regression to see the differences in the sampling methods (for example).
+
 reference https://elitedatascience.com/imbalanced-classes
 '''
 #project
@@ -70,7 +71,7 @@ def main():
     #get data
     df = get_data()
     predictors_list = ['boxratio']
-    
+
     #testing
     print('Trying with no sampling changes (unbalanced)')
     X,y = get_Xy(df,predictors_list)

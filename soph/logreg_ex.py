@@ -1,5 +1,5 @@
 #Sophia Cofone 11/20 
-#File is intended for trying out logistic regression
+#File is intended for testing logistic regression
 
 from read_data import get_data, get_categories
 from helpers import get_Xy, plot_cm, class_report
@@ -16,7 +16,7 @@ def test_partition_a(df,predictors_list):
     print('Feature selection')
     X,y = get_Xy(df,predictors_list)
     selected_features = rec_feature_selection(X,y,predictors_list)
-    
+
     return selected_features
     
 def test_partition_b(df,selected_features):
