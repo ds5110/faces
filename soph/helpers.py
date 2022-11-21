@@ -1,13 +1,13 @@
 #Sophia Cofone 11/19 
 #File is intended to house some helper funtions that multiple models will use
 
+#basic
 import seaborn as sns
 import matplotlib.pyplot as plt
-
+#sklearn
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
-
 
 #Splits the data into X(data) and y(target)
 def get_Xy(df,predictors=None):
