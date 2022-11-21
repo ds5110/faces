@@ -8,6 +8,7 @@ import numpy as np
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.feature_selection import RFECV
+from sklearn.feature_selection import SequentialFeatureSelector
 from sklearn.model_selection import StratifiedKFold
 
 
@@ -21,7 +22,7 @@ def logreg(X,y):
 
     return Xtest, ytest, fitted, y_pred
 
-def feature_selection(X,y):
+def rec_feature_selection(X,y):
     y_flat = np.ravel(y)
     min_features_to_select = 1  # Minimum number of features to consider
     rfecv = RFECV(
@@ -48,3 +49,15 @@ def feature_selection(X,y):
     plt.show()
 
     return rfecv.support_
+
+def fwd_feature_selection(X,y,cols,n_features):
+    y = np.ravel(y)
+    estimator = LogisticRegression(max_iter=1000)
+    fwdfs = SequentialFeatureSelector(estimator=estimator, 
+    n_features_to_select=n_features, 
+    n_jobs = -1)
+
+    fwdfs.fit(X, y)
+
+    selected_features = [i for (i, v) in zip(cols,list(fwdfs.get_support())) if v]
+    return selected_features
