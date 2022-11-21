@@ -35,8 +35,8 @@ def get_dist_df(df_cr,f_num_list = range(68)):
         anot_data = df_cr.iloc[image_index]
         anot_coords = []
         for coord in f_num_list:
-            x = anot_data['norm_cenrot-x{}'.format(coord)]
-            y = anot_data['norm_cenrot-y{}'.format(coord)]
+            x = anot_data['norm-x{}'.format(coord)]
+            y = anot_data['norm-y{}'.format(coord)]
             anot_coords.append(np.array([x,y]))
 
         # get the pairwise euclidian distance between all points
@@ -55,7 +55,7 @@ def main():
     df_cr = df.loc[:,df.columns.str.startswith('norm-')]
     df_dist = get_dist_df(df_cr,f_num_list = range(68))
     df = pd.concat([df.copy(),df_dist],axis=1)
-    df.to_csv('merged_landmarks_dist')
+    df.to_csv('merged_landmarks_dist.csv')
 
 if __name__ == "__main__":
     main()
