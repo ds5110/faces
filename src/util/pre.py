@@ -369,10 +369,11 @@ def add_derived(cache):
     df['interoc_norm'] = np.sqrt(np.sum(np.power(iods / cenrot_extents, 2), axis=1))
     df['boxsize/interoc'] = df['boxsize'] / df['interoc']
 
-    # add angle of rotation (in radians)
+    # ----- Estimated Angles
+    # - estimated yaw (in radians)
     df['yaw'] = angles
 
-    # roll estimate
+    # - roll estimate
     # NOTE: this is based on the assumptions:
     #       * the head is a sphere from cheek to cheek
     #           (i.e. diameter is the max horizontal distance
@@ -386,10 +387,12 @@ def add_derived(cache):
     sins = np.clip((cenrots[:, nose_i, 0] - mid_x) / radius, -1, 1)
     df['roll'] = np.arcsin(sins)
 
+    # - absolute values of estimated angles
     for col in ['yaw', 'roll']:
         df[f'{col}_abs'] = np.abs(df[col])
 
-    # calculate distance between expected symmetric points (raw)
+    # ----- Differences of Expected Symmetric Landmark Pairs
+    # - raw
     for i, [p1, p2] in enumerate(h_syms):
         tmp_df = pd.DataFrame(
             data=np.squeeze(np.diff(raws[:, [p1, p2], :], axis=1)),
@@ -397,8 +400,25 @@ def add_derived(cache):
         )
         df = pd.concat([df, tmp_df], axis=1)
 
-    # add normalized landmarks
-    # this is the distance from nose as a proportion of landmarks' extents
+    # - normalized
+    for i, [p1, p2] in enumerate(h_syms):
+        tmp_df = pd.DataFrame(
+            data=np.squeeze(np.diff(raws[:, [p1, p2], :], axis=1)) / extents,
+            columns=[f'norm_sym_diff-{dim}{p1}' for dim in ['x', 'y']]
+        )
+        df = pd.concat([df, tmp_df], axis=1)
+
+    # - normalized and rotated
+    for i, [p1, p2] in enumerate(h_syms):
+        tmp_df = pd.DataFrame(
+            data=np.squeeze(np.diff(cenrots[:, [p1, p2], :], axis=1)) / cenrot_extents,
+            columns=[f'norm_cenrot_sym_diff-{dim}{p1}' for dim in ['x', 'y']]
+        )
+        df = pd.concat([df, tmp_df], axis=1)
+
+    # ----- Landmark coordinates
+    # - normalized
+    #   (this is the distance from nose as a proportion of landmarks' extents)
     for i in range(raws.shape[1]):
         tmp_df = pd.DataFrame(
             data=(raws[:, i, :] - faces) / extents,
@@ -406,7 +426,7 @@ def add_derived(cache):
         )
         df = pd.concat([df, tmp_df], axis=1)
 
-    # add centered/rotated landmarks
+    # - centered/rotated
     for i in range(cenrots.shape[1]):
         tmp_df = pd.DataFrame(
             data=cenrots[:, i, :],
@@ -414,19 +434,11 @@ def add_derived(cache):
         )
         df = pd.concat([df, tmp_df], axis=1)
 
-    # add normalized landmarks (centered, rotated and scaled per extent)
+    # - centered, rotated and scaled per extent
     for i in range(cenrots.shape[1]):
         tmp_df = pd.DataFrame(
             data=(cenrots[:, i, :] - cenrots[:, nose_i, :]) / cenrot_extents,
             columns=[f'norm_cenrot-{dim}{i}' for dim in ['x', 'y']]
-        )
-        df = pd.concat([df, tmp_df], axis=1)
-
-    # calculate normalized distance between expected symmetric points (rotated)
-    for i, [p1, p2] in enumerate(h_syms):
-        tmp_df = pd.DataFrame(
-            data=np.squeeze(np.diff(cenrots[:, [p1, p2], :], axis=1)) / cenrot_extents,
-            columns=[f'norm_cenrot_sym_diff-{dim}{p1}' for dim in ['x', 'y']]
         )
         df = pd.concat([df, tmp_df], axis=1)
 

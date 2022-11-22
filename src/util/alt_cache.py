@@ -12,8 +12,7 @@ import numpy as np
 # internal
 from util.local_cache import LocalCache
 from util.model import AnnoImg
-
-alt_x_cols, alt_y_cols = [[f'original_{i}_{axis}' for i in range(68)] for axis in ['x', 'y']]
+from util.column_names import alt_x_cols, alt_y_cols 
 
 
 class AltCache(LocalCache):
