@@ -14,7 +14,7 @@ from scipy.interpolate import UnivariateSpline
 import skimage
 
 # intra-project
-from util.model import AnnoImg, landmark68, nose_i
+from util.model import AnnoImg, landmark68, cheeks, h_syms, nose_i
 
 
 # some constants for coord math (mostly premature optimization)
@@ -38,45 +38,6 @@ class Sym:
         return self.pairs[:, 1]
 
 
-cheeks = np.array([[i, 16 - i] for i in range(8)])
-brows = np.array([[17 + i, 26 - i] for i in range(5)])
-h_syms = np.array([
-    [36, 45],  # outer canthus
-    [39, 42],  # inner canthus
-
-    # eyelids
-    [37, 44],
-    [38, 43],
-    [40, 47],
-    [41, 46],
-
-    # h_nose
-    [31, 35],
-    [32, 34],
-
-    # cheeks
-    *cheeks,
-
-    # brows
-    *brows,
-
-    # mouth
-    *[[48 + i, 54 - i] for i in range(3)],
-    *[[60 + i, 64 - i] for i in range(2)],
-    [67, 65],
-    *[[59 - i, 55 + i] for i in range(2)],
-])
-
-v_line = np.array([
-    *[28 + i for i in range(4)],
-    34,
-    52,
-    63,
-    67,
-    58,
-    9,
-])
-
 default_syms = [
     # NOTE: I haven't tested this a lot, but I don't expect
     #       it will be a great/reliable way to address tilt...
@@ -95,6 +56,7 @@ default_syms = [
         ],
         4.  # higher weight for canthi
     ),
+    # TODO: delete?
     # NOTE: This is probably not worth keeping, especially
     #       since its weight is so low...
     Sym(
@@ -427,6 +389,14 @@ def add_derived(cache):
     for col in ['yaw', 'roll']:
         df[f'{col}_abs'] = np.abs(df[col])
 
+    # calculate distance between expected symmetric points (raw)
+    for i, [p1, p2] in enumerate(h_syms):
+        tmp_df = pd.DataFrame(
+            data=np.squeeze(np.diff(raws[:, [p1, p2], :], axis=1)),
+            columns=[f'sym_diff-{dim}{p1}' for dim in ['x', 'y']]
+        )
+        df = pd.concat([df, tmp_df], axis=1)
+
     # add normalized landmarks
     # this is the distance from nose as a proportion of landmarks' extents
     for i in range(raws.shape[1]):
@@ -436,39 +406,11 @@ def add_derived(cache):
         )
         df = pd.concat([df, tmp_df], axis=1)
 
-    # calculate distance between expected symmetric points (raw)
-    for i, [p1, p2] in enumerate(h_syms):
-        tmp_df = pd.DataFrame(
-            data=np.squeeze(np.diff(raws[:, [p1, p2], :], axis=1)),
-            columns=[f'sym_diff-{dim}{p1}' for dim in ['x', 'y']]
-        )
-        df = pd.concat([df, tmp_df], axis=1)
-
-    # add centered/rotated landmarks
-    for i in range(cenrots.shape[1]):
-        tmp_df = pd.DataFrame(
-            data=cenrots[:, i, :],
-            columns=[f'cenrot-{dim}{i}' for dim in ['x', 'y']]
-        )
-        df = pd.concat([df, tmp_df], axis=1)
-
-    # calculate centers
-    all_dims = np.stack([widths, heights]).T
-    centers = all_dims / 2.
-
     # add normalized landmarks (centered, rotated and scaled per extent)
     for i in range(cenrots.shape[1]):
         tmp_df = pd.DataFrame(
             data=(cenrots[:, i, :] - cenrots[:, nose_i, :]) / cenrot_extents,
             columns=[f'norm_cenrot-{dim}{i}' for dim in ['x', 'y']]
-        )
-        df = pd.concat([df, tmp_df], axis=1)
-
-    # calculate distance between expected symmetric points (rotated)
-    for i, [p1, p2] in enumerate(h_syms):
-        tmp_df = pd.DataFrame(
-            data=np.squeeze(np.diff(cenrots[:, [p1, p2], :], axis=1)),
-            columns=[f'cenrot_sym_diff-{dim}{p1}' for dim in ['x', 'y']]
         )
         df = pd.concat([df, tmp_df], axis=1)
 

@@ -20,11 +20,10 @@ class AltCache(LocalCache):
     def __init__(
             self,
             base_dir='_data',
-            scratch_dir='scratch',
             base_url='https://github.com/ostadabbas/Infant-Facial-Landmark-Detection-and-Tracking/raw/master/data/300w',
             meta_filename='300w_valid.csv',
     ):
-        super().__init__(base_dir,scratch_dir,base_url,meta_filename)
+        super().__init__(base_dir,base_url,meta_filename)
 
     def get_image(self, row_id, desc=None):
         elems = self.meta['image_name'].iloc[row_id].split('/')

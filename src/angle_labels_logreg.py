@@ -14,37 +14,8 @@ from sklearn.model_selection import train_test_split
 
 # project
 from util import meta_cache
-from util.model import cat_cols
 
 df = meta_cache.get_meta('baby')
-
-# ------ setup a bunch of column groups
-sz_cols = ['width', 'height', 'cenrot-width', 'cenrot-height']
-meta_cols = ['image-set', 'filename', 'partition', 'subpartition']
-
-# coordinates
-cenrot = [col for col in df.columns if col.startswith('cenrot-')]
-norm = [col for col in df.columns if col.startswith('norm-')]
-norm_cenrot = [col for col in df.columns if col.startswith('norm_cenrot-')]
-
-# diff cols
-sym_diff = [col for col in df.columns if col.startswith('sym_diff-')]
-cenrot_sym_diff = [col for col in df.columns if col.startswith('cenrot_sym_diff-')]
-norm_cenrot_sym_diff = [col for col in df.columns if col.startswith('norm_cenrot_sym_diff-')]
-
-# higher-level cols
-summ_cols = ['yaw', 'roll']
-summ_cols_abs = ['yaw_abs', 'roll_abs']
-all_summ = [*summ_cols, *summ_cols_abs]
-
-# presumed useful
-subset_pred = [*summ_cols, *norm_cenrot_sym_diff, *norm_cenrot]
-
-# everything
-all_pred = df.drop(columns=[*cat_cols, *meta_cols]).columns.values
-
-# maybe less useful
-other_pred = sorted(list(set(all_pred) - set(subset_pred)))
 
 
 def eg_logreg(df, pred, target):

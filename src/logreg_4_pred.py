@@ -7,9 +7,9 @@ from numpy.random import random_sample
 from sklearn.linear_model import LogisticRegression
 from sklearn.dummy import DummyClassifier
 from sklearn.metrics import accuracy_score
+from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
-from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import PolynomialFeatures
 
 # project
@@ -53,7 +53,7 @@ def eg_logreg(df, pred, target):
     X = df[pred]
     y = df[target]
     print(
-        f'looking at "{target}" per {pred} '
+        f'looking at \'{target}\' per {pred} '
         f'(n: {X.shape[0]}; p: {X.shape[1]})'
     )
 
@@ -66,22 +66,35 @@ def eg_logreg(df, pred, target):
     # fit logreg
     pipe = Pipeline(
         steps=[
-            ('poly', PolynomialFeatures(degree=3)),
+            # ('poly', PolynomialFeatures(degree=3)),
             ('logreg', LogisticRegression()),
         ],
     )
     pipe.fit(X_train, y_train)
 
     y_hat = pipe.predict(X_test)
+
+    # - classification report
+    cls_rpt = classification_report(
+        y_test,
+        y_hat,
+        target_names=['baby', 'adult'],
+    )
+    width = len(cls_rpt.split('\n')[0])
+    line = '='*width
+    print('\n' + '\n'.join([line, 'Classification Report', line]))
+    print(cls_rpt)
+
+    # accuracy score
     score = accuracy_score(y_test, y_hat)
     print(
         f'\tlogreg score: '
         f'{score:.3f}')
     
-    # print('coefficients:')
-    # logreg = pipe.named_steps['logreg']
-    # for (p, c) in zip(logreg.feature_names_in_, logreg.coef_[0]):
-    #     print(f'\t\t{p}: {c}')
+    print('coefficients:')
+    logreg = pipe.named_steps['logreg']
+    for (p, c) in zip(logreg.feature_names_in_, logreg.coef_[0]):
+        print(f'\t\t{p}: {c}')
 
     # fit uniform dummy, to compare
     # NOTE: we don't really need to use train/test
