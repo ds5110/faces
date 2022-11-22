@@ -25,11 +25,7 @@ For this model exploration I used several "partitions" of the data. Information 
 ## Preprocessing
 As outlined in the section above, there are several pre-processing steps done to create the "potential predictors" columns and transformed coordinates **(link to different readme going over those preprocessing steps in more detail?)**.
 
-We also noticed that the dataset was somewhat unbalanced with more adult data points than baby data points. Generally classification models preform better with balanced data, so we wanted to provide some options such as upsampling and downsampling. We also looked at specific metrics such as recall score, and plotted the confusion matrix before and after resampling to see if resampling allowed for less false negatives and false positives.
-
-<img src="figs/soph_logreg/unbal.png" width=600>
-
-To learn more about the resampling methods used, see `imbalanced_resampling` for functions and testing. 
+We also noticed that the dataset was somewhat unbalanced with more adult data points than baby data points. See `sample.md` for details on our resampling process.
 
 ## Results
 **Partition 1: The "potential predictors"**
