@@ -5,7 +5,7 @@ File is intended to test resampling functions.
 #project
 from util.helpers import get_data
 from util.helpers  import get_Xy, class_report
-from util.imbalanced_resampling import upsample, downsample
+from util.resample import upsample, downsample
 
 def main():
     from logreg_ex import logreg
