@@ -214,7 +214,7 @@ def rotate(anno):
         in_dims, margin, face, angle, coords = get_yaw_data(anno)
 
         # NOTE: We add a buffer around the image
-        #       to avoid cropping content during centering
+        #       to avoid cropping content during rotating/centering
         buff = Image.new(img.mode, (img.width * 3, img.height * 3))
         buff.paste(img, (img.width, img.height))
         buff_face = face + np.array([[img.width, img.height]])
@@ -232,7 +232,7 @@ def rotate(anno):
         )
 
         # crop back to original size
-        crop = rot.crop(
+        cropped = rot.crop(
             (
                 img.width - margin[0],
                 img.height - margin[1],
@@ -241,7 +241,7 @@ def rotate(anno):
             )
         )
 
-        return crop
+        return cropped
 
     _, _, _, _, coords = get_yaw_data(anno)
 
@@ -258,6 +258,21 @@ def rotate(anno):
 
 
 def crop(anno, use_splines=False):
+    """
+    Crop an image to a convex hull around landmarks.
+
+    Parameters
+    ----------
+    anno : AnnoImg
+        The image to crop.
+    use_splines : bool
+        True to interpolate lanmarks with splines. The default is False.
+
+    Returns
+    -------
+    cropped : AnnoImge
+        The cropped image.
+    """
     def _img():
         image = np.array(anno.get_image())  # convert to skimage
         coords = anno.get_coords()
