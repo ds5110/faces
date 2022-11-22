@@ -3,6 +3,8 @@
 """
 
 import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
 from numpy.random import random_sample
 from sklearn.linear_model import LogisticRegression
 from sklearn.dummy import DummyClassifier
@@ -11,13 +13,14 @@ from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import PolynomialFeatures
+from sklearn.metrics import confusion_matrix
 
 # project
 from util import meta_cache
 from util.plot import scatter
 from util.column_names import norm_cenrot_sym_diff, norm_cenrot_cols
 
-savefig = True
+savefig = False
 
 df = meta_cache.get_meta()
 df['roll_x_boxratio'] = df['roll_abs'] * df['boxratio']
@@ -34,7 +37,6 @@ pred_abs = [*zongyu_pred, *abs_angle_pred]
 more_pred = [*norm_cenrot_sym_diff, *norm_cenrot_cols]
 
 target = 'baby'
-
 
 def eg_logreg(df, pred, target, poly=False):
     X = df[pred]
@@ -78,25 +80,28 @@ def eg_logreg(df, pred, target, poly=False):
     print(
         f'\tlogreg score: '
         f'{score:.3f}')
-    
+
     # TODO: figure out how to print coefficients when using poly features...
     if not poly:
-        print('coefficients:')
+        print('\tcoefficients:')
         logreg = pipe.named_steps['logreg']
-        for (p, c) in zip(logreg.feature_names_in_, logreg.coef_[0]):
-            print(f'\t\t{p}: {c}')
+        # NOTE: it is not relevant to sort these here, but I couldn't help it /shrug
+        coefs = np.array([[p, c] for (p, c) in zip(logreg.feature_names_in_, logreg.coef_[0])])
+        ii = np.flip(np.argsort(coefs[:,1], axis=0))
+        for (pred, coef) in [(coefs[i,0], coefs[i,1]) for i in ii]:
+            print(f'\t\t{pred}: {coef}')
 
     # fit uniform dummy, to compare
     # NOTE: we don't really need to use train/test
     #       unless we use 'stratified' strategy
-    dummy = DummyClassifier(strategy='uniform')
+    dummy = DummyClassifier(strategy='stratified')
     dummy.fit(X_train, y_train)
     dummy_y_hat = dummy.predict(X_test)
     dummy_score = accuracy_score(y_test, dummy_y_hat)
     print(f'\tdummy score: {dummy_score:.3f}')
     
     df[f'{target}_hat'] = pipe.predict(X)
-    return df, pipe, score
+    return df, pipe, score, y_test, y_hat
 
 
 # test logistic regression with random predictor
@@ -110,7 +115,7 @@ for pp in [
     # ['roll_x_boxratio', *pred_abs],
     # ['roll_x', *pred_abs]
 ]:
-    tmp, model, score = eg_logreg(df, pp, 'baby')
+    tmp, model, score, y_test, y_hat = eg_logreg(df, pp, 'baby')
     scatter(
         f'Logistic Regression - baby vs {", ".join(pp)} \n '
             f'score: {score:.3f}',
@@ -122,3 +127,26 @@ for pp in [
         alt_name='Adult',
         savefig=savefig
     )
+
+    target_names = ['Baby', 'Adult']
+    mat = confusion_matrix(y_test, y_hat)
+    sns.heatmap(
+        mat.T,
+        square=True,
+        annot=True,
+        fmt='d',
+        cbar=False,
+        xticklabels=target_names,
+        yticklabels=target_names,
+    )
+    plt.xlabel('true label')
+    plt.ylabel('predicted label')
+    plt.title('Confusion Matrix for Validation Results')
+    plt.tight_layout()
+    if savefig:
+        plt.savefig(
+            'figs/logreg_4_pred_conf_mat.png',
+            dpi=300,
+            bbox_inches='tight',
+        )
+    plt.show()
