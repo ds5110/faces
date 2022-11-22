@@ -1,10 +1,6 @@
 #Sophia Cofone 11/18/22
 '''
 File is intended to house functions used for up and downsampling.
-
-We need to address the fact that we have 689 points in our adult class (0) and  410 points in our baby class (1).
-This is not a wild imbalance, but ideally for classificiation tasks we would have balanced dataset.
-There are several ways to "deal" with unbalanced data such as up-sampling and undersampling.
 We will use logistic regression to see the differences in the sampling methods (for example).
 
 reference https://elitedatascience.com/imbalanced-classes
@@ -22,7 +18,6 @@ def split_df(df):
     return df_baby, df_adult
 
 def upsample(df):
-    '''Up-sampling is the process of randomly duplicating observations from the minority class in order to reinforce its signal.'''
     df_baby, df_adult = split_df(df)
     
     #Resample with replacement
