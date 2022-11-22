@@ -15,7 +15,7 @@ from sklearn.preprocessing import PolynomialFeatures
 # project
 from util import meta_cache
 from util.plot import scatter
-from util.column_names import norm_cenrot_sym_diff, norm_cenrot
+from util.column_names import norm_cenrot_sym_diff, norm_cenrot_cols
 
 savefig = True
 
@@ -31,7 +31,7 @@ pred = [*zongyu_pred, *angle_pred]
 pred_abs = [*zongyu_pred, *abs_angle_pred]
 
 # presumed useful
-more_pred = [*norm_cenrot_sym_diff, *norm_cenrot]
+more_pred = [*norm_cenrot_sym_diff, *norm_cenrot_cols]
 
 target = 'baby'
 

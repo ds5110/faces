@@ -29,8 +29,6 @@ class AltCache(LocalCache):
         path = '/'.join(elems[:-1])
         file = elems[-1]
 
-        # scale, center_w, center_h
-        # 0.745, 145.5, 182.5
         coords = np.stack(
             [self.meta[cols].loc[row_id, :].values for cols in [alt_x_cols, alt_y_cols]],
             1
