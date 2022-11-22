@@ -8,12 +8,20 @@ Created on Fri Oct 28 16:58:49 2022
 
 import numpy as np
 
+'''
+Defining some groups of features (see the derived.md for more information on the features)
+Output should be a list of the columns so the helper function (get_Xy) can appropriatly split the data
+'''
 cat_cols = ['turned', 'occluded', 'tilted', 'expressive']
 x_cols, y_cols = [[f'gt-{axis}{i}' for i in range(68)] for axis in ['x','y']]
 landmark_cols = [x_cols, y_cols]
 cenrot_cols = [[f'cenrot-{axis}{i}' for i in range(68)] for axis in ['x','y']]
 norm_cols = [[f'norm_cenrot-{axis}{i}' for i in range(68)] for axis in ['x','y']]
 nose_i = 33  # the center of the horizontal line under nose
+#Potential predictors for distinguishing infants
+main_predictors = ['boxratio', 'interoc','interoc_norm','boxsize','boxsize/interoc']
+#Angular offsets
+angle_off = ['yaw', 'yaw_abs','roll','roll_abs']
 
 class Feature:
     def __init__(self, desc, idx):
