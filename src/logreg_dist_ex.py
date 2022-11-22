@@ -3,7 +3,7 @@
 #this is basically an extention of the logreg_ex testing
 
 #project
-from util.helpers import get_data, get_Xy, plot_cm, class_report
+from util.helpers import get_data, get_Xy, plot_cm, class_report, get_categories
 from util.resample import upsample, downsample
 from util.feature_selection import fwd_feature_selection
 from logreg_ex import logreg
@@ -49,8 +49,8 @@ def test_logreg_dist(df,predictors_list,desired_feaatures):
 
 
 def main():
-    df = get_data('soph/merged_landmarks_dist.csv')
-    _,_,_,_,_,all_d_coords = get_categories(df)
+    df = get_data('data/merged_landmarks_dist.csv')
+    _,all_d_coords = get_categories(df)
 
     print('All coordinates')
     test_logreg_dist(df,all_d_coords,4)

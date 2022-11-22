@@ -3,10 +3,10 @@
 This file is intended for testing logistic regression model.
 '''
 #project
-from read_data import get_data, get_categories
-from helpers import get_Xy, plot_cm, class_report, tt_split
-from imbalanced_resampling import upsample, downsample
-from feature_selection import rec_feature_selection
+from util.helpers import get_Xy, plot_cm, class_report, tt_split, get_data, get_categories
+from util.resample import upsample, downsample
+from util.feature_selection import rec_feature_selection
+from util.model import main
 #basic
 import numpy as np
 #sklearn
@@ -70,7 +70,7 @@ def with_f_choice(df,selected_features,choice):
 
 def main():
     df = get_data()
-    _, angle_off, main_predictors,norm_cenrot_sym_diff, norm_cols,_ = get_categories(df)
+    norm_cenrot_sym_diff,_ = get_categories(df)
 
     print('Partition 1 - Without feature selection')
     without_f(df,main_predictors) 

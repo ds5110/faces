@@ -18,7 +18,6 @@ def get_data(data='data/merged_landmarks.csv'):
         'subpartition': str,})
     return df
 
-
 #Splits the data into X(data) and y(target)
 def get_Xy(df,predictors=None):
     if predictors is not None:
@@ -51,3 +50,17 @@ def class_report(y_test,y_model,title):
     f"Classification report for classifier {title}:\n"
     f"{classification_report(y_test, y_model)}\n"
 )
+
+#defining some additional categories
+def get_categories(df):
+
+    #Difference of expected symmetric landmarks, yaw-corrected coordinates, normalized per min box
+    df1 = df.loc[:, df.columns.str.startswith('norm_cenrot_sym_diff')]
+    norm_cenrot_sym_diff = list(df1.columns)
+
+    #Euc distance of all coords (yaw and box corrected)
+    #all of them
+    df1 = df.loc[:, df.columns.str.startswith('dist_')]
+    all_d_coords = list(df1.columns)
+
+    return norm_cenrot_sym_diff,all_d_coords
