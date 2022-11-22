@@ -4,10 +4,19 @@
 #basic
 import seaborn as sns
 import matplotlib.pyplot as plt
+import pandas as pd
 #sklearn
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
+
+def get_data(data='data/merged_landmarks.csv'):    
+    df = pd.read_csv(data,dtype={
+        'image-set': str,
+        'filename': str,
+        'partition': str,
+        'subpartition': str,})
+    return df
 
 #Splits the data into X(data) and y(target)
 def get_Xy(df,predictors=None):
