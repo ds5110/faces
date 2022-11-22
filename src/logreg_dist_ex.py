@@ -44,9 +44,6 @@ def test_logreg_dist(df,predictors_list,desired_feaatures):
         print('')
         class_report(ytest,y_pred,'logreg')
 
-    # def test_distbox():
-
-
 
 def main():
     df = get_data('data/merged_landmarks_dist.csv')

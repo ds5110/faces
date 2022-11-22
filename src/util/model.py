@@ -13,6 +13,10 @@ x_cols, y_cols = [[f'gt-{axis}{i}' for i in range(68)] for axis in ['x','y']]
 landmark_cols = [x_cols, y_cols]
 cenrot_cols = [[f'cenrot-{axis}{i}' for i in range(68)] for axis in ['x','y']]
 norm_cols = [[f'norm_cenrot-{axis}{i}' for i in range(68)] for axis in ['x','y']]
+#Potential predictors for distinguishing infants
+main_predictors = ['boxratio', 'interoc','interoc_norm','boxsize','boxsize/interoc']
+#Angular offsets
+angle_off = ['yaw', 'yaw_abs','roll','roll_abs']
 
 class Feature:
     def __init__(self, desc, idx):
