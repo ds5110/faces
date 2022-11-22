@@ -406,6 +406,14 @@ def add_derived(cache):
         )
         df = pd.concat([df, tmp_df], axis=1)
 
+    # add centered/rotated landmarks
+    for i in range(cenrots.shape[1]):
+        tmp_df = pd.DataFrame(
+            data=cenrots[:, i, :],
+            columns=[f'cenrot-{dim}{i}' for dim in ['x', 'y']]
+        )
+        df = pd.concat([df, tmp_df], axis=1)
+
     # add normalized landmarks (centered, rotated and scaled per extent)
     for i in range(cenrots.shape[1]):
         tmp_df = pd.DataFrame(
