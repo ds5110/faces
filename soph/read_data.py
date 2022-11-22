@@ -24,7 +24,7 @@ def get_categories(df):
     '''
     #Original Landmark Coordinates
     coord_nums = range(68)
-    orig_coords = ['{}{}'.format(dim,i) for i in coord_nums for dim in ['x','y']]
+    landmark_cols = ['{}{}'.format(dim,i) for i in coord_nums for dim in ['x','y']]
 
     #Angular offsets
     '''
@@ -41,7 +41,7 @@ def get_categories(df):
     #Derived Landmark Coordinates
     #transformed to correct yaw and position & normalized to the new minimum bounding box
     df1 = df.loc[:, df.columns.str.startswith('norm_cenrot-')]
-    norm_cenrot = list(df1.columns)
+    norm_cols = list(df1.columns)
 
     #Difference of expected symmetric landmarks, yaw-corrected coordinates, normalized per min box
     df1 = df.loc[:, df.columns.str.startswith('norm_cenrot_sym_diff')]
@@ -52,4 +52,4 @@ def get_categories(df):
     df1 = df.loc[:, df.columns.str.startswith('dist_')]
     all_d_coords = list(df1.columns)
 
-    return orig_coords, angle_off, main_predictors,norm_cenrot_sym_diff, norm_cenrot,all_d_coords
+    return landmark_cols, angle_off, main_predictors,norm_cenrot_sym_diff, norm_cols,all_d_coords

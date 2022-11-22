@@ -10,7 +10,7 @@ We will use logistic regression to see the differences in the sampling methods (
 reference https://elitedatascience.com/imbalanced-classes
 '''
 #project
-from read_data import get_data
+from helpers import get_data
 from helpers import get_Xy, class_report
 #basic
 import pandas as pd

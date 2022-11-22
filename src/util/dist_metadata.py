@@ -6,7 +6,7 @@ The output is an updated df, but the  "main" function below puts it into a CSV.
 '''
 
 #project
-from read_data import get_data
+from helpers import get_data
 #basics
 import pandas as pd
 import numpy as np
@@ -58,7 +58,7 @@ def main():
     df_dist = get_dist_df(df_cr,f_num_list = range(68))
     #adding it to the main df and outputting to csv
     df = pd.concat([df.copy(),df_dist],axis=1)
-    df.to_csv('soph/merged_landmarks_dist.csv')
+    df.to_csv('data/merged_landmarks_dist.csv')
 
 if __name__ == "__main__":
     main()
