@@ -15,26 +15,13 @@ from sklearn.preprocessing import PolynomialFeatures
 # project
 from util import meta_cache
 from util.plot import scatter
+from util.column_names import norm_cenrot_sym_diff, norm_cenrot
 
 savefig = True
 
 df = meta_cache.get_meta()
 df['roll_x_boxratio'] = df['roll_abs'] * df['boxratio']
 df['roll_x'] = np.cbrt(df['roll_abs'] * df['boxratio'] * df['interoc_norm'])
-
-# ------ setup a bunch of column groups
-sz_cols = ['width', 'height', 'cenrot-width', 'cenrot-height']
-meta_cols = ['image-set', 'filename', 'partition', 'subpartition']
-
-# coordinates
-cenrot = [col for col in df.columns if col.startswith('cenrot-')]
-norm = [col for col in df.columns if col.startswith('norm-')]
-norm_cenrot = [col for col in df.columns if col.startswith('norm_cenrot-')]
-
-# diff cols
-sym_diff = [col for col in df.columns if col.startswith('sym_diff-')]
-cenrot_sym_diff = [col for col in df.columns if col.startswith('cenrot_sym_diff-')]
-norm_cenrot_sym_diff = [col for col in df.columns if col.startswith('norm_cenrot_sym_diff-')]
 
 # higher-level cols
 zongyu_pred = ['boxratio', 'interoc_norm']
