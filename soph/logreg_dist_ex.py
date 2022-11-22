@@ -1,11 +1,13 @@
 #Sophia Cofone 11/20 
 #File is intended for testing logistic regression with distance data (dif feature selection method)
-#testing
+#this is basically an extention of the logreg_ex testing
 
+#project
 from read_data import get_data, get_categories
 from helpers import get_Xy, plot_cm, class_report
 from imbalanced_resampling import upsample, downsample
-from logreg import logreg, fwd_feature_selection
+from feature_selection import fwd_feature_selection
+from logreg_ex import logreg
 
 import numpy as np
 

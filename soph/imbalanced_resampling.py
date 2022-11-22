@@ -66,7 +66,7 @@ def downsample(df):
     return df_downsampled
     
 def main():
-    from logreg import logreg
+    from logreg_ex import logreg
     #testing out the different sampling options with logreg
     #get data
     df = get_data()

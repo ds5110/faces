@@ -4,9 +4,26 @@ This file is intended for testing logistic regression model.
 '''
 #project
 from read_data import get_data, get_categories
-from helpers import get_Xy, plot_cm, class_report
+from helpers import get_Xy, plot_cm, class_report, tt_split
 from imbalanced_resampling import upsample, downsample
-from logreg import logreg, rec_feature_selection
+from feature_selection import rec_feature_selection
+#basic
+import numpy as np
+#sklearn
+from sklearn.linear_model import LogisticRegression
+
+def logreg(X,y):
+    '''
+    Simple logreg function 
+    '''
+    y_flat = np.ravel(y)
+    Xtrain, Xtest, ytrain, ytest = tt_split(X,y_flat)
+    logreg = LogisticRegression(max_iter=1000)
+    fitted = logreg.fit(Xtrain, ytrain)
+    y_pred = fitted.predict(Xtest)
+    print('Accuracy of logistic regression classifier on test set: {:.2f}'.format(logreg.score(Xtest, ytest)))
+
+    return Xtest, ytest, fitted, y_pred
 
 def without_f(df,predictors_list):
     print('Without feature selection')
