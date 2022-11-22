@@ -49,7 +49,7 @@ more_pred = [*norm_cenrot_sym_diff, *norm_cenrot]
 target = 'baby'
 
 
-def eg_logreg(df, pred, target):
+def eg_logreg(df, pred, target, poly=False):
     X = df[pred]
     y = df[target]
     print(
@@ -64,11 +64,12 @@ def eg_logreg(df, pred, target):
     )
 
     # fit logreg
+    steps = []
+    if poly:
+        steps.append(('poly', PolynomialFeatures(degree=3)))
+    steps.append(('logreg', LogisticRegression()))
     pipe = Pipeline(
-        steps=[
-            # ('poly', PolynomialFeatures(degree=3)),
-            ('logreg', LogisticRegression()),
-        ],
+        steps=steps,
     )
     pipe.fit(X_train, y_train)
 
@@ -91,10 +92,12 @@ def eg_logreg(df, pred, target):
         f'\tlogreg score: '
         f'{score:.3f}')
     
-    print('coefficients:')
-    logreg = pipe.named_steps['logreg']
-    for (p, c) in zip(logreg.feature_names_in_, logreg.coef_[0]):
-        print(f'\t\t{p}: {c}')
+    # TODO: figure out how to print coefficients when using poly features...
+    if not poly:
+        print('coefficients:')
+        logreg = pipe.named_steps['logreg']
+        for (p, c) in zip(logreg.feature_names_in_, logreg.coef_[0]):
+            print(f'\t\t{p}: {c}')
 
     # fit uniform dummy, to compare
     # NOTE: we don't really need to use train/test
