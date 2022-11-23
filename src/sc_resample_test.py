@@ -3,12 +3,12 @@
 File is intended to test resampling functions.
 '''
 #project
-from util.helpers import get_data
-from util.helpers  import get_Xy, class_report
-from util.resample import upsample, downsample
+from util.sc_helpers import get_data
+from util.sc_helpers  import get_Xy, class_report
+from util.sc_resample import upsample, downsample
 
 def main():
-    from logreg_ex import logreg
+    from sc_logreg_ex import logreg
     #testing out the different sampling options with logreg
     #get data
     df = get_data()

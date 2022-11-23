@@ -6,7 +6,7 @@ The output is an updated df, but the  "main" function below puts it into a CSV.
 '''
 
 #project
-from helpers import get_data
+from sc_helpers import get_data
 #basics
 import pandas as pd
 import numpy as np

@@ -3,7 +3,7 @@
 This file is intended to capture the EDA done for the logreg model.
 '''
 #project
-from util.helpers import get_data
+from util.sc_helpers import get_data
 #basic
 import seaborn as sns
 import matplotlib.pyplot as plt
