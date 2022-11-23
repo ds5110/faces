@@ -102,3 +102,8 @@ I think this is a good model because the accuracy rate and recall scores are qui
 <img src="figs/soph_logreg/boxplus_f_cmat.png" width=600>
 
 <img src="figs/soph_logreg/boxplus_fd_cmat.png" width=600>
+
+To reproduce the results from this section run:
+```
+make <make-target>
+```

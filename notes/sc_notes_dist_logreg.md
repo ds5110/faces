@@ -115,5 +115,5 @@ Feature selected: ['dist_21_22', 'dist_17_26', 'dist_48_54', 'dist_27_62']
 * To reproduce the results from these notes, run the `logreg_dist_ex.py` file (testing).
   * Note that this testing uses forward feature selection for the dimentional reduction method, so it does take time to run depending on how many features you ask it to select (still under 5 min on my machine).
 * To reproduce the data used in these notes, run `?jesse file?` and `dist_metadata.py`
-* To reproduce the eda used in these notes, run `eda_dist_logreg.py`
+* To reproduce the eda used in these notes, run `sc_eda_euc_logreg.py`
 * To reproduce the testing for the sampling used in these notes run `imbalanced_resampling.py`
