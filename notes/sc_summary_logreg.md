@@ -1,4 +1,4 @@
-# DS5110 faces: Logistic Regression Exploration Summary
+# DS5110 faces: Logistic Regression Exploration Summary - Sophia
 The purpose of this file is to explain the main takeaways from the logreg model exploration.
 
 More information about EDA, sampling methods attempted, hyper-parameter tuning, and data partitions tested please see `notes/notes_logreg` and `notes/notes_logreg_dist`.
