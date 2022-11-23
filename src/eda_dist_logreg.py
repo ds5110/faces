@@ -4,7 +4,7 @@ This file is intended to capture the EDA done for the "distance" idea.
 '''
 
 #project
-from read_data import get_data
+from util.helpers import get_data
 #basic
 import numpy as np
 import matplotlib.pyplot as plt
