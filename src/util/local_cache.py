@@ -14,7 +14,8 @@ import numpy as np
 from PIL import Image
 
 # project
-from util.model import AnnoImg, x_cols, y_cols
+from util.model import AnnoImg
+from util.column_names import x_cols, y_cols
 from util.pre import add_derived
 
 
@@ -22,12 +23,10 @@ class LocalCache:
     def __init__(
             self,
             base_dir='_data',
-            scratch_dir='scratch',
             base_url='https://coe.northeastern.edu/Research/AClab/InfAnFace',
             meta_filename='labels.csv',
     ):
         self.base_dir = base_dir
-        self.scratch_dir = scratch_dir
         self.base_url = base_url
         self.meta_filename = meta_filename
         self.meta = pd.read_csv(self.get_file(meta_filename))
@@ -45,14 +44,17 @@ class LocalCache:
         '''
         if desc is not None:
             elems = self.meta_filename.split('.')
-            filename = f'{self.scratch_dir}/{elems[0]}_{desc}.{elems[1]}'
+            filename = f'{self.base_dir}/{elems[0]}_{desc}.{elems[1]}'
+            if not Path(filename).exists():
+                df = add_derived(self)
+                df.to_csv(filename, index=False)
             return pd.read_csv(filename)
         
         return self.meta.copy()
     
     def save_meta(self, df, desc):
         elems = self.meta_filename.split('.')
-        filename = f'{self.scratch_dir}/{elems[0]}_{desc}.{elems[1]}'
+        filename = f'{self.base_dir}/{elems[0]}_{desc}.{elems[1]}'
         df.to_csv(
             filename,
             index=False,

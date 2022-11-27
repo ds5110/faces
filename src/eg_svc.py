@@ -37,8 +37,8 @@ n_components = range(1, len(pred) + 1)
 
 model = make_pipeline(pca, svc)
 param_grid = {
-    'svc__C': np.logspace(-3, 3, 7),
-    'svc__gamma': np.logspace(-3, 3, 7),
+    'svc__C': np.logspace(0, 1.5, 7),
+    'svc__gamma': np.logspace(-3, 0, 7),
     'pca__n_components': n_components,
 }
 grid = GridSearchCV(model, param_grid, return_train_score=True, n_jobs=5)

@@ -55,6 +55,12 @@ def plot_image(
     ----------
     anno : AnnoImg
         The image to render.
+    scatter_points : list of int
+        Landmark indices to print (excldues unlisted landmarks).
+        The default is None.
+    ref_point : list of int ['x', 'y']
+        Add a swhite circle centered at given 'x' and 'y'.
+        The default is None.
     annotate : str, optional
         The type of annotations to draw on the image:
             - 'scatter': the landmark points
@@ -62,8 +68,16 @@ def plot_image(
             - 'spline': best-fit splines between landmark points
             - 'splinelabel': best-fit splines with feature names
         The default is None.
+    cross : bool
+        True to include blue crosshairs at image center.
+        The default is False.
+    grayscale : bool
+        True to convert image to grayscale (using default colormap'viridis').
+        The default is False.
+    skip_img : bool
+        True to skip raw image data. The default is False.
     save_fig : bool, optional
-        Pass True to save result to 'figs' directory. The default is False.
+        True to save result to 'figs' directory. The default is False.
 
     Returns
     -------
@@ -198,27 +212,6 @@ def plot_coords(
         height,
         save_fig=False,
 ):
-    '''
-    Either df/row_id or series is required, to provide landmark points.
-    Parameters
-    ----------
-    anno : AnnoImg
-        The image to render.
-    annotate : str, optional
-        The type of annotations to draw on the image:
-            - 'scatter': the landmark points
-            - 'scaternum': landmark points with indices
-            - 'spline': best-fit splines between landmark points
-            - 'splinelabel': best-fit splines with feature names
-        The default is None.
-    save_fig : bool, optional
-        Pass True to save result to 'figs' directory. The default is False.
-
-    Returns
-    -------
-    None.
-
-    '''
     image_set = 'test'
     filename = 'cenrot'
     title = f'{image_set}/{filename}'

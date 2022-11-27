@@ -1,8 +1,10 @@
 # Preprocessing
 
-To calculate the derived features:
+We created a Makefile target `merge_meta` to calculate the derived features.
+
+**IMPORTANT**: This downloads **all** of the baby images to a local cache (in order to get accurate image dimensions to avoid cropping content during centering/rotating):
 ```
-make <make-target>
+make merge_meta
 ```
 To calculate the euclidean pair-wise distances:
 ```
@@ -11,7 +13,7 @@ make <make-target>
 
 ## Derived Features Reference
 
-We added some additional metadata to the [original dataframe](https://coe.northeastern.edu/Research/AClab/InfAnFace/labels.csv).
+We added some derived metadata to the [original dataframe](https://coe.northeastern.edu/Research/AClab/InfAnFace/labels.csv).
 
 ### Derived Landmark Coordinates
 Where `dim` is 'x' or 'y' and `index` is an integer [0-67]
@@ -98,6 +100,35 @@ We plotted raw estimated angles against given categories "tilted" and "turned":
 The classes are more linearly seperable when taking absolute values:
 
 <img src="figs/roll_yaw_abs.png" width=600>
+
+We applied a simple Logistic Regression model to confirm the relationships between estimated angles and given labels:
+```
+looking at "tilted" per ['yaw_abs'] (n: 410; p: 1)
+	logreg score: 0.893
+	dummy score: 0.466
+looking at "tilted" per ['roll_abs'] (n: 410; p: 1)
+	logreg score: 0.631
+	dummy score: 0.417
+looking at "tilted" per ['yaw_abs', 'roll_abs'] (n: 410; p: 2)
+	logreg score: 0.893
+	dummy score: 0.495
+looking at "turned" per ['yaw_abs'] (n: 410; p: 1)
+	logreg score: 0.777
+	dummy score: 0.466
+looking at "turned" per ['roll_abs'] (n: 410; p: 1)
+	logreg score: 0.913
+	dummy score: 0.466
+looking at "turned" per ['yaw_abs', 'roll_abs'] (n: 410; p: 2)
+	logreg score: 0.932
+	dummy score: 0.544
+```
+
+This shows that 'yaw_abs' predicts 'tilted' with ~90% accuracy and 'roll_abs' predicts 'turned' with >90% accuracy.
+
+This can be reproduced by the `angles_logreg` Makefile target:
+```
+make angles_logreg
+```
 
 ## Outliers
 
