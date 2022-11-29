@@ -3,9 +3,9 @@
 This file is intended for testing logistic regression model.
 '''
 #project
-from util.helpers import get_Xy, plot_cm, class_report, tt_split, get_data, get_categories
-from util.resample import upsample, downsample
-from util.feature_selection import rec_feature_selection
+from util.sc_helpers import get_Xy, plot_cm, class_report, tt_split, get_data, get_categories
+from util.sc_resample import upsample, downsample
+from util.sc_feature_selection import rec_feature_selection
 from util.model import main_predictors, angle_off, norm_cols
 #basic
 import numpy as np

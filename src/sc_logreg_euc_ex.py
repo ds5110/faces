@@ -3,10 +3,10 @@
 #this is basically an extention of the logreg_ex testing
 
 #project
-from util.helpers import get_data, get_Xy, plot_cm, class_report, get_categories
-from util.resample import upsample, downsample
-from util.feature_selection import fwd_feature_selection
-from logreg_ex import logreg
+from util.sc_helpers import get_data, get_Xy, plot_cm, class_report, get_categories
+from util.sc_resample import upsample, downsample
+from util.sc_feature_selection import fwd_feature_selection
+from sc_logreg_ex import logreg
 
 import numpy as np
 
