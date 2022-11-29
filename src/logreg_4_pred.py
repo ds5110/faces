@@ -118,7 +118,7 @@ for pp in [
     tmp, model, score, y_test, y_hat = eg_logreg(df, pp, 'baby')
     scatter(
         f'Logistic Regression - baby vs {", ".join(pp)} \n '
-            f'score: {score:.3f}',
+            f'validation score: {score:.3f}',
         f'scatter_boxratio_vs_yaw.png',
         tmp,
         ['boxratio', 'yaw_abs'],
