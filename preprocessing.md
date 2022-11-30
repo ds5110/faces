@@ -6,6 +6,10 @@ We created a Makefile target `merge_meta` to calculate the derived features.
 ```
 make merge_meta
 ```
+To calculate the euclidean pair-wise distances:
+```
+make <make-target>
+```
 
 ## Derived Features Reference
 
@@ -32,6 +36,8 @@ Where `dim` is 'x' or 'y' and `index` is an integer [0-67] (the left-most point 
 * `norm_cenrot_sym_diff-{dim}{index}`: difference of yaw-corrected coordinates, normalized per min box
 
 ### Euclidean pair-wise Distances Between Landmarks
+We calculated the euclidean pair-wise distances for all the normalized (to the bounding box) coordinate data. This gives us "distances" from every landmark point, to every other landmark point (for example, the "distance" between the left mouth conrner and left eye). We used the normalized data to account for scale.
+* `dist_{}_{}`:  euclidean pair-wise distance from xy point to another xy point
 
 ### Angular offsets (anchor link to details?)
 * `yaw`: estimated rotation about the z-axis
