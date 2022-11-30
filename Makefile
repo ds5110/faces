@@ -1,3 +1,6 @@
+prelim_plots:
+	python src/prelim_plots.py
+
 merge_meta:
 	python src/merge_meta.py
 
