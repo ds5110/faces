@@ -41,6 +41,7 @@ def fix_axes(X,Y,ax,flip_y=True):
     
 def plot_image(
         anno,
+        subtitle=None,
         scatter_points=None,
         ref_point=None,
         annotate=None,
@@ -55,6 +56,8 @@ def plot_image(
     ----------
     anno : AnnoImg
         The image to render.
+    subtitle : list of str, optional
+        Additional lines of text below the title. The default is None.
     scatter_points : list of int
         Landmark indices to print (excldues unlisted landmarks).
         The default is None.
@@ -72,7 +75,7 @@ def plot_image(
         True to include blue crosshairs at image center.
         The default is False.
     grayscale : bool
-        True to convert image to grayscale (using default colormap'viridis').
+        True to convert image to grayscale (using default colormap 'viridis').
         The default is False.
     skip_img : bool
         True to skip raw image data. The default is False.
@@ -88,8 +91,10 @@ def plot_image(
     image_set = anno.image_set
     filename = anno.filename
     desc = f' (row {anno.row_id})' if anno.row_id is not None else ''
-    if len(anno.desc):
-        desc = ' \n '.join([desc, *anno.desc])
+    if anno.desc:
+        desc += f' - {", ".join(anno.desc)}'
+    if subtitle:
+        desc = ' \n '.join([desc, *subtitle])
     title = f'{image_set}/{filename}' + desc
     X = anno.get_x()
     Y = anno.get_y()

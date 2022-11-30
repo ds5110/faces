@@ -124,7 +124,7 @@ class MetaCache:
         (in the data directory) the image metadata from the adult and baby
         datasets and renames all landmark columns to standard names:
          * baby "ground truth" landmarks: 'gt-{dim}{index}' -> '{dim}{index}
-         * adult "original" landmakrs: 'original_{index}_{dim}' -> '{dim}{index}
+         * adult "original" landmarks: 'original_{index}_{dim}' -> '{dim}{index}
 
         Returns
         -------

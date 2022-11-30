@@ -1,9 +1,3 @@
-prelim_plots:
-	python src/prelim_plots.py
-
-angle_outliers:
-	python src/angle_outliers.py
-
 merge_meta:
 	python src/merge_meta.py
 
