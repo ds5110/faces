@@ -26,7 +26,7 @@ for i in range(10):
         anno,
         save_fig=save_fig,
         subtitle=[
-            f'{to_deg * row["yaw_abs"]:.2f} degrees estimated yaw',
+            f'{to_deg * row["yaw_abs"]:.2f} degrees estimated absolute yaw',
             'not labeled "tilted" nor "turned"',
         ],
     )
