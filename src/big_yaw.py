@@ -21,6 +21,7 @@ for i in range(10):
     row = unlabeled.iloc[i]
     row_id = unlabeled.index[i]
     anno = meta_cache.get_image(row_id, baby=True)
+    anno.desc = ['big yaw']
     plot_image(
         anno,
         save_fig=save_fig,
