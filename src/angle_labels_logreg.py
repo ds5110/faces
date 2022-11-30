@@ -15,8 +15,6 @@ from sklearn.model_selection import train_test_split
 # project
 from util import meta_cache
 
-df = meta_cache.get_meta('baby')
-
 
 def eg_logreg(df, pred, target):
     X = df[pred]
@@ -51,6 +49,8 @@ def eg_logreg(df, pred, target):
     dummy_score = accuracy_score(y_test, dummy_y_hat)
     print(f'\tdummy score: {dummy_score:.3f}')
 
+
+df = meta_cache.get_meta('baby')
 
 # test logistic regression with random predictor
 # tmp = df.copy()

@@ -106,6 +106,11 @@ The classes are more linearly seperable when taking absolute values:
 
 <img src="figs/roll_yaw_abs.png" width=600>
 
+You can reproduce these plots with the following `Makefile` target:
+```
+make roll_yaw
+```
+
 We applied a simple Logistic Regression model to confirm the relationships between estimated angles and given labels:
 ```
 looking at "tilted" per ['yaw_abs'] (n: 410; p: 1)

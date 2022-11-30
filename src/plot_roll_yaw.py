@@ -9,15 +9,11 @@ Created on Sun Nov 13 20:08:59 2022
 import matplotlib.pyplot as plt
 
 # project
-from util.local_cache import cache
+from util import meta_cache
 from util.pre import to_deg
 
-savefig = False
 
-df = cache.get_meta('decorated')
-
-
-def plot(use_abs=False,savefig=False):
+def plot(df, use_abs=False, save_fig=False):
     label_pre = 'absolute ' if use_abs else ''
     col_suff = '_abs' if use_abs else ''
     tilt = df['tilted'] == 1
@@ -40,7 +36,7 @@ def plot(use_abs=False,savefig=False):
             # c=color,
             marker='x' if desc == 'both' else 'o',
             label=desc,
-            edgecolors=color,
+            edgecolors=None if desc == 'both' else color,
             facecolors='none' if desc == 'neither' else color,
             # marker='$O$' if desc == 'neither' else 'o',
         )
@@ -61,14 +57,16 @@ def plot(use_abs=False,savefig=False):
         borderaxespad=0.,
     )
     plt.tight_layout()
-    if savefig:
+    if save_fig:
         plt.savefig(f'figs/roll_yaw{col_suff}.png', dpi=300, bbox_inches='tight')
     plt.show()
 
 
 def main():
-    plot(savefig=savefig)
-    plot(use_abs=True,savefig=savefig)
+    save_fig = False
+    df = meta_cache.get_meta('baby')
+    plot(df, save_fig=save_fig)
+    plot(df, use_abs=True, save_fig=save_fig)
 
 
 if __name__ == '__main__':

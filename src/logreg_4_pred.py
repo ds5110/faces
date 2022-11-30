@@ -120,12 +120,13 @@ for pp in [
     test_df = pd.DataFrame(X_test, columns=pp)
     test_df[target] = y_test
     test_df[f'{target}_hat'] = y_hat
+    scatter_cols = ['boxratio', 'yaw_abs']
     scatter(
         f'Logistic Regression - baby vs {", ".join(pp)} \n '
             f'score: {score:.3f}',
-        f'scatter_boxratio_vs_yaw.png',
+        f'scatter_{" vs ".join(scatter_cols)}.png',
         tmp, # test_df,
-        ['boxratio', 'yaw_abs'],
+        scatter_cols,
         target,
         target_name='Baby',
         alt_name='Adult',
