@@ -3,6 +3,7 @@
 """
 
 import numpy as np
+import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 from numpy.random import random_sample
@@ -20,7 +21,7 @@ from util import meta_cache
 from util.plot import scatter
 from util.column_names import norm_cenrot_sym_diff, norm_cenrot_cols
 
-savefig = False
+save_fig = False
 
 df = meta_cache.get_meta()
 df['roll_x_boxratio'] = df['roll_abs'] * df['boxratio']
@@ -101,7 +102,7 @@ def eg_logreg(df, pred, target, poly=False):
     print(f'\tdummy score: {dummy_score:.3f}')
     
     df[f'{target}_hat'] = pipe.predict(X)
-    return df, pipe, score, y_test, y_hat
+    return df, pipe, score, X_test, y_test, y_hat
 
 
 # test logistic regression with random predictor
@@ -115,17 +116,20 @@ for pp in [
     # ['roll_x_boxratio', *pred_abs],
     # ['roll_x', *pred_abs]
 ]:
-    tmp, model, score, y_test, y_hat = eg_logreg(df, pp, 'baby')
+    tmp, model, score, X_test, y_test, y_hat = eg_logreg(df, pp, 'baby')
+    test_df = pd.DataFrame(X_test, columns=pp)
+    test_df[target] = y_test
+    test_df[f'{target}_hat'] = y_hat
     scatter(
         f'Logistic Regression - baby vs {", ".join(pp)} \n '
             f'score: {score:.3f}',
         f'scatter_boxratio_vs_yaw.png',
-        tmp,
+        tmp, # test_df,
         ['boxratio', 'yaw_abs'],
         target,
         target_name='Baby',
         alt_name='Adult',
-        savefig=savefig
+        save_fig=save_fig
     )
 
     target_names = ['Baby', 'Adult']
@@ -143,7 +147,7 @@ for pp in [
     plt.ylabel('predicted label')
     plt.title('Confusion Matrix for Validation Results')
     plt.tight_layout()
-    if savefig:
+    if save_fig:
         plt.savefig(
             'figs/logreg_4_pred_conf_mat.png',
             dpi=300,

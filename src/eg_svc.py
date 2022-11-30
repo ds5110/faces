@@ -22,7 +22,7 @@ from util.plot import scatter
 pred = ['boxratio', 'interoc_norm', 'yaw_abs', 'roll_abs']
 pred_plus = ['image_name', *pred, 'baby']
 pcs = [f'pc{i}' for i in range(1, 5)]
-savefig = False
+save_fig = False
 fewer_plots = True
 
 
@@ -71,7 +71,7 @@ for i in range(1, 5):
             'baby',
             target_name='Baby',
             alt_name='Adult',
-            savefig=savefig,
+            save_fig=save_fig,
         )
 
 # ----- review the actual components
@@ -98,5 +98,5 @@ for i in range(4):
             'baby',
             target_name='Baby',
             alt_name='Adult',
-            savefig=savefig,
+            save_fig=save_fig,
         )

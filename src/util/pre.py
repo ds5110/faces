@@ -246,7 +246,8 @@ def rotate(anno):
     _, _, _, _, coords = get_yaw_data(anno)
 
     # add 'rotated' to the image description
-    desc = anno.desc.copy().append('rotated')
+    desc = anno.desc.copy()
+    desc.append('rotated')
     return AnnoImg(
         anno.image_set,
         anno.filename,

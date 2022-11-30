@@ -29,6 +29,8 @@ class MetaCache:
     ):
         self.baby_cache = baby_cache
         self.adult_cache = adult_cache
+        self.baby_meta = self.baby_cache.get_meta('decorated')
+        self.adult_meta = self.adult_cache.get_meta('decorated')
         self.meta = pd.read_csv(
             f'{data_path}/{meta_filename}',
             dtype={
@@ -98,8 +100,8 @@ class MetaCache:
                 #       we haven't resolved image retrieval for the other
                 #       dataset?
                 key = row['image_name']
-                baby_df = self.baby_cache.get_meta('decorated')
-                baby_row_id = baby_df[baby_df['image_name'] == key].index[0]
+                where_eq = self.baby_meta['image_name'] == key
+                baby_row_id = self.baby_meta[where_eq].index[0]
                 anno = self.baby_cache.get_image(baby_row_id)
                 anno.row_id = row_id
                 return anno

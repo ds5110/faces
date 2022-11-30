@@ -65,7 +65,7 @@ In our initial exploration we tried plotting landmarks on a frontal view example
 
 Then we tried drawing splines between subsets of points, to make detected features more clear:
 
-<img src="figs/images/ads/14998.Still056.jpg_spline.png" width=600>
+<img src="figs/images/ads/14998.Still056.jpg_splines.png" width=600>
 
 We also tried to standardize the orientation by centering and rotating about the z-axis (using expected symmetry between eye landmarks to calculate the angle of rotation):
 
@@ -77,6 +77,11 @@ To confirm this, we applied this rotation/centering on a few other images:
 <img src="figs/images/ads/1072.Still005.jpg_splinelabel_rotated.png" width=600>
 
 Depending on the input data and type of models we are training, this type of preprocessing may be useful.
+
+You can generate these images with the following [Makefile](Makefile) target:
+```
+make prelim_plots
+```
 
 ## Angular transformations
 
@@ -135,3 +140,8 @@ make angles_logreg
 There are a few outliers, but they seem to be caused by inconsistent labeling or different ways of interpreting ~90 degree rotations. For example, the face with the maximum absolute yaw score among images labeled neither "tilted" nor "turned" is clearly not upright, presumably "tilted":
 
 <img src="figs/images/youtube2/045.jpg_(big_yaw).png" width=600>
+
+To plot the first 10 such outliers, you can use this `Makefile` target:
+```
+make angle_outliers
+```
