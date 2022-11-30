@@ -10,8 +10,6 @@ from util import meta_cache
 from util.plot import plot_image
 from util.pre import rotate
 
-df = meta_cache.get_meta()
-baby_df = meta_cache.get_meta('baby')
 save_fig = False
 
 anno_img = meta_cache.get_image(4, baby=True)
@@ -31,4 +29,5 @@ for (row_id, annotate) in [
         rotate(meta_cache.get_image(row_id, baby=True)),
         annotate=annotate,
         cross=True,
+        save_fig=save_fig,
     )

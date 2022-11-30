@@ -144,7 +144,7 @@ make angles_logreg
 
 There are a few outliers, but they seem to be caused by inconsistent labeling or different ways of interpreting ~90 degree rotations. For example, the face with the maximum absolute yaw score among images labeled neither "tilted" nor "turned" is clearly not upright, presumably "tilted":
 
-<img src="figs/images/youtube2/045.jpg_big yaw.png" width=600>
+<img src="figs/images/youtube2/045.jpg_(big_yaw).png" width=600>
 
 To plot the first 10 such outliers, you can use this `Makefile` target:
 ```
