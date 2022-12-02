@@ -5,10 +5,13 @@ We also looked at specific metrics such as recall score, and plotted the confusi
 
 <img src="figs/soph_logreg/unbal.png" width=600>
 
-`resample.py`
+To re-create the image above, run:
+```
+make logreg_eda
+```
 
 ## Upsampling
-Up-sampling is the process of randomly duplicating observations from the minority class in order to reinforce its signal.
+Up-sampling is the process of randomly duplicating observations from the minority class in order to reinforce its signal. We ended up not using this method beyond testing-purposes as downsampling seemed to be getting us decent scores (and we didn’t necessarily want duplicated data).
 
 ## Downsampling
 
@@ -33,3 +36,9 @@ After downsampling:
 Confusion matrix:
 
 <img src="figs/soph_logreg/p1_fd_cmat.png" width=600>
+
+To re-create the testing of the resampling functions, run:
+```
+make resample_test
+```
+Plese see `logreg.md` for more information about how our logistic regression model preformed with resampling (and to recreate the figures/reports above). 

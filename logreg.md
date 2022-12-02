@@ -44,7 +44,7 @@ Building off of our findings in Take 1 above, the "one feature" model using just
 
 If you really wanted recall scores to be even better, the "13 feature" model with the normalized & rotated coordinate data appears to be better than the just normalized coordinate data given the similarity in scores and great reduction of features. This provides good evidence that the preprocessing adjustments done to the data are worthwhile.
 
-In many of these instances, we did recursive/backward feature selection to select the best (and minimum) number of features. Espeically in the cases where we are using 66+ features, we found that using feature selection greatly improved both the accuracy and recall scores of our model. This is likely due to logistic regression preforming better with minimal colinearity. 
+In many of these instances, we did recursive feature selection to select the best (and minimum) number of features. Espeically in the cases where we are using 66+ features, we found that using feature selection greatly improved both the accuracy and recall scores of our model. This is likely due to logistic regression preforming better with minimal colinearity. 
 
 One feature (`['boxratio']`), downsampling:
 * Accuracy score: 0.88
@@ -58,11 +58,6 @@ CV to tune optimal features:
 Confusion matrix:
 
 <img src="figs/soph_logreg/p1_fd_cmat.png" width=600>
-
-Two feature (`['boxratio', 'interoc']`), downsampling:
-* Accuracy score: 0.88
-* Recall score adult: 0.90
-* Recall score baby: 0.86
 
 66 features (normalized coord data), downsampling:
 * Accuracy score: 0.94
@@ -84,7 +79,7 @@ Confusion matrix:
 
 To reproduce the results from this section run:
 ```
-make <make-target>
+make logreg_test
 ```
 ## Logistic Regression: Take 3
 Inspired by our sucess with using `boxratio` (ratio between the width and height of the head) as a single predictor, we had the idea of trying to identify more "distances" between facial features that could help classify adults vs infants.
@@ -119,7 +114,7 @@ Fourth (distance from mouth to nose)
 
 To reproduce the results from this section run:
 ```
-make <make-target>
+make logreg_euc_test
 ```
 ## Logistic Regression: Bringing it together
 In the initial iterations of this exploration, we found that `boxratio` was a good single predictor. In the second iteration, we found other distances that could be useful in classifying baby vs adult faces. Adding these features together (specifically `boxratio` with euclidean distance `'dist_7_41','dist_21_22', 'dist_22_25', 'dist_33_65'`) yeilded a model with:
@@ -139,5 +134,5 @@ I think this is a good model because the accuracy rate and recall scores are qui
 
 To reproduce the results from this section run:
 ```
-make <make-target>
+make logreg_test
 ```

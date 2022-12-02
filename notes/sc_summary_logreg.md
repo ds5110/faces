@@ -19,16 +19,11 @@ One feature (`['boxratio']`), downsampling:
 
 CV to tune optimal features:
 
-<img src="figs/soph_logreg/p1_f_cv.png" width=600>
+<img src="soph_logreg/p1_f_cv.png" width=600>
 
 Confusion matrix:
 
-<img src="figs/soph_logreg/p1_fd_cmat.png" width=600>
-
-Two feature (`['boxratio', 'interoc']`), downsampling:
-* Accuracy score: 0.88
-* Recall score adult: 0.90
-* Recall score baby: 0.86
+<img src="soph_logreg/p1_fd_cmat.png" width=600>
 
 66 features (normalized coord data), downsampling:
 * Accuracy score: 0.94
@@ -42,16 +37,12 @@ Two feature (`['boxratio', 'interoc']`), downsampling:
 
 CV to tune optimal features:
 
-<img src="figs/soph_logreg/p5_f_cv.png" width=600>
+<img src="soph_logreg/p5_f_cv.png" width=600>
 
 Confusion matrix:
 
-<img src="figs/soph_logreg/p4_fd_cmat.png" width=600>
+<img src="soph_logreg/p4_fd_cmat.png" width=600>
 
-To reproduce the results from this section run:
-```
-make <make-target>
-```
 ## Logistic Regression: Take 2
 Inspired by our sucess with using `boxratio` (ratio between the width and height of the head) as a single predictor, we had the idea of trying to identify more "distances" between facial features that could help classify adults vs infants.
 
@@ -81,12 +72,8 @@ Fourth (distance from mouth to nose)
 * Recall score adult: .92 (downsampling)
 * Recall score baby:  .95 (downsampling)
 
-<img src="figs/soph_logreg/algo_baby.png" width=600>
+<img src="soph_logreg/algo_baby.png" width=600>
 
-To reproduce the results from this section run:
-```
-make <make-target>
-```
 ## Logistic Regression: Bringing it together
 In the first iteration of this exploration, we found that `boxratio` was a good single predictor. In the second iteration, we found other distances that could be useful in classifying baby vs adult faces. Adding these features together (specifically `boxratio` with euclidean distance `'dist_7_41','dist_21_22', 'dist_22_25', 'dist_33_65'`) yeilded a model with:
 * Accuracy score: 0.97
@@ -95,15 +82,17 @@ In the first iteration of this exploration, we found that `boxratio` was a good 
 
 Interestingly, the feature selection considered all of them important because each additional distance added accuracy to the model. 
 
-<img src="figs/soph_logreg/boxplus_f_cv.png" width=600>
+<img src="soph_logreg/boxplus_f_cv.png" width=600>
 
 I think this is a good model because the accuracy rate and recall scores are quite good and it doesn't require a ton of features (like the 13+ feature models from take 1).
 
-<img src="figs/soph_logreg/boxplus_f_cmat.png" width=600>
+<img src="soph_logreg/boxplus_f_cmat.png" width=600>
 
-<img src="figs/soph_logreg/boxplus_fd_cmat.png" width=600>
+<img src="soph_logreg/boxplus_fd_cmat.png" width=600>
 
+
+## Reproduce Results
 To reproduce the results from this section run:
 ```
-make <make-target>
+make logreg_test
 ```

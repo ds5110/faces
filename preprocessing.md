@@ -6,9 +6,10 @@ We created a Makefile target `merge_meta` to calculate the derived features.
 ```
 make merge_meta
 ```
+
 To calculate the euclidean pair-wise distances:
 ```
-make <make-target>
+make euclidian_data
 ```
 
 ## Derived Features Reference

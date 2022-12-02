@@ -90,9 +90,9 @@ def main():
     with_f_choice(df,selected_features,2)
 
     print('Partition 4 - Without feature selection')
-    without_f(df,norm_cols) 
+    without_f(df,norm_cols[0]) 
     print('Partition 4 - With feature selection')
-    selected_features = with_f(df,norm_cols)
+    selected_features = with_f(df,norm_cols[0])
     #choosing 66
     print('Partition 4 - With feature selection (choice)')
     with_f_choice(df,selected_features,66)
