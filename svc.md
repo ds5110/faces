@@ -30,7 +30,7 @@ Validation curve on `n_components`. The `F1_score` is actually pretty good when 
 
 ### Geometric Values
 
-The two geometric values used here are `boxratio` and `interoclar_norm`. They correspond to the `box width / box height` and `box size / interocular didtance` in `TABLE II` of Dr. Wang's paper. 
+The two geometric values used here are `boxratio` and `interoclar_norm`. They correspond to the `box width / box height` and `box size / interocular didtance` in `TABLE II` of Dr. Wan's paper. 
 
 Bellow are the hyperparameters of `SVC`, and performance on geometric values. The last lines shows the number of support vectors in the train data.
 
