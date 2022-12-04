@@ -6,7 +6,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import ConfusionMatrixDisplay, DetCurveDisplay, RocCurveDisplay
 
@@ -97,13 +97,15 @@ def train_plot(X, y, title):
     scalar = StandardScaler()
     X_train = scalar.fit_transform(X_train)
     X_test = scalar.transform(X_test)
+
+    knn_params = {'n_neighbors': range(5,100, 5), 'weights': ['uniform', 'distance']}
        
     # create all models
     classifiers = {
         "Linear Discriminant Analysis": LinearDiscriminantAnalysis(solver="svd", store_covariance=True),
         "Quadratic Discriminant Analysis": QuadraticDiscriminantAnalysis(store_covariance=True),
         "Gaussian Naive Bayes": GaussianNB(),
-        "K Nearest Neighbors, k=90": KNeighborsClassifier(90, weights='distance')
+        "K Nearest Neighbors": GridSearchCV(estimator=KNeighborsClassifier(), param_grid=knn_params, scoring='roc_auc')
     }
 
     # figure for ROC and DET curves
@@ -141,12 +143,32 @@ def train_plot(X, y, title):
             display_labels = ['Adult', 'Infant'],
             ax = axs_confusion_matrices[i],
             colorbar=False)
-        
         axs_confusion_matrices[i].set(title = name)
         
         # if we have 2 features then we can plot the decision boundary
         if X_test.shape[1] == 2:
             plot_clf_boundary(clf, X_test, y_test, y_predict, axs_boundaries[i], name, score)
+            
+            # if using GridSearchCV, add a text box of the selected params instead of a legend
+            if isinstance(clf, GridSearchCV):
+                axs_boundaries[i].get_legend().remove()
+
+                # get a dict of the params from the best GridSearchCV and write a string of each key = value
+                best_params = clf.best_estimator_.get_params()
+                best_params_label = ''
+                for param, value in best_params.items():
+                    best_params_label += f'{param} = {value}\n'
+                
+                # create a text box in the upper left with the parameters
+                props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
+                axs_boundaries[i].text(
+                    x=0.65,
+                    y=0.95,
+                    s=best_params_label,
+                    transform=axs_boundaries[i].transAxes,
+                    fontsize=8, horizontalalignment='left',
+                    verticalalignment='top',
+                    bbox=props)
     
     for fig in figs:
         fig.suptitle(title, fontsize=18)
@@ -166,11 +188,11 @@ def main():
     y = df[['baby']].squeeze()
     train_plot(X, y, title)
 
-    # run the same models with all 68 landmarks
+    '''# run the same models with all 68 landmarks
     title = '136 Features: \n x,y for 68 landmarks'
     X = df.loc[:, df.columns.str.startswith('norm_cenrot')]
     y = df[['baby']].squeeze()
-    train_plot(X, y, title)
+    train_plot(X, y, title)'''
     
     plt.show()
 
