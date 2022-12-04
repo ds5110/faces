@@ -1,18 +1,19 @@
 """
-Models Linear Discriminant Analysis, Quadratic Discriminant Analysis and Guassian Naive Bayes
-Plots decision boundaries, ROC curves and Detection Error Tradeoff curves for each classifier
+Trains simple Bayesian models, then Plots decision boundaries, confusion matrices, ROC curves and Detection Error Tradeoff curves for each classifier
 """
 
 import pandas as pd
 import seaborn as sns
+import matplotlib.pyplot as plt
+
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import ConfusionMatrixDisplay, DetCurveDisplay, RocCurveDisplay
+
 from sklearn.naive_bayes import GaussianNB
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis, QuadraticDiscriminantAnalysis
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.inspection import DecisionBoundaryDisplay
-from sklearn.pipeline import make_pipeline
-import matplotlib.pyplot as plt
-from sklearn.metrics import confusion_matrix, DetCurveDisplay, RocCurveDisplay
 
 def EDA(data):
     # quick scatter of two features that were called out in the paper,
@@ -44,17 +45,20 @@ def make_cm():
     )
     plt.cm.register_cmap(cmap=cmap)
 
-"""
-Creates a scatter plot of all test points, 
-labeled as True and False, Adult and Baby,
-with the classifier's decision boundary
-"""
-def plot_boundary(clf, X, y, y_pred, ax, name):
-    title= name + ' on Table 2 Features'
+def plot_clf_boundary(clf, X, y, y_pred, ax, name, score):
+    '''
+    Only works with 2 features.
+    Creates a scatter plot of all test points, 
+    labeled as True and False, Adult and Baby,
+    with the classifier's decision boundary
+    '''
+    
+    plot_title = f'{name} \n score = {score:.4f}'
+
     ax.set(
     xlabel='Face Height / Width',
     ylabel='Face Size relative to Interocular Dist.',
-    title= title
+    title= plot_title
     )
 
     tp = y == y_pred  # True Positive
@@ -84,36 +88,89 @@ def plot_boundary(clf, X, y, y_pred, ax, name):
 
     ax.legend(title='Predictions')
     return ax
-    
-def main():
-    # get full dataset
-    df = pd.read_csv('.\data\merged_landmarks.csv')
-    make_cm()
 
-    # set up data for model training and testing
+def train_plot(X, y, title):
+    # models require normalized data
     scalar = StandardScaler()
-    X = df[['boxratio', 'boxsize/interoc']]
     X = scalar.fit_transform(X)
-    y = df[['baby']].squeeze()
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=42)
     
-    # create all three models
+    # split 50% data for testing
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.66, random_state=42)
+    
+    # create all models
     classifiers = {
         "Linear Discriminant Analysis": LinearDiscriminantAnalysis(solver="svd", store_covariance=True),
         "Quadratic Discriminant Analysis": QuadraticDiscriminantAnalysis(store_covariance=True),
-        "Gaussian Naive Bayes": GaussianNB()
+        "Gaussian Naive Bayes": GaussianNB(),
+        "K Nearest Neighbors, k=90": KNeighborsClassifier(90, weights='distance')
     }
 
-    # Train and plot boundaries
-    fig_metrics, [ax_roc, ax_det] = plt.subplots(1,2,figsize=(12,6))
-    fig_boundaries, axs_b = plt.subplots(1,3,figsize=(18,6))
+    # figure for ROC and DET curves
+    fig_metrics, [ax_roc, ax_det] = plt.subplots(1, 2, figsize = (12,6))
+    # figure grid of confusion matrices for each estimator
+    fig_confusion_matrices, axs_confusion_matrices = plt.subplots(2, 2, figsize = (6, 6))
+    figs = [fig_metrics, fig_confusion_matrices]
 
+    # axes arrays need to be flattened 
+    axs_confusion_matrices = axs_confusion_matrices.flatten()
+
+    # if we have 2 features then we can plot the decision boundary
+    if X_test.shape[1] == 2:
+            fig_boundaries, axs_boundaries = plt.subplots(2, 2, figsize = (10, 10))
+            figs.append(fig_boundaries)
+            axs_boundaries = axs_boundaries.flatten()
+
+    # train and plot each classifier
     for i, (name, clf) in enumerate(classifiers.items()):
         y_predict = clf.fit(X_train, y_train).predict(X_test)
-        RocCurveDisplay.from_estimator(clf, X_test, y_test, ax=ax_roc, name=name)
-        DetCurveDisplay.from_estimator(clf, X_test, y_test, ax=ax_det, name=name)
-        boundary = plot_boundary(clf, X_test, y_test, y_predict, axs_b[i], name)
+        score = clf.score(X_test, y_test)
 
+        # plot ROC curve
+        RocCurveDisplay.from_estimator(clf, X_test, y_test, ax=ax_roc, name=name)
+        
+        # plot detection error tradeoff curve
+        DetCurveDisplay.from_estimator(clf, X_test, y_test, ax=ax_det, name=name)
+        ax_det.legend(loc='best')
+
+        # plot a confusion matrix for the classifier
+        ConfusionMatrixDisplay.from_estimator(
+            clf,
+            X_test,
+            y_test,
+            display_labels = ['Adult', 'Infant'],
+            ax = axs_confusion_matrices[i],
+            colorbar=False)
+        
+        axs_confusion_matrices[i].set(title = name)
+        
+        # if we have 2 features then we can plot the decision boundary
+        if X_test.shape[1] == 2:
+            plot_clf_boundary(clf, X_test, y_test, y_predict, axs_boundaries[i], name, score)
+    
+    for fig in figs:
+        fig.suptitle(title, fontsize=18)
+        fig.tight_layout()
+
+def main():
+
+    # get full dataset
+    df = pd.read_csv('.\data\merged_landmarks.csv')
+    
+    # make the colormap
+    make_cm()
+    
+    # first show plots using just 2 features
+    title = '2 Features: \n boxratio, boxsize'
+    X = df[['boxratio', 'boxsize/interoc']]
+    y = df[['baby']].squeeze()
+    train_plot(X, y, title)
+
+    # run the same models with all 68 landmarks
+    title = '136 Features: \n x,y for 68 landmarks'
+    X = df.loc[:, df.columns.str.startswith('norm_cenrot')]
+    y = df[['baby']].squeeze()
+    train_plot(X, y, title)
+    
     plt.show()
 
 if __name__ == '__main__':
