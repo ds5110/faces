@@ -88,15 +88,16 @@ def plot_clf_boundary(clf, X, y, y_pred, ax, name, score):
 
     ax.legend(title='Predictions')
     return ax
-
+ 
 def train_plot(X, y, title):
-    # models require normalized data
-    scalar = StandardScaler()
-    X = scalar.fit_transform(X)
-    
     # split 50% data for testing
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.66, random_state=42)
     
+    # normalized data
+    scalar = StandardScaler()
+    X_train = scalar.fit_transform(X_train)
+    X_test = scalar.transform(X_test)
+       
     # create all models
     classifiers = {
         "Linear Discriminant Analysis": LinearDiscriminantAnalysis(solver="svd", store_covariance=True),
