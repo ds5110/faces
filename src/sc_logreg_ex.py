@@ -38,7 +38,7 @@ def rec_feature_tune(df,predictors_list):
     num_features = np.arange(1,len(predictors_list)+1)
     num_folds = 5   
     estimator = LogisticRegression(max_iter=1000)
-    scores,scores_std,scores_train,scores_std_train,num_features_selected = tune_rfe(estimator,num_features,num_folds,X,y,predictors_list)
+    scores,scores_std,scores_train,scores_std_train,num_features_selected = tune_rfe(estimator,num_features,num_folds,X,y)
     plot_tune(scores,scores_std,scores_train,scores_std_train,num_features,num_folds)
 
     return num_features_selected
@@ -58,39 +58,36 @@ def fwd_feature_select(df,n_features,predictors_list):
     class_report(ytest,y_pred,'logreg')
     print(selected_features)
 
-
-
-
-
 def main():
     df = get_data()
     norm_cenrot_sym_diff,_ = get_categories(df)
 
-    # print('Partition 1 - Without feature selection')
-    # without_f(df,main_predictors) 
-    # print('Partition 1 - Feature selection')
-    # num_features_selected = rec_feature_tune(df,main_predictors)
-    # print('Partition 1 - With Feature selection')
-    # rec_feature_select(df,main_predictors,num_features_selected)
-
+    print('Testing out [boxratio, interoc,interoc_norm,boxsize,boxsize/interoc]')
     print('Partition 1 - Without feature selection')
     without_f(df,main_predictors) 
     print('Partition 1 - Feature selection')
-    num_features_selected = fwd_feature_select(df,3,main_predictors)
+    num_features_selected = rec_feature_tune(df,main_predictors)
     print('Partition 1 - With Feature selection')
-    # rec_feature_select(df,main_predictors,num_features_selected)
+    rec_feature_select(df,main_predictors,num_features_selected)
     
-    # print('Partition 2 - Without feature selection')
-    # without_f(df,cenrot_cols) 
-    # print('Partition 2 - Feature selection')
-    # num_features_selected = rec_feature_tune(df,cenrot_cols)
-    # print('Partition 2 - With Feature selection')
-    # rec_feature_select(df,main_predictors,num_features_selected)
+    print('Testing out [norm_cenrot-]')
+    print('Partition 2 - Without feature selection')
+    without_f(df,cenrot_cols) 
+    print('Partition 2 - Feature selection')
+    num_features_selected = rec_feature_tune(df,cenrot_cols)
+    print('Partition 2 - With Feature selection')
+    rec_feature_select(df,main_predictors,num_features_selected)
 
-    # print('Testing out box + eucdistances')
-    # df = get_data('soph/merged_landmarks_dist.csv')
-    # predictors_list = ['boxratio','dist_7_41','dist_21_22', 'dist_22_25', 'dist_33_65']
-    # with_f(df,predictors_list)
+    print('Testing out boxratio + specific eucdistances')
+    df = get_data('data/merged_landmarks_dist.csv')
+    predictors_list = ['boxratio','dist_7_41','dist_21_22', 'dist_22_25', 'dist_33_65']
+    print('Partition 3 - Without feature selection')
+    without_f(df,predictors_list) 
+    print('Partition 3 - Feature selection')
+    num_features_selected = rec_feature_tune(df,predictors_list)
+    print('Partition 3 - With Feature selection')
+    rec_feature_select(df,predictors_list,num_features_selected)
+
 
 if __name__ == "__main__":
     main()
