@@ -53,7 +53,8 @@ def rec_feature_select(df,predictors_list,num_features):
 def fwd_feature_select(df,n_features,predictors_list):
     X,y = get_Xy(df,predictors_list)
     estimator = LogisticRegression(max_iter=1000)
-    Xtrain, Xtest, ytrain, ytest, y_pred, selected_features = fwd_feature_selection(X,y,predictors_list,n_features, estimator)    
+    Xtrain, Xtest, ytrain, ytest, y_pred, selected_features = fwd_feature_selection(X,y,predictors_list,n_features, estimator)   
+     
     plot_cm(ytest,y_pred,'logreg')
     class_report(ytest,y_pred,'logreg')
     print(selected_features)
