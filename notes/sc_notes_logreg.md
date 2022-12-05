@@ -1,5 +1,5 @@
 # DS5110 faces: Notes on Logistic Regression Exploration - Sophia
-The purpose of this file is to contain all the notes and testing related to logreg model exploration (take 1).
+The purpose of this file is to contain all the notes and testing related to logreg model exploration (take 2).
 
 ## EDA
 I plotted the distribution of the "potential predictors" using histograms for both babys and adults. I was looking to see if any of the features seemed separable (thinking that would work well for logreg). I noted that the "boxratio" looked alright but the other ones did not look very separable.
@@ -15,21 +15,17 @@ For this model exploration I used several "partitions" of the data. Information 
 
 * Partition 1: The "potential predictors" 
   * Aka `['boxratio', 'interoc','interoc_norm','boxsize','boxsize/interoc']`
-* Partition 2: The "potential predictors" + "angular offsets" 
+* Partition 2: "boxratio" only
+* Partition 3: The "potential predictors" + "angular offsets" 
   * Aka `['boxratio', 'interoc','interoc_norm','boxsize','boxsize/interoc']` + `['yaw', 'yaw_abs','roll','roll_abs']`
-* Partition 3: The "norm_cenrot-" columns
-  * aka coords transformed to correct yaw and position & normalized to the new minimum bounding box
-* Partition 4: The "norm_cenrot_sym_diff" columns
+* Partition 4: The "norm_cenrot-" columns
+  * aka coords transformed to correct yaw and position & normalized to the minimum bounding box
+* Partition 5: The "norm_cenrot_sym_diff" columns
   * Aka the expected symmetric difference of yaw-corrected coordinates, normalized per min box
-
-## Preprocessing
-As outlined in the section above, there are several pre-processing steps done to create the "potential predictors" columns and transformed coordinates **(link to different readme going over those preprocessing steps in more detail?)**.
-
-We also noticed that the dataset was somewhat unbalanced with more adult data points than baby data points. See `sample.md` for details on our resampling process.
 
 ## Results
 **Partition 1: The "potential predictors"**
-This partition produced pretty good results after feature selection and downsampling. The 2 features selected were `['boxratio', 'interoc']` (reinforcing paper findings).
+This partition produced good results after feature selection and downsampling. The 2 features selected were `['boxratio', 'interoc']` (reinforcing paper findings).
 
 Without feature selection:
 * Accuracy score: 0.76
