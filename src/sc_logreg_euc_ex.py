@@ -25,7 +25,7 @@ def test_logreg_dist(df,predictors_list,desired_feaatures):
         
         X,y = get_Xy(df,selected)
         y = np.ravel(y)
-        Xtest, ytest, fitted, y_pred = logreg(X,y)
+        Xtrain, Xtest, ytrain, ytest, fitted, y_pred = logreg(X,y)
         acc = fitted.score(Xtest,ytest)
         accuracy.append(acc)
         print("Features: {} , Accuracy: {}".format(n,acc))
@@ -36,7 +36,7 @@ def test_logreg_dist(df,predictors_list,desired_feaatures):
         downsample_df = downsample(df)
         X,y = get_Xy(downsample_df,selected)
         y = np.ravel(y)
-        Xtest, ytest, fitted, y_pred = logreg(X,y)
+        Xtrain, Xtest, ytrain, ytest, fitted, y_pred = logreg(X,y)
         acc = fitted.score(Xtest,ytest)
         accuracy.append(acc)
         print("Features: {} , Accuracy: {}".format(n,acc))
@@ -50,7 +50,7 @@ def main():
     _,all_d_coords = get_categories(df)
 
     print('All coordinates')
-    test_logreg_dist(df,all_d_coords,4)
+    test_logreg_dist(df,all_d_coords,6)
 
     print('Heuristically chosen coordinates')
     special_dist = {'LBW':'17_21','RBW':'22_26','innerB_dist':'21_22','outerB_dist':'17_26','LEW':'36_39','REW':'42_45',

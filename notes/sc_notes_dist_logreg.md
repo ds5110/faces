@@ -1,5 +1,5 @@
 # DS5110 faces: Notes on Logistic Regression Exploration (euclidean distance) - Sophia
-The purpose of this file is to contain all the notes and testing related to logreg model exploration (take 2).
+The purpose of this file is to contain all the notes and testing related to logreg model exploration (take 3).
 
 ## EDA
 We had the idea of trying to identify more "distances" between facial features that could help classify adults vs infants. We know from the paper and our original logreg exploration (take 1) that the ratio between the width and height of the head (boxratio) and distance between the eyes are good for this. Could there be more?
@@ -14,40 +14,54 @@ The EDA for this idea involved selecting one image and plotting the matrix of th
 Infant and adult raw coordinate data can be found from this repo: [Infant-Facial-Landmark-Detection-and-Tracking](https://github.com/ostadabbas/Infant-Facial-Landmark-Detection-and-Tracking).
 
 ## Preprocessing
-For this model exploration I created additional metadata which computed the euclidean distances between the coordinate points (using normalized to the bounding box data as the coord input - see this document for information on how the normalized points were generated **link to different readme going over those preprocessing steps in more detail?**). Please see the `dist_metadata.py` for details on the calculations. To recreate the dataframe used, simply run `dist_metadata.py` and an updated csv will be created.
+For this model exploration I created additional metadata which computed the euclidean distances between the coordinate points (using normalized to the bounding box data as the coord input - see this document for information on how the normalized points were generated: `preprocessing.md`). Please see `sc_euc_metadata.py` for details on the calculations.
 
 ## Results
 We approached this idea from 2 ways. We first wanted to see given **all** the information (euc distance from every point to every other point) what distances/features would the model choose, and how many would the model need until we got to a decent accuracy and recall score? We also were curious about what order it added those features in. 
 
 **One feature**
-Feature selected: ['dist_7_41'] (distance from the left chin to left eye)
-* Accuracy score: 0.76 (no downsampling)
-* Accuracy score: 0.83 (downsampling)
-* Recall score adult: 0.92 (downsampling)
-* Recall score baby: 0.74 (downsampling)
+Feature selected: ['dist_7_48'] 
+* Accuracy score: 0.74 (no downsampling)
+* Accuracy score: 0.82 (downsampling)
+* Recall score adult: 0.86 (downsampling)
+* Recall score baby: 0.78 (downsampling)
 
 **Two feature**
-Feature selected: ['dist_7_41', 'dist_22_25'] (new is right eyebrow width)
-* Accuracy score: 0.85 (no downsampling)
-* Accuracy score: 0.90 (downsampling)
-* Recall score adult: 0.94 (downsampling)
-* Recall score baby: 0.87 (downsampling)
+Feature selected: ['dist_7_48', 'dist_33_42'] 
+* Accuracy score: 0.83 (no downsampling)
+* Accuracy score: 0.91 (downsampling)
+* Recall score adult: 0.93 (downsampling)
+* Recall score baby: 0.89 (downsampling)
 
 **Three feature**
-Feature selected: ['dist_7_41', 'dist_21_22', 'dist_22_25'] (new is distance between eyebrows)
-* Accuracy score: 0.87 (no downsampling)
-* Accuracy score: 0.93 (downsampling)
-* Recall score adult: 0.96 (downsampling)
+Feature selected: ['dist_7_48', 'dist_21_22', 'dist_33_42'] 
+* Accuracy score: 0.91 (no downsampling)
+* Accuracy score: 0.94 (downsampling)
+* Recall score adult: 0.98 (downsampling)
 * Recall score baby: 0.89 (downsampling)
 
 **Four feature**
-Feature selected: ['dist_7_41', 'dist_21_22', 'dist_22_25', 'dist_33_65'] (new is distance from mouth to nose)
-* Accuracy score: 0.93 (no downsampling)
-* Accuracy score: 0.99 (downsampling)
-* Recall score adult: 1.00 (downsampling)
-* Recall score baby: 0.97 (downsampling)
+Feature selected: ['dist_7_48','dist_18_25','dist_21_22', 'dist_33_42'] 
+* Accuracy score: 0.94 (no downsampling)
+* Accuracy score: 0.98 (downsampling)
+* Recall score adult: 0.98 (downsampling)
+* Recall score baby: 0.98 (downsampling)
 
-<img src="soph_logreg/algo_baby.png" width=600>
+**Five feature**
+Feature selected: ['dist_7_9', 'dist_7_48', 'dist_18_25', 'dist_21_22', 'dist_33_42']
+* Accuracy score: 0.95 (no downsampling)
+* Accuracy score: 0.98 (downsampling)
+* Recall score adult: .98 (downsampling)
+* Recall score baby:  .97 (downsampling)
+
+**Six feature**
+Feature selected: ['dist_5_7', 'dist_7_9', 'dist_7_48', 'dist_18_25', 'dist_21_22', 'dist_33_42']
+* Accuracy score: 0.97 (no downsampling)
+* Accuracy score: 0.98 (downsampling)
+* Recall score adult: .98 (downsampling)
+* Recall score baby:  .98 (downsampling)
+
+<img src="soph_logreg/6_baby.png" width=600>
 
 We then wanted to see given only some distances, would the classifier be able to generate a good score? We heuristically chose these landmarks based on what we thought would be valuable. The distances chosen are as follows:
 Left(L) brow width(W)
@@ -82,32 +96,32 @@ Visual representation of what we picked:
 <img src="soph_logreg/h_baby.png" width=600>
 
 **One feature**
-Feature selected: ['dist_21_22'] (distance between inner brows)
+Feature selected: ['dist_7_48']
 * Accuracy score: 0.74 (no downsampling)
-* Accuracy score: 0.76 (downsampling)
-* Recall score adult: 0.82 (downsampling)
-* Recall score baby: 0.70 (downsampling)
-
-**Two feature**
-Feature selected: ['dist_21_22', 'dist_48_54'] (mouth width)
-* Accuracy score: 0.81 (no downsampling)
-* Accuracy score: 0.86 (downsampling)
-* Recall score adult: 0.94 (downsampling)
+* Accuracy score: 0.82 (downsampling)
+* Recall score adult: 0.86 (downsampling)
 * Recall score baby: 0.78 (downsampling)
 
+**Two feature**
+Feature selected: ['dist_7_48', 'dist_33_42']
+* Accuracy score: 0.83 (no downsampling)
+* Accuracy score: 0.91 (downsampling)
+* Recall score adult: 0.93 (downsampling)
+* Recall score baby: 0.89 (downsampling)
+
 **Three feature**
-Feature selected: ['dist_21_22', 'dist_48_54', 'dist_27_62'] (from between eyes to top of mouth)
-* Accuracy score: 0.84 (no downsampling)
-* Accuracy score: 0.93 (downsampling)
-* Recall score adult: 0.96 (downsampling)
+Feature selected: [['dist_7_48', 'dist_21_22', 'dist_33_42']
+* Accuracy score: 0.91 (no downsampling)
+* Accuracy score: 0.94 (downsampling)
+* Recall score adult: 0.98 (downsampling)
 * Recall score baby: 0.89 (downsampling)
 
 **Four feature**
-Feature selected: ['dist_21_22', 'dist_17_26', 'dist_48_54', 'dist_27_62']
-* Accuracy score: 0.85 (no downsampling)
-* Accuracy score: 0.94 (downsampling)
-* Recall score adult: .92 (downsampling)
-* Recall score baby:  .95 (downsampling)
+Feature selected: ['dist_7_48', 'dist_18_25', 'dist_21_22', 'dist_33_42']
+* Accuracy score: 0.94 (no downsampling)
+* Accuracy score: 0.98 (downsampling)
+* Recall score adult: .98 (downsampling)
+* Recall score baby:  .98 (downsampling)
 
 <img src="soph_logreg/myh_baby.png" width=600>
 
