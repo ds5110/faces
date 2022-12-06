@@ -7,6 +7,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+from sklearn.pipeline import Pipeline
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import ConfusionMatrixDisplay, DetCurveDisplay, RocCurveDisplay
@@ -29,24 +30,16 @@ def make_cm():
     )
     plt.cm.register_cmap(cmap=cmap)
 
-def train(X, y, classifiers):
-    # split 50% data for testing
-    X_train_scaled, X_test_scaled, y_train, y_test= train_test_split(X, y, test_size=0.66, random_state=42)
+def train(X_train, X_test, y_train, y_test, classifiers):
     
-    # fit scalar to training data and normalize data
-    scalar = StandardScaler()
-    X_train_scaled = scalar.fit_transform(X_train_scaled)
-    X_test_scaled = scalar.transform(X_test_scaled)
-
-    trained_classifiers = {}
     scores = {}
 
     for name, classifier in classifiers.items():
-        trained_classifiers[name] = classifier.fit(X_train_scaled, y_train)
+        classifier.fit(X_train, y_train)
         # if using GridSearchCV, add a text box of the selected params instead of a legend
-        scores[name] = classifier.score(X_test_scaled, y_test)
+        scores[name] = classifier.score(X_test, y_test)
 
-    return trained_classifiers, scores, X_train_scaled, X_test_scaled, y_train, y_test
+    return classifiers, scores
 
 def plot_metrics(trained_classifiers, scores, X_train_scaled, X_test_scaled, y_train, y_test, fig_title):
     '''
@@ -86,7 +79,7 @@ def plot_metrics(trained_classifiers, scores, X_train_scaled, X_test_scaled, y_t
         fig.suptitle(fig_title, fontsize=18)
         fig.tight_layout()
 
-def plot_clf_boundary(clf, X_test_scaled, y_test, y_pred, ax, ax_title):
+def plot_clf_boundary(clf, X_test, y_test, y_pred, ax, ax_title):
     '''
     Creates a scatter plot of all test points labeled as True and False, Adult and Baby,
     and plots the classifier's decision boundary. Only works with 2d models.'''
@@ -99,21 +92,21 @@ def plot_clf_boundary(clf, X_test_scaled, y_test, y_pred, ax, ax_title):
 
     tp = y_test == y_pred  # True Positive
     tp0, tp1 = tp[y_test == 0], tp[y_test == 1]
-    X0, X1 = X_test_scaled[y_test == 0], X_test_scaled[y_test == 1]
+    X0, X1 = X_test[y_test == 0], X_test[y_test == 1]
     X0_tp, X0_fp = X0[tp0], X0[~tp0]
     X1_tp, X1_fp = X1[tp1], X1[~tp1]
 
     # class 0: Adults
-    ax.scatter(X0_tp[:, 0], X0_tp[:, 1], marker=".", color="red", label='True Adult')
-    ax.scatter(X0_fp[:, 0], X0_fp[:, 1], marker="x", s=20, color="#990000", label='False Adult')  # dark red
+    ax.scatter(X0_tp.iloc[:, 0], X0_tp.iloc[:, 1], marker=".", color="red", label='True Adult')
+    ax.scatter(X0_fp.iloc[:, 0], X0_fp.iloc[:, 1], marker="x", s=20, color="#990000", label='False Adult')  # dark red
 
     # class 1: Babies
-    ax.scatter(X1_tp[:, 0], X1_tp[:, 1], marker=".", color="blue", label='True Baby')
-    ax.scatter(X1_fp[:, 0], X1_fp[:, 1], marker="x", s=20, color="#000099", label='False Baby')  # dark blue
+    ax.scatter(X1_tp.iloc[:, 0], X1_tp.iloc[:, 1], marker=".", color="blue", label='True Baby')
+    ax.scatter(X1_fp.iloc[:, 0], X1_fp.iloc[:, 1], marker="x", s=20, color="#000099", label='False Baby')  # dark blue
 
     disp = DecisionBoundaryDisplay.from_estimator(
         clf, 
-        X_test_scaled, 
+        X_test, 
         response_method="predict", 
         xlabel='Face Height / Width', 
         ylabel='Face Size relative to Interoc Dist.', 
@@ -125,18 +118,18 @@ def plot_clf_boundary(clf, X_test_scaled, y_test, y_pred, ax, ax_title):
     ax.legend(title='Predictions')
     return ax
 
-def plot2D(trained_classifiers, scores, X_test_scaled, y_test, fig_title):
+def plot2D(trained_classifiers, scores, X_test, y_test, fig_title):
     '''
     Loops through each model and plots their boundary using plot_clf_boundary()
     '''
-    assert X_test_scaled.shape[1] == 2    
+    assert X_test.shape[1] == 2    
     fig_boundaries, axs_boundaries = plt.subplots(2, 2, figsize = (10, 10))
     axs_boundaries = axs_boundaries.flatten()
 
     for i, (name, trained_classifier) in enumerate(trained_classifiers.items()):
         ax_title = f'{name} \n score = {scores[name]:.4f}'
-        y_predict = trained_classifier.predict(X_test_scaled)
-        plot_clf_boundary(trained_classifier, X_test_scaled, y_test, y_predict, axs_boundaries[i], ax_title)
+        y_predict = trained_classifier.predict(X_test)
+        plot_clf_boundary(trained_classifier, X_test, y_test, y_predict, axs_boundaries[i], ax_title)
         
         # if GridCV was used, then add the chosen parameters to the plot
         if isinstance(trained_classifier, GridSearchCV):
@@ -152,6 +145,7 @@ def plot2D(trained_classifiers, scores, X_test_scaled, y_test, fig_title):
                 fontsize=8, horizontalalignment='left',
                 verticalalignment='top',
                 bbox=props)
+    
     fig_boundaries.suptitle(fig_title, fontsize=18)
     fig_boundaries.tight_layout()
 
@@ -164,6 +158,18 @@ def GridSearchCV_Parameter_Message(trained_classifier):
         best_params_message += f'{param} = {value}\n'
     return best_params_message
 
+def train_and_plot(X,y, classifiers, fig_title):
+    # hold out data for testing
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.66, random_state=42)
+
+    # train the classifiers
+    trained_classifiers, scores = train(X_train, X_test, y_train, y_test, classifiers)
+
+    # plot the results    
+    plot_metrics(trained_classifiers, scores, X_train, X_test, y_train, y_test, fig_title)
+    if X_test.shape[1] == 2:
+        plot2D(trained_classifiers, scores, X_test, y_test, fig_title)
+
 def main():
     # get full dataset
     df = pd.read_csv('.\data\merged_landmarks.csv')
@@ -172,36 +178,46 @@ def main():
     make_cm()
 
     # create all models
-    knn_params = {'n_neighbors': range(5,100, 5), 'weights': ['uniform', 'distance']}
+    knn_params = {'knn__n_neighbors': range(5,100, 5), 'knn__weights': ['uniform', 'distance']}
     classifiers = {
-        "Linear Discriminant Analysis": LinearDiscriminantAnalysis(solver="svd", store_covariance=True),
-        "Quadratic Discriminant Analysis": QuadraticDiscriminantAnalysis(store_covariance=True),
-        "Gaussian Naive Bayes": GaussianNB(),
-        "K Nearest Neighbors": GridSearchCV(estimator=KNeighborsClassifier(), param_grid=knn_params, scoring='roc_auc')
+        "Linear Discriminant Analysis": Pipeline([
+            ('scaler', StandardScaler()), 
+            ('lda', LinearDiscriminantAnalysis(solver="svd", store_covariance=True))]),
+        
+        "Quadratic Discriminant Analysis": Pipeline([
+            ('scaler', StandardScaler()), 
+            ('qda', QuadraticDiscriminantAnalysis(store_covariance=True))]),
+        
+        "Gaussian Naive Bayes": Pipeline([
+            ('scaler', StandardScaler()),
+            ('gnb',GaussianNB())]),
+        
+        "K Nearest Neighbors": GridSearchCV(
+            estimator = Pipeline([
+            ('scaler', StandardScaler()), 
+            ('knn', KNeighborsClassifier())]), 
+            param_grid = knn_params, 
+            scoring = 'roc_auc')
     }
     
     # using just 2 features
     fig_title = '2 Features: \n boxratio, boxsize'
     X = df[['boxratio', 'boxsize/interoc']]
     y = df[['baby']].squeeze()
-    trained_classifiers, scores, X_train_scaled, X_test_scaled, y_train, y_test = train(X, y, classifiers)
-    plot_metrics(trained_classifiers, scores, X_train_scaled, X_test_scaled, y_train, y_test, fig_title)
-    plot2D(trained_classifiers, scores, X_test_scaled, y_test, fig_title)
+    train_and_plot(X, y, classifiers, fig_title)
 
     # using all 68 original landmarks
     fig_title = '136 Features: \n Original 68 landmarks'
     X = df.loc[:, df.columns.str.startswith('x') + df.columns.str.startswith('y')]
     y = df[['baby']].squeeze()
-    trained_classifiers, scores, X_train_scaled, X_test_scaled, y_train, y_test = train(X, y, classifiers)
-    plot_metrics(trained_classifiers, scores, X_train_scaled, X_test_scaled, y_train, y_test, fig_title)
+    train_and_plot(X, y, classifiers, fig_title)
 
     # using all 68 normalized and centered landmarks
     fig_title = '136 Features: \n Normalized, Centered 68 landmarks'
     X = df.loc[:, df.columns.str.startswith('norm_cenrot')]
     y = df[['baby']].squeeze()
-    trained_classifiers, scores, X_train_scaled, X_test_scaled, y_train, y_test = train(X, y, classifiers)
-    plot_metrics(trained_classifiers, scores, X_train_scaled, X_test_scaled, y_train, y_test, fig_title)
-    
+    train_and_plot(X, y, classifiers, fig_title)
+
     plt.show()
 
 if __name__ == '__main__':
