@@ -121,6 +121,7 @@ Feature selected: ['dist_5_7', 'dist_7_9', 'dist_7_48', 'dist_18_25', 'dist_21_2
 * Recall score baby:  .98 (downsampling)
 
 Visual representation of distances on example face:
+
 <img src="figs/soph_logreg/6_baby.png" width=600>
 
 To reproduce the results from this section run:
