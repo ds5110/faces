@@ -6,8 +6,8 @@ This file is intended for testing logistic regression model.
 from util.sc_helpers import get_Xy, plot_cm, class_report, tt_split, get_data, get_categories
 from util.sc_resample import upsample, downsample
 from util.sc_feature_selection import tune_rfe, plot_tune, rec_feature_selection, fwd_feature_selection
-from util.model import main_predictors
-from util.column_names import cenrot_cols
+from util.model import main_predictors, norm_cols
+
 #basic
 import numpy as np
 #sklearn
@@ -73,11 +73,11 @@ def main():
     
     print('Testing out [norm_cenrot-]')
     print('Partition 2 - Without feature selection')
-    without_f(df,cenrot_cols) 
+    without_f(df,norm_cols[0]) 
     print('Partition 2 - Feature selection')
-    num_features_selected = rec_feature_tune(df,cenrot_cols)
+    num_features_selected = rec_feature_tune(df,norm_cols[0])
     print('Partition 2 - With Feature selection')
-    rec_feature_select(df,main_predictors,num_features_selected)
+    rec_feature_select(df,main_predictors,13)
 
     print('Testing out boxratio + specific eucdistances')
     df = get_data('data/merged_landmarks_dist.csv')

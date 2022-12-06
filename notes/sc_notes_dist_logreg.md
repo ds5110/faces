@@ -1,5 +1,5 @@
 # DS5110 faces: Notes on Logistic Regression Exploration (euclidean distance) - Sophia
-The purpose of this file is to contain all the notes and testing related to logreg model exploration (take 2).
+The purpose of this file is to contain all the notes and testing related to logreg model exploration (take 3).
 
 ## EDA
 We had the idea of trying to identify more "distances" between facial features that could help classify adults vs infants. We know from the paper and our original logreg exploration (take 1) that the ratio between the width and height of the head (boxratio) and distance between the eyes are good for this. Could there be more?
@@ -14,7 +14,7 @@ The EDA for this idea involved selecting one image and plotting the matrix of th
 Infant and adult raw coordinate data can be found from this repo: [Infant-Facial-Landmark-Detection-and-Tracking](https://github.com/ostadabbas/Infant-Facial-Landmark-Detection-and-Tracking).
 
 ## Preprocessing
-For this model exploration I created additional metadata which computed the euclidean distances between the coordinate points (using normalized to the bounding box data as the coord input - see this document for information on how the normalized points were generated **link to different readme going over those preprocessing steps in more detail?**). Please see the `dist_metadata.py` for details on the calculations. To recreate the dataframe used, simply run `dist_metadata.py` and an updated csv will be created.
+For this model exploration I created additional metadata which computed the euclidean distances between the coordinate points (using normalized to the bounding box data as the coord input - see this document for information on how the normalized points were generated: `preprocessing.md`). Please see `sc_euc_metadata.py` for details on the calculations.
 
 ## Results
 We approached this idea from 2 ways. We first wanted to see given **all** the information (euc distance from every point to every other point) what distances/features would the model choose, and how many would the model need until we got to a decent accuracy and recall score? We also were curious about what order it added those features in. 

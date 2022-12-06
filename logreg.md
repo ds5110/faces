@@ -59,11 +59,6 @@ Confusion matrix:
 
 <img src="figs/soph_logreg/p1_fd_cmat.png" width=600>
 
-66 features (normalized coord data), downsampling:
-* Accuracy score: 0.94
-* Recall score adult: 0.92
-* Recall score baby: 0.96
-
 13 features (normalized & rotated coord data), downsampling:
 * Accuracy score: 0.94
 * Recall score adult: 0.92
