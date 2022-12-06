@@ -35,7 +35,7 @@ def tune_rfe(estimator,num_features,n_folds,X,y):
    
     return scores,scores_std,scores_train,scores_std_train,num_features_selected
 
-def plot_tune(scores,scores_std,scores_train,scores_std_train,num_components,n_folds):
+def plot_tune(scores,scores_std,scores_train,scores_std_train,num_features,n_folds):
     '''
     Plotting function for the gridsearch.
     '''
@@ -43,27 +43,27 @@ def plot_tune(scores,scores_std,scores_train,scores_std_train,num_components,n_f
     fig, ax = plt.subplots()
     fig.set_size_inches(8, 6)
     
-    ax.plot(num_components, scores)
-    ax.plot(num_components, scores_train)
+    ax.plot(num_features, scores)
+    ax.plot(num_features, scores_train)
 
     std_error = scores_std / np.sqrt(n_folds)
-    ax.plot(num_components, scores + std_error, "b--")
-    ax.plot(num_components, scores - std_error, "b--")
+    ax.plot(num_features, scores + std_error, "b--")
+    ax.plot(num_features, scores - std_error, "b--")
 
     std_error_train = scores_std_train / np.sqrt(n_folds)
-    ax.plot(num_components, scores_train + std_error_train, linestyle=":", color='orange')
-    ax.plot(num_components, scores_train - std_error_train, linestyle=":",color='orange')
+    ax.plot(num_features, scores_train + std_error_train, linestyle=":", color='orange')
+    ax.plot(num_features, scores_train - std_error_train, linestyle=":",color='orange')
 
     # alpha=0.2 controls the translucency of the fill color
-    ax.fill_between(num_components, scores + std_error, scores - std_error, alpha=0.2)
-    ax.fill_between(num_components, scores_train + std_error_train, scores_train - std_error_train, alpha=0.2)
+    ax.fill_between(num_features, scores + std_error, scores - std_error, alpha=0.2)
+    ax.fill_between(num_features, scores_train + std_error_train, scores_train - std_error_train, alpha=0.2)
     plt.ylabel("CV score +/- std error")
-    plt.xlabel("Number of Components")
+    plt.xlabel("Number of Features")
     plt.axhline(np.max(scores), linestyle="--", color=".5")
     plt.axhline(np.max(scores_train), linestyle=":", color=".5")
-    plt.xlim([num_components[0], num_components[-1]])
+    plt.xlim([num_features[0], num_features[-1]])
 
-    plt.title("CV scores vs number of components used in PCR")
+    plt.title("CV scores vs number of features used")
     blue_patch = mpatches.Patch(color='blue', label='Training')
     orange_patch = mpatches.Patch(color='orange', label='Testing')
 

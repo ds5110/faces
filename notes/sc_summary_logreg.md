@@ -6,42 +6,18 @@ More information about EDA, sampling methods attempted, hyper-parameter tuning, 
 ## Logistic Regression: Take 1
 One of our goals is to test out different forms of resampling to balance the data. We wanted to know if resampling would have a positive impact on model accuracy. We found that "downsampled" scores were consistently better (even if it reduced the accuracy rating by 0.1 or so, the recall scores greatly improved), so we can conclude that downsampling is a good strategy for this model. 
 
-In the spirit of simple models being the "best", the "one feature" model stood out to us as pretty good. For more information on how this model preformed with other groups of features, please see `notes/notes_logreg`.
+In the spirit of simple models being the "best", the "one feature" model stood out to us as pretty good. For more information on how this model preformed with other groups of features, please see `notes/notes_logreg`. We got to this model by using recursive feature selection to select the best (and minimum) number of features.
 
-If you really wanted recall scores to be even better, the "13 feature" model with the normalized & rotated coordinate data appears to be better than the just normalized coordinate data given the similarity in scores and great reduction of features. This provides good evidence that the preprocessing adjustments done to the data are worthwhile.
-
-In many of these instances, we did recursive/backward feature selection to select the best (and minimum) number of features. Espeically in the cases where we are using 66+ features, we found that using feature selection greatly improved both the accuracy and recall scores of our model. This is likely due to logistic regression preforming better with minimal colinearity. 
+Using other feature groups such as the `norm_cenrot` columns did not yeild very promising results. This could be due to coliniarity, given the nature of the data (too many similar coordinate points). 
 
 One feature (`['boxratio']`), downsampling:
 * Accuracy score: 0.88
 * Recall score adult: 0.90
 * Recall score baby: 0.85
 
-CV to tune optimal features:
-
-<img src="soph_logreg/p1_f_cv.png" width=600>
-
 Confusion matrix:
 
 <img src="soph_logreg/p1_fd_cmat.png" width=600>
-
-66 features (normalized coord data), downsampling:
-* Accuracy score: 0.94
-* Recall score adult: 0.92
-* Recall score baby: 0.96
-
-13 features (normalized & rotated coord data), downsampling:
-* Accuracy score: 0.94
-* Recall score adult: 0.92
-* Recall score baby: 0.96
-
-CV to tune optimal features:
-
-<img src="soph_logreg/p5_f_cv.png" width=600>
-
-Confusion matrix:
-
-<img src="soph_logreg/p4_fd_cmat.png" width=600>
 
 ## Logistic Regression: Take 2
 Inspired by our sucess with using `boxratio` (ratio between the width and height of the head) as a single predictor, we had the idea of trying to identify more "distances" between facial features that could help classify adults vs infants.
