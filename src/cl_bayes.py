@@ -4,6 +4,7 @@ If the model is 2-dimensional, also plots decision boundaries
 """
 
 import pandas as pd
+import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
@@ -32,16 +33,19 @@ def make_cm():
 
 def train(X_train, X_test, y_train, y_test, classifiers):
     
-    scores = {}
+    test_scores = {}
 
     for name, classifier in classifiers.items():
         classifier.fit(X_train, y_train)
         # if using GridSearchCV, add a text box of the selected params instead of a legend
-        scores[name] = classifier.score(X_test, y_test)
+        if isinstance(classifier, GridSearchCV):
+            test_scores[name] = classifier.best_estimator_.score(X_test, y_test)
+        else:
+            test_scores[name] = classifier.score(X_test, y_test)
 
-    return classifiers, scores
+    return classifiers, test_scores
 
-def plot_metrics(trained_classifiers, scores, X_train_scaled, X_test_scaled, y_train, y_test, fig_title):
+def plot_metrics(trained_classifiers, test_scores, X_train, X_test, y_train, y_test, fig_title):
     '''
     Create 2 figures showing metrics for trained classifiers:
     * One figure with confusion matrices for each classifier
@@ -56,19 +60,25 @@ def plot_metrics(trained_classifiers, scores, X_train_scaled, X_test_scaled, y_t
     axs_confusion_matrices = axs_confusion_matrices.flatten()
 
     for i, (name, trained_classifier) in enumerate(trained_classifiers.items()):
-        ax_title = f'{name} \n score = {scores[name]:.4f}'
+        ax_title = f'{name} \n score = {test_scores[name]:.4f}'
+        
+        # GridSearchCV requires getting the best estimator via attribute 
+        if isinstance(trained_classifier, GridSearchCV):
+            chosen_classifier = trained_classifier.best_estimator_
+        else:
+            chosen_classifier = trained_classifier
         
         # plot ROC curve
-        RocCurveDisplay.from_estimator(trained_classifier, X_test_scaled, y_test, ax=ax_roc, name=name)
+        RocCurveDisplay.from_estimator(chosen_classifier, X_test, y_test, ax=ax_roc, name=name)
         
         # plot detection error tradeoff curve
-        DetCurveDisplay.from_estimator(trained_classifier, X_test_scaled, y_test, ax=ax_det, name=name)
+        DetCurveDisplay.from_estimator(chosen_classifier, X_test, y_test, ax=ax_det, name=name)
         ax_det.legend(loc='best')
 
         # plot a confusion matrix for the classifier
         ConfusionMatrixDisplay.from_estimator(
-            trained_classifier,
-            X_test_scaled,
+            chosen_classifier,
+            X_test,
             y_test,
             display_labels = ['Adult', 'Infant'],
             ax = axs_confusion_matrices[i],
@@ -153,22 +163,26 @@ def GridSearchCV_Parameter_Message(trained_classifier):
     assert isinstance(trained_classifier, GridSearchCV) 
     # get a dict of the params from the best GridSearchCV and write a string of each key = value
     best_params = trained_classifier.best_estimator_.get_params()
+    # get the name of the classifier step in the pipeline
+    classifier_step_name = best_params['steps'][1][0] + '__'
     best_params_message = ''
     for param, value in best_params.items():
-        best_params_message += f'{param} = {value}\n'
+        if param.startswith(classifier_step_name):
+            param_name = param.split('__',1)[1]
+            best_params_message += f'{param_name} = {value}\n'
     return best_params_message
 
 def train_and_plot(X,y, classifiers, fig_title):
     # hold out data for testing
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.66, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=42)
 
     # train the classifiers
-    trained_classifiers, scores = train(X_train, X_test, y_train, y_test, classifiers)
+    trained_classifiers, test_scores = train(X_train, X_test, y_train, y_test, classifiers)
 
     # plot the results    
-    plot_metrics(trained_classifiers, scores, X_train, X_test, y_train, y_test, fig_title)
+    plot_metrics(trained_classifiers, test_scores, X_train, X_test, y_train, y_test, fig_title)
     if X_test.shape[1] == 2:
-        plot2D(trained_classifiers, scores, X_test, y_test, fig_title)
+        plot2D(trained_classifiers, test_scores, X_test, y_test, fig_title)
 
 def main():
     # get full dataset
@@ -178,24 +192,33 @@ def main():
     make_cm()
 
     # create all models
+    lda_params = {'lda__solver': ['svd', 'lsqr', 'eigen'], 'lda__shrinkage': [None, 'auto']}
+    qda_params = {'qda__reg_param': np.arange(0, 1, 0.05)}
     knn_params = {'knn__n_neighbors': range(5,100, 5), 'knn__weights': ['uniform', 'distance']}
     classifiers = {
-        "Linear Discriminant Analysis": Pipeline([
+        "Linear Discriminant Analysis": GridSearchCV(
+            estimator = Pipeline([
             ('scaler', StandardScaler()), 
-            ('lda', LinearDiscriminantAnalysis(solver="svd", store_covariance=True))]),
+            ('lda', LinearDiscriminantAnalysis(store_covariance=True))]),
+            param_grid = lda_params, 
+            scoring = 'roc_auc'),
         
-        "Quadratic Discriminant Analysis": Pipeline([
+        "Quadratic Discriminant Analysis": GridSearchCV(
+            estimator = Pipeline([
             ('scaler', StandardScaler()), 
             ('qda', QuadraticDiscriminantAnalysis(store_covariance=True))]),
+            param_grid = qda_params, 
+            scoring = 'roc_auc'),
         
-        "Gaussian Naive Bayes": Pipeline([
+        "Gaussian Naive Bayes":
+            Pipeline([
             ('scaler', StandardScaler()),
             ('gnb',GaussianNB())]),
         
         "K Nearest Neighbors": GridSearchCV(
             estimator = Pipeline([
-            ('scaler', StandardScaler()), 
-            ('knn', KNeighborsClassifier())]), 
+                ('scaler', StandardScaler()), 
+                ('knn', KNeighborsClassifier())]), 
             param_grid = knn_params, 
             scoring = 'roc_auc')
     }
