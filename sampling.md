@@ -40,4 +40,4 @@ To re-create the testing of the resampling functions, run:
 ```
 make resample_test
 ```
-Plese see `logreg.md` for more information about how our logistic regression model preformed with resampling (and to recreate the figures/reports above). 
+Please see `logreg.md` for more information about how our logistic regression model preformed with resampling (and to recreate the figures/reports above). 
