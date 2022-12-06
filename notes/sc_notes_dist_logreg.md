@@ -20,28 +20,28 @@ For this model exploration I created additional metadata which computed the eucl
 We approached this idea from 2 ways. We first wanted to see given **all** the information (euc distance from every point to every other point) what distances/features would the model choose, and how many would the model need until we got to a decent accuracy and recall score? We also were curious about what order it added those features in. 
 
 **One feature**
-Feature selected: ['dist_7_48'] (distance from the left chin to left mouth corner)
+Feature selected: ['dist_7_48'] 
 * Accuracy score: 0.74 (no downsampling)
 * Accuracy score: 0.82 (downsampling)
 * Recall score adult: 0.86 (downsampling)
 * Recall score baby: 0.78 (downsampling)
 
 **Two feature**
-Feature selected: ['dist_7_48', 'dist_33_42'] (new is nose to right eye corner)
+Feature selected: ['dist_7_48', 'dist_33_42'] 
 * Accuracy score: 0.83 (no downsampling)
 * Accuracy score: 0.91 (downsampling)
 * Recall score adult: 0.93 (downsampling)
 * Recall score baby: 0.89 (downsampling)
 
 **Three feature**
-Feature selected: ['dist_7_48', 'dist_21_22', 'dist_33_42'] (new is distance between eyebrows)
+Feature selected: ['dist_7_48', 'dist_21_22', 'dist_33_42'] 
 * Accuracy score: 0.91 (no downsampling)
 * Accuracy score: 0.94 (downsampling)
 * Recall score adult: 0.98 (downsampling)
 * Recall score baby: 0.89 (downsampling)
 
 **Four feature**
-Feature selected: ['dist_7_48','dist_18_25','dist_21_22', 'dist_33_42'] (new is distance from mid eyebrow to mid eyebrow)
+Feature selected: ['dist_7_48','dist_18_25','dist_21_22', 'dist_33_42'] 
 * Accuracy score: 0.94 (no downsampling)
 * Accuracy score: 0.98 (downsampling)
 * Recall score adult: 0.98 (downsampling)
