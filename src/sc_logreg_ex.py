@@ -80,21 +80,23 @@ def main():
     # print('Partition 2 - Feature selection')
     # num_features_selected = rec_feature_tune(df,norm_cols[0])
     # print('Partition 2 - With Feature selection')
-    # rec_feature_select(df,main_predictors,num_features_selected)
-    # print('Partition 2 - With Feature selection & downsampled')
+    rec_feature_select(df,norm_cols[0],29)
+    print('Partition 2 - With Feature selection & downsampled')
+    df_downsampled = downsample(df)
+    rec_feature_select(df_downsampled,norm_cols[0],29)
+
+
+    # print('Testing out boxratio + specific eucdistances')
+    # df = get_data('data/merged_landmarks_dist.csv')
+    # predictors_list = ['boxratio','dist_5_7', 'dist_7_9', 'dist_7_48', 'dist_18_25', 'dist_21_22', 'dist_33_42']
+    # print('Partition 3 - Without feature selection')
+    # without_f(df,predictors_list) 
+    # print('Partition 3 - Feature selection')
+    # num_features_selected = rec_feature_tune(df,predictors_list)
+    # print('Partition 3 - With Feature selection')
+    # rec_feature_select(df,predictors_list,num_features_selected)
     # df_downsampled = downsample(df)
-    # rec_feature_select(df_downsampled,main_predictors,num_features_selected)
-
-
-    print('Testing out boxratio + specific eucdistances')
-    df = get_data('data/merged_landmarks_dist.csv')
-    predictors_list = ['boxratio','dist_7_41','dist_21_22', 'dist_22_25', 'dist_33_65']
-    print('Partition 3 - Without feature selection')
-    without_f(df,predictors_list) 
-    print('Partition 3 - Feature selection')
-    num_features_selected = rec_feature_tune(df,predictors_list)
-    print('Partition 3 - With Feature selection')
-    rec_feature_select(df,predictors_list,num_features_selected)
+    # rec_feature_select(df_downsampled,predictors_list,num_features_selected)
 
 
 if __name__ == "__main__":

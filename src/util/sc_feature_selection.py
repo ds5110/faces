@@ -86,17 +86,19 @@ def rec_feature_selection(estimator,num_features,X,y,predictors_list):
 
     return Xtrain, Xtest, ytrain, ytest, y_pred, selected_features
 
-def fwd_feature_selection(X,y,predictors_list,n_features, estimator):
+def fwd_feature_selection(X,y,predictors_list,n_features, estimator=LogisticRegression()):
     '''
     Forward feature selection.
     Returns a list of selected features.
     '''
-    y_flat = np.ravel(y)
-    Xtrain, Xtest, ytrain, ytest = tt_split(X,y_flat)
-    selector = SequentialFeatureSelector(estimator=estimator, n_features_to_select=n_features, n_jobs = -1)
-    fitted = selector.fit(Xtrain, ytrain)
-    y_pred = fitted.predict(Xtest)
-    
-    selected_features = [i for (i, v) in zip(predictors_list,list(selector.get_support())) if v]
+    y = np.ravel(y)
+    estimator = estimator
+    fwdfs = SequentialFeatureSelector(estimator=estimator, 
+    n_features_to_select=n_features, 
+    n_jobs = -1)
 
-    return Xtrain, Xtest, ytrain, ytest, y_pred, selected_features
+    fwdfs.fit(X, y)
+    
+    selected_features = [i for (i, v) in zip(predictors_list,list(fwdfs.get_support())) if v]
+
+    return selected_features
