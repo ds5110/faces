@@ -42,7 +42,7 @@ One of our goals is to test out different forms of resampling to balance the dat
 
 Building off of our findings in Take 1 above, the "one feature" model using just `['boxratio']` stood out to us as pretty good. For more information on how this model preformed with other groups of features, please see `notes/sc_notes_logreg`.
 
-In many of these instances, we did recursive feature selection to select the best (and minimum) number of features. Espeically in the cases where we are using 66+ features, we found that using feature selection greatly improved both the accuracy and recall scores of our model. This is likely due to logistic regression preforming better with minimal colinearity. 
+In many of these instances, we did recursive feature selection to select the best (and minimum) number of features. Especially in the cases where we are using 66+ features, we found that using feature selection greatly improved both the accuracy and recall scores of our model. This is likely due to logistic regression preforming better with minimal collinearity. 
 
 One feature (`['boxratio']`), downsampling:
 * Accuracy score: 0.88
@@ -69,11 +69,11 @@ make logreg_test
 make logreg_eda
 ```
 ## Logistic Regression: Take 3
-Inspired by our sucess with using `boxratio` (ratio between the width and height of the head) as a single predictor, we had the idea of trying to identify more "distances" between facial features that could help classify adults vs infants.
+Inspired by our success with using `boxratio` (ratio between the width and height of the head) as a single predictor, we had the idea of trying to identify more "distances" between facial features that could help classify adults vs infants.
 
-After generating the pairwise euclidian distances, it became really obvious that we would need feature selection given the ammount of features. In fact, if you tried to run this model with all these new features, you run the risk of overfitting the model. We thought that forward feature selection would be a good choice, as we can easily identify how and which additional distances will imporve the model. 
+After generating the pairwise euclidian distances, it became really obvious that we would need feature selection given the amount of features. In fact, if you tried to run this model with all these new features, you run the risk of overfitting the model. We thought that forward feature selection would be a good choice, as we can easily identify how and which additional distances will improve the model. 
 
-We also used downsampling here given the sucess of downsampling with the previous set of features.
+We also used downsampling here given the success of downsampling with the previous set of features.
 
 
 We found that the classifier produced a pretty good score with just one feature:
@@ -142,7 +142,7 @@ I think this is a good model because the accuracy rate and recall scores are qui
 
 <img src="figs/soph_logreg/p3_fd_cmat.png" width=600>
 
-Similar to above, we beleive this model preformed well due to the preproccing adjsutments that went into the `boxratio` and euclidian distances (the data was normalized, see `preprocessing.md` for details), and the fact that these features are somewhat seperable:
+Similar to above, we believe this model preformed well due to the preprocessing adjustments that went into the `boxratio` and euclidian distances (the data was normalized, see `preprocessing.md` for details), and the fact that these features are somewhat separable:
 
 <img src="figs/soph_logreg/dist_h.png" width=600>
 
