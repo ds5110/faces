@@ -104,10 +104,16 @@ def plot_image(
     X = anno.get_x()
     Y = anno.get_y()
     if grayscale:
+        if isinstance(grayscale, str):
+            cmap = grayscale
+        else:
+            cmap = 'viridis'
         # NOTE: Extracting luma component produces the same result
         #       as ImageOps.grayscale.
         # y,u,v = img.convert('YCbCr').split()
         img = ImageOps.grayscale(img)
+    else:
+        cmap = None
     
     # get the image data
     # img.convert('YCbCr')
@@ -118,7 +124,7 @@ def plot_image(
     else:
         own_axes = False
     if img is not None and not skip_img:
-        ax.imshow(img)
+        ax.imshow(img, cmap=cmap)
         if cross:
             center = np.array([img.width/2, img.height/2])
             ax.axhline(y=center[1])

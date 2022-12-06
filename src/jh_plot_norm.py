@@ -13,7 +13,7 @@ import numpy as np
 
 # internal
 from util import meta_cache
-from util.pre import rotate
+from util.pre import rotate, to_deg
 from util.plot import plot_image
 from util.column_names import x_cols_norm_cenrot, y_cols_norm_cenrot
 
@@ -51,17 +51,20 @@ for i, image_name in enumerate([
         cross=False,
         ax=ax1,
     )
-    ax1.title.set_text(image_name)
+    ax1.title.set_text(image_name + ' \n raw image data')
     
     rotated = rotate(anno)
     plot_image(
         rotated,
         annotate='spline',
         cross=True,
-        grayscale=True,
+        grayscale='bone',
         ax=ax2,
     )
-    ax2.title.set_text('rotated and centered')
+    yaw = df.iloc[row_id]['yaw'] * to_deg
+    ax2.title.set_text(
+        f'rotated and centered \n estimated yaw: {yaw:.2f}' + '$^{\circ}$'
+    )
     
     # plot geometry without image, to verify coords
     # NOTE: this is a hack to plot normalized coords
@@ -75,7 +78,6 @@ for i, image_name in enumerate([
     plot_image(
         rotated,
         annotate='splinenum',
-        grayscale=True,
         skip_img=True,
         ax=ax3,
     )
