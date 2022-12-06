@@ -26,7 +26,7 @@ After generating the pairwise euclidian distances, it became really obvious that
 
 We also used downsampling here given the sucess of downsampling with the previous set of features.
 
-We found that the classifier produced a pretty good score with just one feature, the euclidian distance from the left chin to left eye.
+We found that the classifier produced a pretty good score with just one feature:
 **One feature**
 Feature selected: ['dist_7_48'] (distance from the left chin to left mouth corner)
 * Accuracy score: 0.74 (no downsampling)
