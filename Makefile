@@ -7,6 +7,9 @@ prelim_plots:
 angles_logreg:
 	python src/jh_angle_labels_logreg.py
 
+compare_normalized:
+	python src/jh_plot_norm.py
+
 roll_yaw:
 	python src/jh_plot_roll_yaw.py
 

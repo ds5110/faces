@@ -150,3 +150,9 @@ To plot the first 10 such outliers, you can use this `Makefile` target:
 ```
 make angle_outliers
 ```
+
+## Normalizing Landmarks
+
+We used the estimated yaw and extent of minimum bounding box (per dimension) to normalize the landmark data.
+
+<img src="figs/normalized_landmarks.png" width=900>
