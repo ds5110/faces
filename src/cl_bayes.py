@@ -34,18 +34,23 @@ def make_cm():
 def train(X_train, X_test, y_train, y_test, classifiers):
     
     test_scores = {}
+    train_scores = {}
 
     for name, classifier in classifiers.items():
+        
         classifier.fit(X_train, y_train)
-        # if using GridSearchCV, add a text box of the selected params instead of a legend
+        
+        # GridSearchCV requires getting the best estimator via attribute 
         if isinstance(classifier, GridSearchCV):
+            train_scores[name] = classifier.best_score_ # Mean cross-validated score of the best_estimator
             test_scores[name] = classifier.best_estimator_.score(X_test, y_test)
         else:
+            train_scores[name] = classifier.score(X_train, y_train)
             test_scores[name] = classifier.score(X_test, y_test)
 
-    return classifiers, test_scores
+    return classifiers, test_scores, train_scores
 
-def plot_metrics(trained_classifiers, test_scores, X_train, X_test, y_train, y_test, fig_title):
+def plot_metrics(trained_classifiers, test_scores, train_scores, X_test, y_test, fig_title):
     '''
     Create 2 figures showing metrics for trained classifiers:
     * One figure with confusion matrices for each classifier
@@ -53,14 +58,14 @@ def plot_metrics(trained_classifiers, test_scores, X_train, X_test, y_train, y_t
     '''
     
     fig_metrics, [ax_roc, ax_det] = plt.subplots(1, 2, figsize = (12,6))
-    fig_confusion_matrices, axs_confusion_matrices = plt.subplots(2, 2, figsize = (6, 6))
+    fig_confusion_matrices, axs_confusion_matrices = plt.subplots(2, 2, figsize = (8, 6))
     figs = [fig_metrics, fig_confusion_matrices]
 
     # axes arrays need to be 1-dimensional to index through them in the next loop
     axs_confusion_matrices = axs_confusion_matrices.flatten()
 
     for i, (name, trained_classifier) in enumerate(trained_classifiers.items()):
-        ax_title = f'{name} \n score = {test_scores[name]:.4f}'
+        ax_title = f'{name} \ntrain score = {train_scores[name]:.4f} \ntest score = {test_scores[name]:.4f}'
         
         # GridSearchCV requires getting the best estimator via attribute 
         if isinstance(trained_classifier, GridSearchCV):
@@ -128,7 +133,7 @@ def plot_clf_boundary(clf, X_test, y_test, y_pred, ax, ax_title):
     ax.legend(title='Predictions')
     return ax
 
-def plot2D(trained_classifiers, scores, X_test, y_test, fig_title):
+def plot2D(trained_classifiers, test_scores, X_test, y_test, fig_title):
     '''
     Loops through each model and plots their boundary using plot_clf_boundary()
     '''
@@ -137,7 +142,7 @@ def plot2D(trained_classifiers, scores, X_test, y_test, fig_title):
     axs_boundaries = axs_boundaries.flatten()
 
     for i, (name, trained_classifier) in enumerate(trained_classifiers.items()):
-        ax_title = f'{name} \n score = {scores[name]:.4f}'
+        ax_title = f'{name} \ntest score = {test_scores[name]:.4f}'
         y_predict = trained_classifier.predict(X_test)
         plot_clf_boundary(trained_classifier, X_test, y_test, y_predict, axs_boundaries[i], ax_title)
         
@@ -177,10 +182,10 @@ def train_and_plot(X,y, classifiers, fig_title):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=42)
 
     # train the classifiers
-    trained_classifiers, test_scores = train(X_train, X_test, y_train, y_test, classifiers)
+    trained_classifiers, test_scores, train_scores = train(X_train, X_test, y_train, y_test, classifiers)
 
     # plot the results    
-    plot_metrics(trained_classifiers, test_scores, X_train, X_test, y_train, y_test, fig_title)
+    plot_metrics(trained_classifiers, test_scores, train_scores, X_test, y_test, fig_title)
     if X_test.shape[1] == 2:
         plot2D(trained_classifiers, test_scores, X_test, y_test, fig_title)
 
@@ -199,7 +204,7 @@ def main():
         "Linear Discriminant Analysis": GridSearchCV(
             estimator = Pipeline([
             ('scaler', StandardScaler()), 
-            ('lda', LinearDiscriminantAnalysis(store_covariance=True))]),
+            ('lda', LinearDiscriminantAnalysis(store_covariance=True, tol=.01))]),
             param_grid = lda_params, 
             scoring = 'roc_auc'),
         
