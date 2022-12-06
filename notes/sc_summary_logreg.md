@@ -1,7 +1,7 @@
 # DS5110 faces: Logistic Regression Exploration Summary - Sophia
 The purpose of this file is to explain the main takeaways from the logreg model exploration.
 
-More information about EDA, sampling methods attempted, hyper-parameter tuning, and data partitions tested please see `notes/notes_logreg` and `notes/notes_logreg_dist`.
+More information about EDA, sampling methods attempted, hyper-parameter tuning, and data partitions tested please see `notes/sc_notes_logreg` and `notes/sc_notes_logreg_dist`.
 
 ## Logistic Regression: Take 1
 One of our goals is to test out different forms of resampling to balance the data. We wanted to know if resampling would have a positive impact on model accuracy. We found that "downsampled" scores were consistently better (even if it reduced the accuracy rating by 0.1 or so, the recall scores greatly improved), so we can conclude that downsampling is a good strategy for this model. 

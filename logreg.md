@@ -40,9 +40,7 @@ This is a rough first test using small random validation set, but it indicates t
 ## Logistic Regression: Take 2
 One of our goals is to test out different forms of resampling to balance the data. We wanted to know if resampling would have a positive impact on model accuracy. We found that "downsampled" scores were consistently better (even if it reduced the accuracy rating by 0.1 or so, the recall scores greatly improved), so we can conclude that downsampling is a good strategy for this model. 
 
-Building off of our findings in Take 1 above, the "one feature" model using just `['boxratio']` stood out to us as pretty good. For more information on how this model preformed with other groups of features, please see `notes/notes_logreg`.
-
-If you really wanted recall scores to be even better, the "13 feature" model with the normalized & rotated coordinate data appears to be better than the just normalized coordinate data given the similarity in scores and great reduction of features. This provides good evidence that the preprocessing adjustments done to the data are worthwhile.
+Building off of our findings in Take 1 above, the "one feature" model using just `['boxratio']` stood out to us as pretty good. For more information on how this model preformed with other groups of features, please see `notes/sc_notes_logreg`.
 
 In many of these instances, we did recursive feature selection to select the best (and minimum) number of features. Espeically in the cases where we are using 66+ features, we found that using feature selection greatly improved both the accuracy and recall scores of our model. This is likely due to logistic regression preforming better with minimal colinearity. 
 
@@ -59,22 +57,16 @@ Confusion matrix:
 
 <img src="figs/soph_logreg/p1_fd_cmat.png" width=600>
 
-13 features (normalized & rotated coord data), downsampling:
-* Accuracy score: 0.94
-* Recall score adult: 0.92
-* Recall score baby: 0.96
+We beleive this model preformed well due to the preproccing adjsutments that went into the `boxratio` predictor (the data was normalized), and the fact that this feature is seperable:
 
-CV to tune optimal features:
-
-<img src="figs/soph_logreg/p5_f_cv.png" width=600>
-
-Confusion matrix:
-
-<img src="figs/soph_logreg/p4_fd_cmat.png" width=600>
+<img src="soph_logreg/dist_p.png" width=600>
 
 To reproduce the results from this section run:
 ```
 make logreg_test
+```
+```
+make logreg_eda
 ```
 ## Logistic Regression: Take 3
 Inspired by our sucess with using `boxratio` (ratio between the width and height of the head) as a single predictor, we had the idea of trying to identify more "distances" between facial features that could help classify adults vs infants.

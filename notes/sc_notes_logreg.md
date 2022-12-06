@@ -55,7 +55,7 @@ Confusion matrix:
 <img src="soph_logreg/p1_fd_cmat.png" width=600>
 
 **Partition 2: The "norm_cenrot" column**
-This partition was pretty strong even before feature selection (is overfitting a possibility? It is a lot of features). After feature selection the acurracy score was only ok (perhaps did not eliminate enough of the colinearity), and the score really dropped after downsampling (perhaps not enough data).
+This partition was pretty strong even before feature selection (is overfitting a possibility? It is a lot of features).
 
 Without feature selection:
 * Accuracy score: 0.96
@@ -68,9 +68,9 @@ Confusion matrix:
 
 With feature selection:
 * Optimal features is 29
-* Accuracy score: .76
-* Recall score adult: 0.84
-* Recall score baby: 0.65
+* Accuracy score: .91
+* Recall score adult: 1.00
+* Recall score baby: 0.77
 
 CV to tune optimal features:
 
@@ -81,9 +81,9 @@ Confusion matrix:
 <img src="soph_logreg/p2_f_cmat.png" width=600>
 
 With feature selection & downsampling:
-* Accuracy score: 0.61
-* Recall score adult: 0.44
-* Recall score baby: 0.81
+* Accuracy score: 0.93
+* Recall score adult: 0.92
+* Recall score baby: 0.94
 
 Confusion matrix:
 
