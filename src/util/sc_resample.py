@@ -19,41 +19,22 @@ def split_df(df):
 
 def upsample(df):
     df_baby, df_adult = split_df(df)
-    
-    #Resample with replacement
-    print(df_adult['baby'].value_counts())
-    #Separate majority and minority classes
-    df_majority = df_adult
-    df_minority = df_baby
-    #Upsample minority class
-    df_minority_upsampled = resample(df_minority, 
+    df_minority_upsampled = resample(df_baby, 
     replace=True,
-    n_samples=689,#to match majority class
+    n_samples=689,#adult class
     random_state=42)
-    
-    #Combine majority class with upsampled minority class
-    df_upsampled = pd.concat([df_majority, df_minority_upsampled])
-    counts = df_upsampled['baby'].value_counts()
-    print(f'Resulting instances of class 0 and 1 after upsampling: {counts}')
+    #Combine adult with upsampled baby
+    df_upsampled = pd.concat([df_adult, df_minority_upsampled])
 
     return df_upsampled
 
 def downsample(df):
-    '''randomly removes elements of the majority class'''
     df_baby, df_adult = split_df(df)
-
-    #Separate majority and minority classes
-    df_majority = df_adult
-    df_minority = df_baby
-    #Downsample majority class
-    df_majority_downsampled = resample(df_majority, 
+    df_majority_downsampled = resample(df_adult, 
     replace=False,
-    n_samples=410,# to match minority class
+    n_samples=410,#baby class
     random_state=42) 
-    
-    #Combine minority class with downsampled majority class
-    df_downsampled = pd.concat([df_majority_downsampled, df_minority])
-    counts = df_downsampled['baby'].value_counts()
-    print(f'Resulting instances of class 0 and 1 after upsampling: {counts}')
+    #Combine baby with downsampled adult
+    df_downsampled = pd.concat([df_majority_downsampled, df_baby])
 
     return df_downsampled

@@ -5,31 +5,39 @@ We also looked at specific metrics such as recall score, and plotted the confusi
 
 <img src="figs/soph_logreg/unbal.png" width=600>
 
-`resample.py`
+To re-create the image above, run:
+```
+make logreg_eda
+```
 
 ## Upsampling
-Up-sampling is the process of randomly duplicating observations from the minority class in order to reinforce its signal.
+Up-sampling is the process of randomly duplicating observations from the minority class in order to reinforce its signal. We ended up not using this method beyond testing-purposes as downsampling seemed to be getting us decent scores (and we didn’t necessarily want duplicated data).
 
 ## Downsampling
 
 Logreg Examples:
 
-**Two features**
+**One features**
 Before downsampling:
 * Accuracy score: .89
 * Recall score adult: 0.98
-* Recall score baby: 0.76
+* Recall score baby: 0.77
 
 Confusion matrix:
 
 <img src="figs/soph_logreg/p1_f_cmat.png" width=600>
 
 After downsampling:
-* Optimal features is 2 (unchanged)
 * Accuracy score: 0.88
 * Recall score adult: 0.90
-* Recall score baby: 0.86
+* Recall score baby: 0.85
 
 Confusion matrix:
 
 <img src="figs/soph_logreg/p1_fd_cmat.png" width=600>
+
+To re-create the testing of the resampling functions, run:
+```
+make resample_test
+```
+Please see `logreg.md` for more information about how our logistic regression model preformed with resampling (and to recreate the figures/reports above). 

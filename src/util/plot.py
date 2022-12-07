@@ -41,6 +41,7 @@ def fix_axes(X,Y,ax,flip_y=True):
     
 def plot_image(
         anno,
+        subtitle=None,
         scatter_points=None,
         ref_point=None,
         annotate=None,
@@ -55,6 +56,14 @@ def plot_image(
     ----------
     anno : AnnoImg
         The image to render.
+    subtitle : list of str, optional
+        Additional lines of text below the title. The default is None.
+    scatter_points : list of int
+        Landmark indices to print (excldues unlisted landmarks).
+        The default is None.
+    ref_point : list of int ['x', 'y']
+        Add a swhite circle centered at given 'x' and 'y'.
+        The default is None.
     annotate : str, optional
         The type of annotations to draw on the image:
             - 'scatter': the landmark points
@@ -62,8 +71,16 @@ def plot_image(
             - 'spline': best-fit splines between landmark points
             - 'splinelabel': best-fit splines with feature names
         The default is None.
+    cross : bool
+        True to include blue crosshairs at image center.
+        The default is False.
+    grayscale : bool
+        True to convert image to grayscale (using default colormap 'viridis').
+        The default is False.
+    skip_img : bool
+        True to skip raw image data. The default is False.
     save_fig : bool, optional
-        Pass True to save result to 'figs' directory. The default is False.
+        True to save result to 'figs' directory. The default is False.
 
     Returns
     -------
@@ -74,8 +91,10 @@ def plot_image(
     image_set = anno.image_set
     filename = anno.filename
     desc = f' (row {anno.row_id})' if anno.row_id is not None else ''
-    if len(anno.desc):
-        desc += f' ({", ".join(anno.desc)})'
+    if anno.desc:
+        desc += f' - {", ".join(anno.desc)}'
+    if subtitle:
+        desc = ' \n '.join([desc, *subtitle])
     title = f'{image_set}/{filename}' + desc
     X = anno.get_x()
     Y = anno.get_y()
@@ -183,8 +202,8 @@ def plot_image(
         #       original image if we don't.
         if annotate:
             filename += f'_{annotate}'
-        if anno.desc is not None:
-            filename += f'_({"_".join(anno.desc)})'
+        if anno.desc:
+            filename += f'_{"_".join(anno.desc)}'
         plt.savefig(
             f'{path}/{filename}.png',
             dpi=300,
@@ -198,27 +217,6 @@ def plot_coords(
         height,
         save_fig=False,
 ):
-    '''
-    Either df/row_id or series is required, to provide landmark points.
-    Parameters
-    ----------
-    anno : AnnoImg
-        The image to render.
-    annotate : str, optional
-        The type of annotations to draw on the image:
-            - 'scatter': the landmark points
-            - 'scaternum': landmark points with indices
-            - 'spline': best-fit splines between landmark points
-            - 'splinelabel': best-fit splines with feature names
-        The default is None.
-    save_fig : bool, optional
-        Pass True to save result to 'figs' directory. The default is False.
-
-    Returns
-    -------
-    None.
-
-    '''
     image_set = 'test'
     filename = 'cenrot'
     title = f'{image_set}/{filename}'
@@ -322,8 +320,39 @@ def scatter(
         target,
         target_name=None,
         alt_name=None,
-        savefig=False,
+        save_fig=False,
 ):
+    '''
+    This function assumes the predicted values are in the given DataFrame,
+    under a column name consisting of the target column name with a '_hat'
+    suffix (e.g. target 'baby' requires predictions are in column 'baby_hat').
+
+    Parameters
+    ----------
+    title : str
+        The plot title.
+    filename : str
+        The filename to save this plot (location is the 'figs' directory).
+    df : DataFrame
+        The data frame that holds the target, predictors and predictions.
+    pred : list of 2 column names
+        The X and Y axes of the scatter.
+    target : str
+        The column to use as target. NOTE: This also establishes the column
+        name for predicted values (e.g. target 'baby' requires prediction
+        column to be 'baby_hat').
+    target_name : str, optional
+        Override the target name in the plot legend. The default is None.
+    alt_name : str, optional
+        Override the display string for target==0 case. The default is None.
+    save_fig : bool, optional
+        Pass True to save the plot. The default is False.
+
+    Returns
+    -------
+    None.
+
+    '''
     if target_name is None:
         target_name = target
     if alt_name is None:
@@ -361,7 +390,7 @@ def scatter(
             label=case.name
         )
     ax.legend()
-    if savefig:
+    if save_fig:
         plt.savefig(
             f'figs/{filename}',
             dpi=300,

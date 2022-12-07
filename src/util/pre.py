@@ -14,7 +14,7 @@ from scipy.interpolate import UnivariateSpline
 import skimage
 
 # intra-project
-from util.model import AnnoImg, landmark68, nose_i
+from util.model import AnnoImg, landmark68, cheeks, h_syms, nose_i
 
 
 # some constants for coord math (mostly premature optimization)
@@ -38,45 +38,6 @@ class Sym:
         return self.pairs[:, 1]
 
 
-cheeks = np.array([[i, 16 - i] for i in range(8)])
-brows = np.array([[17 + i, 26 - i] for i in range(5)])
-h_syms = np.array([
-    [36, 45],  # outer canthus
-    [39, 42],  # inner canthus
-
-    # eyelids
-    [37, 44],
-    [38, 43],
-    [40, 47],
-    [41, 46],
-
-    # h_nose
-    [31, 35],
-    [32, 34],
-
-    # cheeks
-    *cheeks,
-
-    # brows
-    *brows,
-
-    # mouth
-    *[[48 + i, 54 - i] for i in range(3)],
-    *[[60 + i, 64 - i] for i in range(2)],
-    [67, 65],
-    *[[59 - i, 55 + i] for i in range(2)],
-])
-
-v_line = np.array([
-    *[28 + i for i in range(4)],
-    34,
-    52,
-    63,
-    67,
-    58,
-    9,
-])
-
 default_syms = [
     # NOTE: I haven't tested this a lot, but I don't expect
     #       it will be a great/reliable way to address tilt...
@@ -95,6 +56,7 @@ default_syms = [
         ],
         4.  # higher weight for canthi
     ),
+    # TODO: delete?
     # NOTE: This is probably not worth keeping, especially
     #       since its weight is so low...
     Sym(
@@ -252,7 +214,7 @@ def rotate(anno):
         in_dims, margin, face, angle, coords = get_yaw_data(anno)
 
         # NOTE: We add a buffer around the image
-        #       to avoid cropping content during centering
+        #       to avoid cropping content during rotating/centering
         buff = Image.new(img.mode, (img.width * 3, img.height * 3))
         buff.paste(img, (img.width, img.height))
         buff_face = face + np.array([[img.width, img.height]])
@@ -270,7 +232,7 @@ def rotate(anno):
         )
 
         # crop back to original size
-        crop = rot.crop(
+        cropped = rot.crop(
             (
                 img.width - margin[0],
                 img.height - margin[1],
@@ -279,12 +241,13 @@ def rotate(anno):
             )
         )
 
-        return crop
+        return cropped
 
     _, _, _, _, coords = get_yaw_data(anno)
 
     # add 'rotated' to the image description
-    desc = anno.desc.copy().append('rotated')
+    desc = anno.desc.copy()
+    desc.append('rotated')
     return AnnoImg(
         anno.image_set,
         anno.filename,
@@ -296,6 +259,21 @@ def rotate(anno):
 
 
 def crop(anno, use_splines=False):
+    """
+    Crop an image to a convex hull around landmarks.
+
+    Parameters
+    ----------
+    anno : AnnoImg
+        The image to crop.
+    use_splines : bool
+        True to interpolate lanmarks with splines. The default is False.
+
+    Returns
+    -------
+    cropped : AnnoImge
+        The cropped image.
+    """
     def _img():
         image = np.array(anno.get_image())  # convert to skimage
         coords = anno.get_coords()
@@ -407,10 +385,11 @@ def add_derived(cache):
     df['interoc_norm'] = np.sqrt(np.sum(np.power(iods / cenrot_extents, 2), axis=1))
     df['boxsize/interoc'] = df['boxsize'] / df['interoc']
 
-    # add angle of rotation (in radians)
+    # ----- Estimated Angles
+    # - estimated yaw (in radians)
     df['yaw'] = angles
 
-    # roll estimate
+    # - roll estimate
     # NOTE: this is based on the assumptions:
     #       * the head is a sphere from cheek to cheek
     #           (i.e. diameter is the max horizontal distance
@@ -424,19 +403,12 @@ def add_derived(cache):
     sins = np.clip((cenrots[:, nose_i, 0] - mid_x) / radius, -1, 1)
     df['roll'] = np.arcsin(sins)
 
+    # - absolute values of estimated angles
     for col in ['yaw', 'roll']:
         df[f'{col}_abs'] = np.abs(df[col])
 
-    # add normalized landmarks
-    # this is the distance from nose as a proportion of landmarks' extents
-    for i in range(raws.shape[1]):
-        tmp_df = pd.DataFrame(
-            data=(raws[:, i, :] - faces) / extents,
-            columns=[f'norm-{dim}{i}' for dim in ['x', 'y']]
-        )
-        df = pd.concat([df, tmp_df], axis=1)
-
-    # calculate distance between expected symmetric points (raw)
+    # ----- Differences of Expected Symmetric Landmark Pairs
+    # - raw
     for i, [p1, p2] in enumerate(h_syms):
         tmp_df = pd.DataFrame(
             data=np.squeeze(np.diff(raws[:, [p1, p2], :], axis=1)),
@@ -444,7 +416,33 @@ def add_derived(cache):
         )
         df = pd.concat([df, tmp_df], axis=1)
 
-    # add centered/rotated landmarks
+    # - normalized
+    for i, [p1, p2] in enumerate(h_syms):
+        tmp_df = pd.DataFrame(
+            data=np.squeeze(np.diff(raws[:, [p1, p2], :], axis=1)) / extents,
+            columns=[f'norm_sym_diff-{dim}{p1}' for dim in ['x', 'y']]
+        )
+        df = pd.concat([df, tmp_df], axis=1)
+
+    # - normalized and rotated
+    for i, [p1, p2] in enumerate(h_syms):
+        tmp_df = pd.DataFrame(
+            data=np.squeeze(np.diff(cenrots[:, [p1, p2], :], axis=1)) / cenrot_extents,
+            columns=[f'norm_cenrot_sym_diff-{dim}{p1}' for dim in ['x', 'y']]
+        )
+        df = pd.concat([df, tmp_df], axis=1)
+
+    # ----- Landmark coordinates
+    # - normalized
+    #   (this is the distance from nose as a proportion of landmarks' extents)
+    for i in range(raws.shape[1]):
+        tmp_df = pd.DataFrame(
+            data=(raws[:, i, :] - faces) / extents,
+            columns=[f'norm-{dim}{i}' for dim in ['x', 'y']]
+        )
+        df = pd.concat([df, tmp_df], axis=1)
+
+    # - centered/rotated
     for i in range(cenrots.shape[1]):
         tmp_df = pd.DataFrame(
             data=cenrots[:, i, :],
@@ -452,31 +450,11 @@ def add_derived(cache):
         )
         df = pd.concat([df, tmp_df], axis=1)
 
-    # calculate centers
-    all_dims = np.stack([widths, heights]).T
-    centers = all_dims / 2.
-
-    # add normalized landmarks (centered, rotated and scaled per extent)
+    # - centered, rotated and scaled per extent
     for i in range(cenrots.shape[1]):
         tmp_df = pd.DataFrame(
             data=(cenrots[:, i, :] - cenrots[:, nose_i, :]) / cenrot_extents,
             columns=[f'norm_cenrot-{dim}{i}' for dim in ['x', 'y']]
-        )
-        df = pd.concat([df, tmp_df], axis=1)
-
-    # calculate distance between expected symmetric points (rotated)
-    for i, [p1, p2] in enumerate(h_syms):
-        tmp_df = pd.DataFrame(
-            data=np.squeeze(np.diff(cenrots[:, [p1, p2], :], axis=1)),
-            columns=[f'cenrot_sym_diff-{dim}{p1}' for dim in ['x', 'y']]
-        )
-        df = pd.concat([df, tmp_df], axis=1)
-
-    # calculate normalized distance between expected symmetric points (rotated)
-    for i, [p1, p2] in enumerate(h_syms):
-        tmp_df = pd.DataFrame(
-            data=np.squeeze(np.diff(cenrots[:, [p1, p2], :], axis=1)) / cenrot_extents,
-            columns=[f'norm_cenrot_sym_diff-{dim}{p1}' for dim in ['x', 'y']]
         )
         df = pd.concat([df, tmp_df], axis=1)
 
