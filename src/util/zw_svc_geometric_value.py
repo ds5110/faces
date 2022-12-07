@@ -6,6 +6,7 @@ from sklearn.svm import SVC
 from sklearn.model_selection import GridSearchCV, train_test_split
 import seaborn as sns
 import matplotlib.pyplot as plt
+import matplotlib.ticker as mtick
 
 # Get data
 df = pd.read_csv('data/merged_landmarks.csv')
@@ -21,8 +22,8 @@ svc_geometric = SVC(class_weight='balanced')
 model_geometric = make_pipeline(svc_geometric)
 
 param_grid_geometric = {'svc__C': [50, 100, 500, 1000],
-					   'svc__gamma': [0.05, 0.1, 0.5, 1, 5],
-					   'svc__kernel': ['rbf','linear', 'poly']}
+						'svc__gamma': [0.05, 0.1, 0.5, 1, 5],
+						'svc__kernel': ['rbf', 'linear', 'poly']}
 
 grid_geometric = GridSearchCV(model_geometric, param_grid_geometric, return_train_score=True, n_jobs=5, refit=True)
 grid_geometric.fit(X_train, y_train)
@@ -59,34 +60,53 @@ n_Support_vector = svc_trained.n_support_
 print("Number of support vector: ", n_Support_vector)
 Support_vector_index = svc_trained.support_
 
-
 # Plot geometric values and support vectors
 X_geometric['baby'] = y
 sns.scatterplot(data=X_geometric, x='boxratio', y='interoc_norm',
 				hue='baby',
 				legend=True)
+plt.title('Scatter plot of all samples with geometric values')
 plt.savefig('figs/Geometric_values')
 plt.show()
 
+# Plot predict vs true
+X_geometric['pre'] = svc_trained.predict(X_geometric.loc[:, ['boxratio', 'interoc_norm']])
+sns.scatterplot(data=X_geometric, x='boxratio', y='interoc_norm',
+				hue='pre',
+				legend=True)
+plt.title('Scatter plot of predict vs true')
+plt.savefig('figs/Geometric_values_pre_vs_true')
+plt.show()
+
+# Plot support vecrors
 support_vector = X_train.iloc[Support_vector_index][:]
 support_vector['baby'] = y_train.iloc[Support_vector_index][:]
 sns.scatterplot(data=support_vector, x='boxratio', y='interoc_norm',
 				hue='baby',
 				legend=True)
+plt.title('Scatter plot of support vectors with geometric values')
 plt.savefig('figs/Support_Vectors')
 plt.show()
 
 # Plot heatmap for geometric values
-interoc_norm = np.linspace(0.1, 0.9, 100)
-boxratio = np.linspace(0.7, 1.7, 100)
+interoc_norm = np.linspace(0.1, 0.9, 81)
+boxratio = np.linspace(0.7, 1.7, 101)
 heatmap = [['.'] * len(boxratio) for _ in range(len(interoc_norm))]
 
 for i in range(len(interoc_norm)):
 	for j in range(len(boxratio)):
-		heatmap[i][j] = model_best.predict([[boxratio[j], interoc_norm[i]]])[0]
+		heatmap[i][j] = model_best.predict(pd.DataFrame({'boxratio': [boxratio[j]],
+														'interoc_norm': [interoc_norm[i]]}))[0]
 heatmap = pd.DataFrame(heatmap)
-
+heatmap.columns = boxratio
+heatmap.index = interoc_norm
 sns.heatmap(data=heatmap,
-			cbar-False)
+			cbar=False,
+			xticklabels=10,
+			yticklabels=10).invert_yaxis()
+
+plt.xlabel('boxratio')
+plt.ylabel('interoc_norm')
+plt.title('Heatmap on meshgrid with geometric values')
 plt.savefig('figs/SVC_meshgrid_of_geometric')
 plt.show()

@@ -52,14 +52,6 @@ plt.ylabel('true value')
 plt.savefig('figs/SVC_landmarks')
 plt.show()
 
-# Plot first two principle components
-pca = PCA(whiten=True, n_components=2)
-X_2d = pd.DataFrame(pca.fit_transform(X_original))
-X_2d['PCA1'], X_2d['PCA2'], X_2d['baby'] = X_2d[0], X_2d[1], y
-sns.lmplot(data=X_2d, x='PCA1', y='PCA2', hue='baby',legend=True, fit_reg=False)
-plt.savefig('figs/PCA_of_landmarks')
-plt.show()
-
 # Plot validation curve
 pca_vali = PCA(whiten=True)
 best_params_ = grid_original.best_params_
@@ -151,3 +143,17 @@ y_predict_2 = model_2.predict(X_test)
 print('Classification report for n_components = 2:\n')
 print(classification_report(y_test, y_predict_2, target_names=['adult', 'infant']))
 
+# Plot first two principal components
+pca = PCA(whiten=True, n_components=2)
+X_2d = pd.DataFrame(pca.fit_transform(X_original))
+X_2d['PCA1'], X_2d['PCA2'], X_2d['baby'] = X_2d[0], X_2d[1], y
+sns.lmplot(data=X_2d, x='PCA1', y='PCA2', hue='baby',legend=True, fit_reg=False)
+plt.title('First 2 components true value')
+plt.savefig('figs/PCA_of_landmarks_infant')
+plt.show()
+
+X_2d['pre'] = model_2.predict(X_original)
+sns.lmplot(data=X_2d, x='PCA1', y='PCA2', hue='pre',legend=True, fit_reg=False)
+plt.title('First 2 components predicted value')
+plt.savefig('figs/PCA_of_landmarks_predict')
+plt.show()
