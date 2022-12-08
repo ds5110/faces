@@ -10,6 +10,12 @@ angles_logreg:
 compare_normalized:
 	python src/jh_plot_norm.py
 
+roll_yaw_slides:
+	python src/jh_roll_yaw_slides.py
+
+norm_slides:
+	python src/jh_norm_slides.py
+
 roll_yaw:
 	python src/jh_plot_roll_yaw.py
 

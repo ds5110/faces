@@ -13,9 +13,10 @@ import numpy as np
 nose_i = 33  # the center of the horizontal line under nose
 cheeks = np.array([[i, 16 - i] for i in range(8)])
 brows = np.array([[17 + i, 26 - i] for i in range(5)])
+outer_canthi = [36, 45]
 h_syms = np.array([
-    [36, 45],  # outer canthus
-    [39, 42],  # inner canthus
+    outer_canthi,  # outer canthi
+    [39, 42],  # inner canthi
 
     # eyelids
     [37, 44],

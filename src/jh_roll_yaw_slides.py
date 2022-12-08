@@ -14,18 +14,21 @@ import numpy as np
 # internal
 from util import meta_cache
 from util.model import nose_i, outer_canthi
-from util.pre import rotate
+from util.pre import rotate, to_deg
 from util.plot import plot_image
 from util.column_names import x_cols_cenrot,\
     x_cols_norm_cenrot,\
     y_cols_norm_cenrot
 
+# ----- constants
+deg = '$^{\circ}$'
 
+
+# ----- config
 save_fig = False
 
-# for col in df.columns:
-#     print(f'{col}: {df[col].dtype}')
 
+# ----- main execution
 df = meta_cache.get_meta()
 row_id = 690
 anno = meta_cache.get_image(row_id)
@@ -36,7 +39,7 @@ x_max = x_coords.max()
 x_mid = (x_min + x_max)/2
 x_nose = x_coords[nose_i]
 y_nose = rotated.get_y()[nose_i]
-# row = df.iloc[row_id]
+row = df.iloc[row_id]
 # x_cenrot = row[x_cols_norm_cenrot].to_numpy()
 
 fig, ax = plt.subplots(figsize=(10, 10))
@@ -47,6 +50,7 @@ plot_image(
 )
 canthi = rotated.get_coords()[outer_canthi]
 ax.plot(canthi[:,0], canthi[:,1], marker='|')
+plt.title(f'Estimated yaw: {row["yaw"] * to_deg:.2f}' + deg)
 plt.tight_layout()
 if save_fig:
     plt.savefig(
@@ -68,6 +72,7 @@ ax.axvline(x_max, c='tab:gray', linestyle='--')
 ax.plot([x_min, x_max], [y_nose, y_nose])
 ax.plot([x_nose, x_mid], [y_nose, y_nose], c='tab:red', marker='|')
 
+plt.title(f'Estimated roll: {row["roll"] * to_deg:.2f}' + deg)
 plt.tight_layout()
 if save_fig:
     plt.savefig(

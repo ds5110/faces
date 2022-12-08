@@ -89,7 +89,9 @@ We would like to derive three components of head orientation: "roll", "pitch", a
 
 ## Calculation of "yaw"
 
-The calculation for yaw is a simple weighted average of angles between key landmarks (mainly the corners of eyes, or "canthi"). This has proven very effective, as manually verified for nearly all of the training data.
+The calculation for yaw is a simple weighted average of angles between key landmarks (mainly the corners of eyes, or "canthi"). This has proven very effective, as manually verified for most, if not all, of the training data.
+
+<img src="figs/yaw_analysis.png" width=600>
 
 ## Calculation of "roll"
 
