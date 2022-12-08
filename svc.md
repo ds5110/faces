@@ -1,44 +1,53 @@
 ## SVC
 
-Applied SVC to original data (landmarks) and to geometric values. 
+Applied SVC to landmarks and to geometric values. 
 
-### Original Data
+`GridSearchCV` in both methods are applied to the train set, and classification reports are generated from the test set.
 
-The original data consists of the position of landmarks. There are 68 landmarks and two indices, x and y, for each landmark so there are 136 predictors in total.
+### Landmarks
 
-Considering the number of predictors, we applied `PCA` first to reduce the dimensionality and then used `SVC` for classification. `GridSearchCV` is used to find the best hyperparameters for the SVC model.
+There are 68 landmarks and two axis, x and y, for each landmark so there are 136 predictors in total.
 
-Bellow are the hyperparameters of `PCA` and `SVC`, and performance on original landmarks.
+Considering the number of predictors, we first applied `PCA` to reduce the number of dimension and then used `SVC` for classification. `GridSearchCV` is used to find the best hyperparameters for both `PCA` and `SVC`.
 
-<img src="figs/SVC_performance_landmarks.png">
+Bellow are the hyperparameters of `PCA` and `SVC`, and classification report on landmarks.
 
-The score of original landmarks could be an upper bound for model performance since it contains all information in the landmarks. 
+<img src="figs/SVC_best_landmarks.png">
 
-This performance is already high enough. Even if it might be further improved, the improvement will be tiny. Preprocessing like centering, rotating to upright position and scaling are needed to directly use the landmarks.
+The score of landmarks could be an upper bound for model performance since it contains all information in the landmarks. 
+
+This performance is already high enough. Even if it might be further improved, the improvement will be tiny. Preprocessing like centering, rotating to upright position and scaling are needed here.
 
 Bellow is the confusion matrix of classification.
 
 <img src="figs/SVC_landmarks.png">
 
-This is a scatter plot of the first two principal components. There is no obvious pattern visible in the plot.
-
-<img src="figs/PCA_of_landmarks.png">
-
 Validation curve on `n_components`. The `F1_score` is actually pretty good when `n_components=15`
 
 <img src="figs/SVC_vali_landmarks.png">
 
+So we printed more classification reports with different number of principal component. Other hyperparameters are the same as in the previous model.
+
+<img src="figs/SVC_other_landmarks.png">
+
+The score for `n_components = 15` is still pretty good, and `n_components = 5` is not that bad. But `n_components = 2` is simply guessing for the infant samples.
+
+As the scatter plot of the first two principals shows bellow, the model with `n_components = 2` just predict the lower half part to be andult.
+
+<img src="figs/PCA_of_landmarks_infant.png">
+<img src="figs/PCA_of_landmarks_predict.png">
+
 ### Geometric Values
 
-The two geometric values used here are `boxratio` and `interoclar_norm`. They correspond to the `box width / box height` and `box size / interocular didtance` in `TABLE II` of Dr. Wan's paper. 
+Now we use the two geometric values, `boxratio` and `interoclar_norm`, as predictors. They correspond to the `box width / box height` and `box size / interocular didtance` in `TABLE II` of Dr. Wan's paper. 
 
-Bellow are the hyperparameters of `SVC`, and performance on geometric values. The last lines shows the number of support vectors in the train data.
+Bellow are the hyperparameters of `SVC`, and performance on geometric values. The classification report is generated on the test set, and the last lines shows the number of support vectors in the train set with 736 samples.
 
 <img src="figs/SVC_model_geometric.png">
 
-The performance on the two geometric values is nice and this could serve as a lower bound since it requires only the ratio of box width to box height and box size to interocular distance.
+The performance on the two geometric values is nice and it's between the performance with `n_components = 5` and `n_components = 15` in the model using landmarks. This could serve as a lower bound since it requires only the ratio of box width to box height and box size to interocular distance.
 
-Little preprocessing is needed givens the bounding box and landmarks. It’s also more interpretable as we know the meaning of the predictors. More predictors might be added to improve its performance.
+Little preprocessing is needed given the bounding box and landmarks. It’s also more interpretable as we know the meaning of the predictors.
 
 Bellow is the confusion matrix of classification.
 
@@ -48,9 +57,13 @@ Here is a scatter plot with `boxratio` and `interoc_norm` as axis. The points te
 
 <img src="figs/Geometric_values.png">
 
-The pattern in the scatter plot above is quite obvious, so we also circled the support vectors wanting to see if there still exists any pattern.
+And if we draw the same scatter plot with predicted value vs true value. 
+<img src="figs/Geometric_values_pre_vs_true.png">
 
-Unfortunately, there are too many support vectors so the picture is messy, and no pattern is visible here.
+Same plot on a meshgrid.
+<img src="figs/SVC_meshgrid_of_geometric.png">
 
+
+The support vectors in the train set. They tend to form a curved boundary between infant and adult samples. 
 <img src="figs/Support_Vectors.png">
 
