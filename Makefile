@@ -39,3 +39,11 @@ logreg_eda:
 #testing resample functions
 resample_test:
 	python src/sc_resample_test.py
+
+# Result of SVC on landmarks
+svc_landmarks:
+	python src/zw_svc_landmarks.py
+
+# Result of SVC on geometric values
+svc_geometric:
+	python src/zw_svc_geometric_value.py
