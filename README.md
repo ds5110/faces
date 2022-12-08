@@ -37,20 +37,9 @@ KNN with 2 features also did well: Please refer to [lda.md](lda.md) for details 
 We found feature selection and resampling to be effective methods for improving model accuracy and recall score. Please refer to [Sampling](sampling.md)
 and [Feature Selection](feature_selection.md) for details on these techniques.
 
-
-## Data
-
+## Data & Reproducibility
 This project leverages the adult and infant facial landmark data from this repo: [Infant-Facial-Landmark-Detection-and-Tracking](https://github.com/ostadabbas/Infant-Facial-Landmark-Detection-and-Tracking).
 
-To download the data and generate the derived columns run the following command:
-```
-make merge_meta
-```
-To generate the euclidean pair-wise distance data run the following command:
-```
-make euclidian_data
-```
-## Reproducibility
 To reproduce the results shown in this repository, first download the data and generate the additional features using the following two commands:
 ```
 make merge_meta
