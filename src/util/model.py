@@ -117,22 +117,26 @@ class AnnoImg:
     ):
         self.image_set = image_set
         self.filename = filename
-        self._coords = coords
-        
-        # - extract face center as center of nose_h
-        xx, yy = [coords[:,i] for i in range(2)]
-        nose_x, nose_y = [vv[nose_i] for vv in [xx, yy]]
-        self._face = np.stack([nose_x, nose_y])
         
         self.im_fun = im_fun
         self.row_id = row_id
         self.desc = desc if desc is not None else []
+        
+        self.set_coords(coords)
     
     def get_image(self):
         return self.im_fun()
     
     def get_coords(self):
         return np.copy(self._coords)
+    
+    def set_coords(self, coords):
+        self._coords = coords
+        
+        # - extract face center as center of nose_h
+        xx, yy = [coords[:,i] for i in range(2)]
+        nose_x, nose_y = [vv[nose_i] for vv in [xx, yy]]
+        self._face = np.stack([nose_x, nose_y])
     
     def get_face_center(self):
         return np.copy(self._face)

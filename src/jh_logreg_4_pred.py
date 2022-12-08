@@ -51,6 +51,7 @@ def eg_logreg(df, pred, target, poly=False):
     X_train, X_test, y_train, y_test = train_test_split(
         X,
         y,
+        random_state=42,
     )
 
     # fit logreg
@@ -95,7 +96,7 @@ def eg_logreg(df, pred, target, poly=False):
     # fit uniform dummy, to compare
     # NOTE: we don't really need to use train/test
     #       unless we use 'stratified' strategy
-    dummy = DummyClassifier(strategy='stratified')
+    dummy = DummyClassifier(strategy='stratified', random_state=42)
     dummy.fit(X_train, y_train)
     dummy_y_hat = dummy.predict(X_test)
     dummy_score = accuracy_score(y_test, dummy_y_hat)
@@ -133,25 +134,29 @@ for pp in [
         save_fig=save_fig
     )
 
-    target_names = ['Baby', 'Adult']
-    mat = confusion_matrix(y_test, y_hat)
-    sns.heatmap(
-        mat.T,
-        square=True,
-        annot=True,
-        fmt='d',
-        cbar=False,
-        xticklabels=target_names,
-        yticklabels=target_names,
-    )
-    plt.xlabel('true label')
-    plt.ylabel('predicted label')
-    plt.title('Confusion Matrix for Validation Results')
-    plt.tight_layout()
-    if save_fig:
-        plt.savefig(
-            'figs/logreg_4_pred_conf_mat.png',
-            dpi=300,
-            bbox_inches='tight',
+    def conf_mat(desc, y, y_hat):
+        target_names = ['Baby', 'Adult']
+        mat = confusion_matrix(y, y_hat)
+        sns.heatmap(
+            mat.T,
+            square=True,
+            annot=True,
+            fmt='d',
+            cbar=False,
+            xticklabels=target_names,
+            yticklabels=target_names,
         )
-    plt.show()
+        plt.xlabel('true label')
+        plt.ylabel('predicted label')
+        plt.title(f'Confusion Matrix for {desc} Results')
+        plt.tight_layout()
+        if save_fig:
+            plt.savefig(
+                f'figs/logreg_4_pred_conf_mat_{desc}.png',
+                dpi=300,
+                bbox_inches='tight',
+            )
+        plt.show()
+
+    conf_mat('Validation', y_test, y_hat)
+    conf_mat('Logistic Regression', df[target], model.predict(df[pp]))

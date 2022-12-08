@@ -49,6 +49,7 @@ def plot_image(
         grayscale=False,
         skip_img=False,
         save_fig=False,
+        ax=None,
 ):
     '''
     Either df/row_id or series is required, to provide landmark points.
@@ -70,6 +71,7 @@ def plot_image(
             - 'scaternum': landmark points with indices
             - 'spline': best-fit splines between landmark points
             - 'splinelabel': best-fit splines with feature names
+            - 'splinenum': splines with numbered landmarks
         The default is None.
     cross : bool
         True to include blue crosshairs at image center.
@@ -81,6 +83,9 @@ def plot_image(
         True to skip raw image data. The default is False.
     save_fig : bool, optional
         True to save result to 'figs' directory. The default is False.
+    ax: pyplot Axes
+        The Axes to plot onto. When provided, we skip showing/saving
+        the plot (caller owns). The default is None.
 
     Returns
     -------
@@ -99,17 +104,27 @@ def plot_image(
     X = anno.get_x()
     Y = anno.get_y()
     if grayscale:
+        if isinstance(grayscale, str):
+            cmap = grayscale
+        else:
+            cmap = 'viridis'
         # NOTE: Extracting luma component produces the same result
         #       as ImageOps.grayscale.
         # y,u,v = img.convert('YCbCr').split()
         img = ImageOps.grayscale(img)
+    else:
+        cmap = None
     
     # get the image data
     # img.convert('YCbCr')
     
-    fig, ax = plt.subplots(figsize=(10, 10))
+    if ax is None:
+        own_axes = True
+        fig, ax = plt.subplots(figsize=(10, 10))
+    else:
+        own_axes = False
     if img is not None and not skip_img:
-        ax.imshow(img)
+        ax.imshow(img, cmap=cmap)
         if cross:
             center = np.array([img.width/2, img.height/2])
             ax.axhline(y=center[1])
@@ -137,7 +152,7 @@ def plot_image(
                 points_fitted = np.vstack(
                     [spline(np.linspace(0, 1, 64)) for spline in splines]
                 )
-                plt.plot(
+                ax.plot(
                     *points_fitted,
                     linestyle='-',
                     linewidth='1',
@@ -158,11 +173,11 @@ def plot_image(
                         fontsize=6,
                     )
                 else:
-                    plt.plot(
+                    ax.plot(
                         *points,
                         'o',
                         markersize=1,
-                        c='white',
+                        c='tab:blue' if skip_img else 'white',
                     )
         if annotate and annotate.startswith('scatter'):
             if scatter_points is None:
@@ -191,6 +206,13 @@ def plot_image(
         )
     if skip_img:
         fix_axes(X,Y,ax)
+    
+    # skip display for unowned axes
+    # NOTE: this is a quick fix to support multiplot
+    # TODO: revisit...
+    if not own_axes:
+        return
+    
     plt.title(title)
     plt.tight_layout()
     if save_fig:
