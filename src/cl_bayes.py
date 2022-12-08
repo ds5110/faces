@@ -31,6 +31,32 @@ def make_cm():
     )
     plt.cm.register_cmap(cmap=cmap)
 
+def resize_axes(ax, x, y):
+    # resize plot base on data limits
+    # scatter_limit_margin adds extra space so data points aren't sitting on the edge of the plot
+    scatter_limit_margin = .1 
+    x_min = x.max() * (1 - scatter_limit_margin)
+    x_max = x.min() * (1 + scatter_limit_margin)
+    y_min = y.max() * (1 - scatter_limit_margin)
+    y_max = y.min() * (1 + scatter_limit_margin)
+    ax.set_xlim(x_min, x_max)
+    ax.set_ylim(y_min, y_max)
+
+# make introductory scatterplot
+# data should be 3 columns, the x feature, y feature, and the class labels.
+def eda(data, title):
+    ax = sns.scatterplot(data=data, x=data.columns[0], y=data.columns[1], hue=data.columns[2])
+    ax.set(
+        xlabel='Face Height / Width',
+        ylabel='Face Size relative to Interocular Dist.',
+    )
+    ax.get_figure().suptitle(t = title, fontsize=18)
+    leg = ax.axes.get_legend()
+    leg.set_title('Age Group')
+    legend_labels = ['Adult', 'Baby']
+    for t, l in zip(leg.texts, legend_labels):
+        t.set_text(l)
+
 def train(X_train, X_test, y_train, y_test, classifiers):
     
     test_scores = {}
@@ -90,9 +116,16 @@ def plot_metrics(trained_classifiers, test_scores, train_scores, X_test, y_test,
             colorbar=False)
         axs_confusion_matrices[i].set(title = ax_title)
                 
+    
     for fig in figs:
         fig.suptitle(fig_title, fontsize=18)
         fig.tight_layout()
+    
+    window_metric_title = fig_title + ' (Metrics Curves)'
+    fig_metrics.canvas.set_window_title(window_metric_title)
+    
+    window_confusion_matrix_title = fig_title + ' (Confusion Matrices)'
+    fig_confusion_matrices.canvas.set_window_title(window_confusion_matrix_title)
 
 def plot_clf_boundary(clf, X_test, y_test, y_pred, ax, ax_title):
     '''
@@ -131,6 +164,7 @@ def plot_clf_boundary(clf, X_test, y_test, y_pred, ax, ax_title):
         ax=ax)
 
     ax.legend(title='Predictions')
+
     return ax
 
 def plot2D(trained_classifiers, test_scores, X_test, y_test, fig_title):
@@ -163,6 +197,8 @@ def plot2D(trained_classifiers, test_scores, X_test, y_test, fig_title):
     
     fig_boundaries.suptitle(fig_title, fontsize=18)
     fig_boundaries.tight_layout()
+    window_title = fig_title + ' (Decision Boundaries)'
+    fig_boundaries.canvas.set_window_title(window_title)
 
 def GridSearchCV_Parameter_Message(trained_classifier):
     assert isinstance(trained_classifier, GridSearchCV) 
@@ -196,6 +232,15 @@ def main():
     # make the colormap
     make_cm()
 
+    # make the introductory scatterplots
+    '''
+    eda_df = df[['boxratio', 'boxsize/interoc', 'baby']]
+    eda(eda_df, 'Exploring Table II')
+    '''
+
+    eda_df = df[['boxratio', 'interoc_norm', 'baby']]
+    eda(eda_df, 'boxratio vs. interoc_norm')
+
     # create all models
     lda_params = {'lda__solver': ['svd', 'lsqr', 'eigen'], 'lda__shrinkage': [None, 'auto']}
     qda_params = {'qda__reg_param': np.arange(0, 1, 0.05)}
@@ -204,7 +249,7 @@ def main():
         "Linear Discriminant Analysis": GridSearchCV(
             estimator = Pipeline([
             ('scaler', StandardScaler()), 
-            ('lda', LinearDiscriminantAnalysis(store_covariance=True, tol=.01))]),
+            ('lda', LinearDiscriminantAnalysis(store_covariance=True, tol=.1))]),
             param_grid = lda_params, 
             scoring = 'roc_auc'),
         
@@ -227,10 +272,17 @@ def main():
             param_grid = knn_params, 
             scoring = 'roc_auc')
     }
-    
+    '''
     # using just 2 features
     fig_title = '2 Features: \n boxratio, boxsize'
     X = df[['boxratio', 'boxsize/interoc']]
+    y = df[['baby']].squeeze()
+    train_and_plot(X, y, classifiers, fig_title)
+    '''
+
+    # using just 2 features
+    fig_title = '2 Features: \n boxratio, interoc_norm'
+    X = df[['boxratio', 'interoc_norm']]
     y = df[['baby']].squeeze()
     train_and_plot(X, y, classifiers, fig_title)
 
@@ -245,6 +297,7 @@ def main():
     X = df.loc[:, df.columns.str.startswith('norm_cenrot')]
     y = df[['baby']].squeeze()
     train_and_plot(X, y, classifiers, fig_title)
+
 
     plt.show()
 
