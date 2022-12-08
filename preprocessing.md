@@ -157,3 +157,8 @@ make angle_outliers
 We used the estimated yaw and extent of minimum bounding box (per dimension) to normalize the landmark data.
 
 <img src="figs/normalized_landmarks.png" width=900>
+
+To reproduce these results, you can use this `Makefile` target:
+```
+make compare_normalized
+```
