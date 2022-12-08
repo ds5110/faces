@@ -41,7 +41,7 @@ As the scatter plot of the first two principals shows bellow, the model with `n_
 
 Now we use the two geometric values, `boxratio` and `interoclar_norm`, as predictors. They correspond to the `box width / box height` and `box size / interocular didtance` in `TABLE II` of Dr. Wan's paper. 
 
-Bellow are the hyperparameters of `SVC`, and performance on geometric values. The classification report is generated on the test set, and the last lines shows the number of support vectors in the train set with 736 samples.
+Below are the hyperparameters of `SVC`, and performance on geometric values. The classification report is generated on the test set, and the last lines shows the number of support vectors in the train set with 736 samples.
 
 <img src="figs/SVC_model_geometric.png">
 
@@ -49,7 +49,7 @@ The performance on the two geometric values is nice and it's between the perform
 
 Little preprocessing is needed given the bounding box and landmarks. It’s also more interpretable as we know the meaning of the predictors.
 
-Bellow is the confusion matrix of classification.
+Below is the confusion matrix of classification.
 
 <img src="figs/SVC_geometric_value.png">
 
