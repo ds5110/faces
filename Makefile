@@ -43,7 +43,16 @@ logreg_eda:
 resample_test:
 	python src/sc_resample_test.py
 
+=======
+# Result of SVC with landmarks
+svc_landmarks:
+	python src/zw_svc_landmarks.py
 
+# Result of SVC with geometric values
+svc_geometric:
+	python src/zw_svc_geometric_value.py
+  
 # recreates figures in bayes.md
 bayes_figures:
-	python src/cl_bayes.md
+  python src/cl_bayes.py
+
