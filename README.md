@@ -4,7 +4,7 @@ This repo documents the development efforts in an exploratory data analysis and 
 
 ## Goal and Overview
 
-Our goal for this project is to apply classical machine learning methods such as SVC, Logistic Regression, and Naive Bayes to classify adult vs infant faces using facial landmark data. 
+Our goal for this project is to apply classical machine learning models such as SVC, Logistic Regression, and Naive Bayes to classify adult vs infant faces using facial landmark data. 
 
 * [Preprocessing](preprocessing.md)
 * [Sampling](sampling.md)
