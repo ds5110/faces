@@ -42,3 +42,8 @@ logreg_eda:
 #testing resample functions
 resample_test:
 	python src/sc_resample_test.py
+
+
+# recreates figures in bayes.md
+bayes_figures:
+	python src/cl_bayes.md

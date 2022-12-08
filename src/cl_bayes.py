@@ -31,6 +31,22 @@ def make_cm():
     )
     plt.cm.register_cmap(cmap=cmap)
 
+# make introductory scatterplot
+def eda(df):
+    data = df[['boxratio', 'boxsize/interoc','baby']]
+    ax = sns.scatterplot(data=data, x='boxratio', y='boxsize/interoc', hue='baby')
+    ax.set(
+        xlabel='Face Height / Width',
+        ylabel='Face Size relative to Interocular Dist.',
+        title='Exploring Table II'
+    )
+
+    leg = ax.axes.get_legend()
+    leg.set_title('Age Group')
+    legend_labels = ['Adult', 'Baby']
+    for t, l in zip(leg.texts, legend_labels):
+        t.set_text(l)
+
 def train(X_train, X_test, y_train, y_test, classifiers):
     
     test_scores = {}
@@ -196,6 +212,9 @@ def main():
     # make the colormap
     make_cm()
 
+    # make the introductory scatterplot of boxratio and boxsize
+    eda(df)
+
     # create all models
     lda_params = {'lda__solver': ['svd', 'lsqr', 'eigen'], 'lda__shrinkage': [None, 'auto']}
     qda_params = {'qda__reg_param': np.arange(0, 1, 0.05)}
@@ -233,6 +252,7 @@ def main():
     X = df[['boxratio', 'boxsize/interoc']]
     y = df[['baby']].squeeze()
     train_and_plot(X, y, classifiers, fig_title)
+    
 
     # using all 68 original landmarks
     fig_title = '136 Features: \n Original 68 landmarks'
@@ -245,6 +265,7 @@ def main():
     X = df.loc[:, df.columns.str.startswith('norm_cenrot')]
     y = df[['baby']].squeeze()
     train_and_plot(X, y, classifiers, fig_title)
+
 
     plt.show()
 
