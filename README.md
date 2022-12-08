@@ -73,7 +73,7 @@ make make logreg_test
 make logreg_4_pred
 ```
 
-To reproduce Naive Bayes, LDA, QDA, & KNN models:
+To reproduce Naive Bayes, LDA, QDA, & KNN models: (see [bayes.md](bayes.md) for details)
 ```
 make bayes_figures
 ```
