@@ -12,7 +12,7 @@ Our goal for this project is to apply classical machine learning models such as 
 * Training Models
   * [PCA > SVC](svc.md)
   * [Logistic Regression](logreg.md)
-  * [LDA/QDA](lda.md)
+  * [Naive Bayes/LDA/QDA](bayes.md)
 
 ## Challenges and Main Results
 
@@ -30,7 +30,7 @@ Our best "low" dimensional model is SVC with 2 features: Please refer to [svc.md
 
 <img src="figs/SVC_geometric_value.png" width=600>
 
-KNN with 2 features also did well: Please refer to [lda.md](lda.md) for details and other results from this model.
+KNN with 2 features also did well: Please refer to [bayes.md](bayes.md) for details and other results from this model.
 
 <img src="figs/bayes_2feature_confusion_matrix.png" width=600>
 
@@ -75,7 +75,7 @@ make logreg_4_pred
 
 To reproduce Naive Bayes, LDA, QDA, & KNN models:
 ```
-make **FIX**
+make bayes_figures
 ```
 
 ## Dependencies
