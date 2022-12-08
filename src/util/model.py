@@ -8,6 +8,51 @@ Created on Fri Oct 28 16:58:49 2022
 
 import numpy as np
 
+
+# ----- landmark indices
+nose_i = 33  # the center of the horizontal line under nose
+cheeks = np.array([[i, 16 - i] for i in range(8)])
+brows = np.array([[17 + i, 26 - i] for i in range(5)])
+h_syms = np.array([
+    [36, 45],  # outer canthus
+    [39, 42],  # inner canthus
+
+    # eyelids
+    [37, 44],
+    [38, 43],
+    [40, 47],
+    [41, 46],
+
+    # h_nose
+    [31, 35],
+    [32, 34],
+
+    # cheeks
+    *cheeks,
+
+    # brows
+    *brows,
+
+    # mouth
+    *[[48 + i, 54 - i] for i in range(3)],
+    *[[60 + i, 64 - i] for i in range(2)],
+    [67, 65],
+    *[[59 - i, 55 + i] for i in range(2)],
+])
+
+# points that should be centered in frontal view
+v_line = np.array([
+    *[28 + i for i in range(4)],
+    34,
+    52,
+    63,
+    67,
+    58,
+    9,
+])
+
+
+# TODO: reconcile with column_names.py
 '''
 Defining some groups of features (see the derived.md for more information on the features)
 Output should be a list of the columns so the helper function (get_Xy) can appropriatly split the data
@@ -22,6 +67,7 @@ nose_i = 33  # the center of the horizontal line under nose
 main_predictors = ['boxratio', 'interoc','interoc_norm','boxsize','boxsize/interoc']
 #Angular offsets
 angle_off = ['yaw', 'yaw_abs','roll','roll_abs']
+
 
 class Feature:
     def __init__(self, desc, idx):

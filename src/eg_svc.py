@@ -22,7 +22,7 @@ from util.plot import scatter
 pred = ['boxratio', 'interoc_norm', 'yaw_abs', 'roll_abs']
 pred_plus = ['image_name', *pred, 'baby']
 pcs = [f'pc{i}' for i in range(1, 5)]
-savefig = False
+save_fig = False
 fewer_plots = True
 
 
@@ -37,8 +37,8 @@ n_components = range(1, len(pred) + 1)
 
 model = make_pipeline(pca, svc)
 param_grid = {
-    'svc__C': np.logspace(-3, 3, 7),
-    'svc__gamma': np.logspace(-3, 3, 7),
+    'svc__C': np.logspace(0, 1.5, 7),
+    'svc__gamma': np.logspace(-3, 0, 7),
     'pca__n_components': n_components,
 }
 grid = GridSearchCV(model, param_grid, return_train_score=True, n_jobs=5)
@@ -71,7 +71,7 @@ for i in range(1, 5):
             'baby',
             target_name='Baby',
             alt_name='Adult',
-            savefig=savefig,
+            save_fig=save_fig,
         )
 
 # ----- review the actual components
@@ -98,5 +98,5 @@ for i in range(4):
             'baby',
             target_name='Baby',
             alt_name='Adult',
-            savefig=savefig,
+            save_fig=save_fig,
         )

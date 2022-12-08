@@ -6,7 +6,7 @@ The output is an updated df, but the  "main" function below puts it into a CSV.
 '''
 
 #project
-from helpers import get_data
+from sc_helpers import get_data
 #basics
 import pandas as pd
 import numpy as np
@@ -15,7 +15,7 @@ from sklearn.metrics.pairwise import euclidean_distances as edist
 
 def get_dist_df(df_cr,f_num_list = range(68)):
     """ 
-    df input should be a subet of the main one. Below I used the "norm-" derived columns but I've also done it with "norm_cenrot-".
+    df input should be a subet of the main one. Below I used the "norm_cenrot-" derived columns.
     f_num_list = the list of feature (coordinates) numbers to compute the distances betweeen, 
     ex. range(68) for all of them, or [1,5,6,20,30,55]
     """
@@ -35,8 +35,8 @@ def get_dist_df(df_cr,f_num_list = range(68)):
         anot_data = df_cr.iloc[image_index]
         anot_coords = []
         for coord in f_num_list:
-            x = anot_data['norm-x{}'.format(coord)]
-            y = anot_data['norm-y{}'.format(coord)]
+            x = anot_data['norm_cenrot-x{}'.format(coord)]
+            y = anot_data['norm_cenrot-y{}'.format(coord)]
             anot_coords.append(np.array([x,y]))
 
         #Get the pairwise euclidian distance between all points
@@ -53,7 +53,7 @@ def main():
     #grabbing main DF
     df = get_data()
     #getting subset of DF
-    df_cr = df.loc[:,df.columns.str.startswith('norm-')]
+    df_cr = df.loc[:,df.columns.str.startswith('norm_cenrot-')]
     #calculating new df
     df_dist = get_dist_df(df_cr,f_num_list = range(68))
     #adding it to the main df and outputting to csv

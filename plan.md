@@ -58,10 +58,9 @@ Zongyu: pca, SVC
 * 22 Nov: project check in
   * demonstrated progress on the project goals presented with a walk-through of the project repo
   * should include a submission in canvas with the url of a "checkin" branch in the project repo
-* 28 Nov?: first stakeholder feedback session **not confirmed**
+* 2 Dec: first stakeholder feedback session **confirmed**
 * 4 Dec: project prototype due 
   * submitted in canvas as the URL of a "prototype" branch of the project repo
-* 5 Dec?: final stakeholder feedback session **not confirmed**
 * 7 Dec: main branch of project is ready to go, feedback is implemented
 * 8 Dec: project presentations
   * 9-minute presentations with 2-minute Q&A
