@@ -95,6 +95,7 @@ The calculation for yaw is a simple weighted average of angles between key landm
 
 The calculation for "roll" is much more tenuous. We assume the head is a sphere, with diameter equal to the maximum horizontal distance between cheek landmarks (after "yaw correction"). Then we take the nose point (landmark 33) as a point on the surface of said sphere and calculate the angle: `roll = arcsin((nose-mid)/radius)`
 
+<img src="figs/roll_analysis.png" width=600>
 
 ## Visualizing estimates
 
@@ -150,3 +151,9 @@ To plot the first 10 such outliers, you can use this `Makefile` target:
 ```
 make angle_outliers
 ```
+
+## Normalizing Landmarks
+
+We used the estimated yaw and extent of minimum bounding box (per dimension) to normalize the landmark data.
+
+<img src="figs/normalized_landmarks.png" width=900>

@@ -92,7 +92,7 @@ class MetaCache:
 
         '''
         if baby is None:
-            row = self.meta.loc[row_id]
+            row = self.meta.iloc[row_id]
             if row['baby']:
                 # NOTE: This is a hack to get the correct image from the baby
                 #       cache, with the correct row ID for the combined data.
