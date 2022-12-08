@@ -89,6 +89,7 @@ There is a [requirements.txt](requirements.txt) file at the root of the repo, as
 ## Acknowledgments
 The data used in this project comes from InfAnFace: Bridging the Infant--Adult Domain Gap in Facial Landmark Estimation in the Wild.
 Wan, M., Zhu, S., Luan, L., Prateek, G., Huang, X., Schwartz-Mette, R., Hayes, M., Zimmerman, E., & Ostadabbas, S. "InfAnFace: Bridging the infant-adult domain gap in facial landmark estimation in the wild." 26th International Conference on Pattern Recognition (ICPR 2022).
+
 Data: [Infant-Facial-Landmark-Detection-and-Tracking](https://github.com/ostadabbas/Infant-Facial-Landmark-Detection-and-Tracking).
 
 We also incorporated feedback and guidance from Dr. Michael Wan.
