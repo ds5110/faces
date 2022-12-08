@@ -47,7 +47,7 @@ Bellow are the hyperparameters of `SVC`, and performance on geometric values. Th
 
 The performance on the two geometric values is nice and it's between the performance with `n_components = 5` and `n_components = 15` in the model using landmarks. This could serve as a lower bound since it requires only the ratio of box width to box height and box size to interocular distance.
 
-Little preprocessing is needed givens the bounding box and landmarks. It’s also more interpretable as we know the meaning of the predictors.
+Little preprocessing is needed given the bounding box and landmarks. It’s also more interpretable as we know the meaning of the predictors.
 
 Bellow is the confusion matrix of classification.
 
