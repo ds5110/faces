@@ -18,7 +18,7 @@ The score of landmarks could be an upper bound for model performance since it co
 
 This performance is already high enough. Even if it might be further improved, the improvement will be tiny. Preprocessing like centering, rotating to upright position and scaling are needed here.
 
-Bellow is the confusion matrix of classification.
+Below is the confusion matrix of classification.
 
 <img src="figs/SVC_landmarks.png">
 
