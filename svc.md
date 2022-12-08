@@ -67,3 +67,8 @@ Same plot on a meshgrid.
 The support vectors in the train set. They tend to form a curved boundary between infant and adult samples. 
 <img src="figs/Support_Vectors.png">
 
+To reproduce the results from this section run:
+```
+make svc_geometric
+make svc_landmarks
+```
