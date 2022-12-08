@@ -32,7 +32,7 @@ Our best "low" dimensional model is SVC with 2 features: Please refer to [svc.md
 
 KNN with 2 features also did well: Please refer to [bayes.md](bayes.md) for details and other results from this model.
 
-<img src="figs/bayes_2feature_confusion_matrix.png" width=600>
+<img src="figs/bayes_interoc_norm_confusion_matrix.png" width=600>
 
 We found feature selection and resampling to be effective methods for improving model accuracy and recall score. Please refer to [Sampling](sampling.md)
 and [Feature Selection](feature_selection.md) for details on these techniques.
