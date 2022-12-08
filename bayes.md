@@ -60,16 +60,24 @@ Here are ROC and Detection Error Tradeoff Curves for each model:
 
 Area Under Curve (AUC) is a robust metric for comparing classifiers, where a higher score shows the model better avoids misclassification across all classification thresholds.
 
-## The Original 68 Landmarks
-We can explore the bias variance tradeoff in more depth by feeding these models a higher dimensionality dataset, in this case 68 x,y coordinates or 136 features:
+To show this same behavior on another feature selection:
 
+<img src="figs/bayes_boxratio_vs_interoc_norm.png" width=400>
+<img src="figs/bayes_interoc_norm_boundary.png" width=1000>
+<img src="figs/bayes_interoc_norm_confusion_matrix.png" width=600>
+<img src="figs/bayes_interoc_norm_metrics.png" width=1000>
+
+## The Original 68 Landmarks
+We can demonstrate the bias variance tradeoff in more depth by feeding these models a higher dimensionality dataset, in this case 68 x,y coordinates or 136 features:
 
 <img src="figs/bayes_original_confusion_matrix.png" width=600>
 <img src="figs/bayes_original_metrics.png" width=600>
 
 ## The Normalized, Centered and Rotated 68 Landmarks
-Finally, we can compare teh
+Finally, we can compare the original data scores to the normalized, centered and rotated features that we created to see if removing pixel-base externalities improved the models' predictive capability.
 
+<img src="figs/bayes_norm_confusion_matrix.png" width=600>
+<img src="figs/bayes_norm_metrics.png" width=600>
 
-<img src="figs/bayes_original_confusion_matrix.png" width=600>
-<img src="figs/bayes_original_metrics.png" width=600>
+GaussianNB is still the worst performer, but with 1/3 the error rate as with the original training set.
+This time LDA has managed to maintain its excellent score in the test set.
