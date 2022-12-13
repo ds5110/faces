@@ -11,7 +11,7 @@ I plotted the distribution of the "potential predictors" using histograms for bo
 ## Data used
 Infant and adult raw coordinate data can be found from this repo: [Infant-Facial-Landmark-Detection-and-Tracking](https://github.com/ostadabbas/Infant-Facial-Landmark-Detection-and-Tracking).
 
-For this model exploration I used several "partitions" of the data. Information on how these partitions were created can be found [here](https://github.com/ds5110/faces/blob/SVC/derived.md).
+For this model exploration I used several "partitions" of the data. Information on how these partitions were created can be found [here](https://github.com/ds5110/faces/blob/main/preprocessing.md).
 
 * Partition 1: The "potential predictors" 
   * Aka `['boxratio', 'interoc','interoc_norm','boxsize','boxsize/interoc']`

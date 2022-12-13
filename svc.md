@@ -25,7 +25,7 @@ The score of landmarks could be an upper bound for model performance since it co
 
 This performance is already high enough. Even if it might be further improved, the improvement will be tiny. Preprocessing like centering, rotating to upright position and scaling are needed here.
 
-Bellow is the confusion matrix of classification.
+Below is the confusion matrix of classification.
 
 <img src="figs/SVC_landmarks.png">
 
@@ -99,7 +99,7 @@ The performance on the two geometric values is nice, and it's between the perfor
 
 Little preprocessing is needed given the bounding box and landmarks. It’s also more interpretable as we know the meaning of the predictors.
 
-Bellow is the confusion matrix of classification.
+Below is the confusion matrix of classification.
 
 <img src="figs/SVC_geometric_value.png">
 
@@ -120,3 +120,8 @@ The support vectors in the train set. They tend to form a curved boundary betwee
 
 <img src="figs/Support_Vectors.png">
 
+To reproduce the results from this section run:
+```
+make svc_geometric
+make svc_landmarks
+```
