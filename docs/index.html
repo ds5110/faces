@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Adult vs Infant classification ML project">
+    <meta name="author" content="The Sophia Cofone, Jesse Hautala, Connor Lynch, Zongyu Wu, with thanks to Bootstrap">
+    <meta name="generator" content="Hugo 0.88.1">
+    <title>DS5110 Faces Project</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/docs/5.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" href="/docs/5.1/assets/img/favicons/apple-touch-icon.png" sizes="180x180">
+    <link rel="icon" href="/docs/5.1/assets/img/favicons/favicon-32x32.png" sizes="32x32" type="image/png">
+    <link rel="icon" href="/docs/5.1/assets/img/favicons/favicon-16x16.png" sizes="16x16" type="image/png">
+    <link rel="manifest" href="/docs/5.1/assets/img/favicons/manifest.json">
+    <link rel="mask-icon" href="/docs/5.1/assets/img/favicons/safari-pinned-tab.svg" color="#7952b3">
+    <link rel="icon" href="/docs/5.1/assets/img/favicons/favicon.ico">
+    <meta name="theme-color" content="#7952b3">
+
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-md navbar-light fixed-top bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Classifying Faces: adult vs infant</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
+                aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#models">Models</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#analysis">Analysis</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#acknowledgements">Acknowledgements</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="navbar-end-item">
+                <a href="https://github.com/ds5110/faces" target="_blank" title="GitHub"
+                    class="nav-item align-right mx-2">
+                    <img src="github.png" width="32px" />
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+            <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+                <span class="fs-4">Classifying Faces: adult vs infant</span>
+            </a>
+            <a href="/" class="nav-item align-right mx-2"></a>
+        </header>
+
+        <div class="p-5 mb-4 bg-light rounded-3">
+            <div class="container-fluid py-5">
+                <h1 class="display-5 fw-bold">Classifying Faces: adult vs infant</h1>
+                <p class="col-md-8 fs-4">
+                    This project is an exploration into the application of classical machine learning models such as
+                    SVC,
+                    Logistic Regression, and Naive Bayes to classify adult vs infant faces using facial
+                    landmark data. The data used in this analysis is provided by <a
+                        href="https://github.com/ostadabbas/Infant-Facial-Landmark-Detection-and-Tracking">InfAnFace:
+                        Bridging the Infant--Adult Domain Gap in Facial Landmark Estimation in the Wild</a>.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row align-items-md-stretch" id="models">
+            <div class="col-md-6">
+                <div class="h-100 p-5 bg-light border rounded-3">
+                    <h2>High Dimentional</h2>
+                    <div class="ratio ratio-4x3">
+                        <img src="SVC_landmarks.png" class="img-fluid">
+                    </div>
+                    <p class="col-md-8 fs-4">SVC</p>
+                    <p>Our best "high" dimensional model is an SVC model with 55 features.</p>
+                    <p>To generate this result, first we pre-processed the data.
+                        Then, we applied PCA to the normalized coordinate data. Finally we used used SVC for the
+                        classification.
+                    </p>
+                    <p>For further details on hyperparameter tuning and plotting of the principal components, please
+                        visit <a href="https://github.com/ds5110/faces/blob/main/svc.md">svc.md</a>.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="h-100 p-5 bg-light border rounded-3">
+                    <h2>"Mid" Dimentional</h2>
+                    <div class="ratio ratio-4x3">
+                        <img src="p3_fd_cmat.png" class="img-fluid">
+                    </div>
+                    <p class="col-md-8 fs-4">Logistic Regression</p>
+                    <p>Our best "mid" dimensional model is logistic regression with 7 features.</p>
+                    <p>To generate this result, first we pre-processed the data and generated the pair-wise euclidian
+                        distances.
+                        Then, we applied forward feature selection to pick out the 6 most relevant distances.
+                        Finally, using recursive feature selection and resampling, we combined the 6 distances with the
+                        "box ratio" predictor and applied logistic regression.
+                    </p>
+                    <p>For further details on hyperparameter tuning and histograms of the distrobutions, please visit <a
+                            href="https://github.com/ds5110/faces/blob/main/logreg.md">logreg.md</a>.
+                        Please visit <a
+                            href="https://github.com/ds5110/faces/blob/main/feature_selection.md">feature_election.md</a>
+                        and <a href="https://github.com/ds5110/faces/blob/main/sampling.md">sampling.md</a> for details
+                        on those methods.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="h-100 p-5 bg-light border rounded-3">
+                    <h2>another? Dimentional</h2>
+                    <div class="ratio ratio-4x3">
+                        <img src="bayes_interoc_norm_confusion_matrix.png" class="img-fluid">
+                    </div>
+                    <p class="col-md-8 fs-4">Bayes</p>
+                    <p>Our best dimensional model is with features.</p>
+                    <p>To generate this result, first we pre-processed the data.
+                        Then, we ....
+                    </p>
+                    <p>For further details on and , please visit <a
+                            href="https://github.com/ds5110/faces/blob/main/bayes.md">bayes.md</a>.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="h-100 p-5 bg-light border rounded-3">
+                    <h2>Low Dimentional</h2>
+                    <div class="ratio ratio-4x3">
+                        <img src="SVC_geometric_value.png" class="img-fluid">
+                    </div>
+                    <p class="col-md-8 fs-4">SVC</p>
+                    <p>Our best "low" dimensional model is SVC with 2 features.</p>
+                    <p>To generate this result, first we pre-processed the data.
+                        Then, we selected to geometric value features....
+                    </p>
+                    <p>For further details on hyperparameter tuning and plotting of the principal components, please
+                        visit <a href="https://github.com/ds5110/faces/blob/main/svc.md">svc.md</a>.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="p-5 mb-4 bg-light rounded-3" id="analysis">
+            <div class="container-fluid py-5">
+                <h1 class="display-5 fw-bold">Background & Analysis</h1>
+                <p class="col-md-8 fs-4">Background</p>
+                <p>Background on paper and data.</p>
+                <p class="col-md-8 fs-4">Challenges & Pre-processing</p>
+                <p>The main challenge with this project was pre-processing the data. The landmark data is generated from
+                    images, and sometimes those landmarks are turned, titled, or scaled differently.
+                    We accounted for these differences by "normalizing" the landmark points through rotating and scaling
+                    the points to the "bounding box" of the face.
+                    This allowed us to better compare the faces to one another, and gave us assurance that our
+                    classifiers are more likely to distinguish actual features of the faces (rather than something
+                    arbitrary, like the size of the image).
+                    For more information on the specific pre-processing steps done, please refer to <a
+                        href="https://github.com/ds5110/faces/blob/main/preprocessing.md">preprocessing.md</a>.
+                </p>
+                <p class="col-md-8 fs-4">Analysis</p>
+                <p>After testing out a collection of supervised machine learning models with different sets of features,
+                    pre-processing steps,
+                    resampling, feature selection, and dimensional reduction methods we concluded that
+                    classical machine learning is a powerful way to classify facial landmark data.
+                    We also found that domain knowledge can help inform feature engineering, which ended up being a
+                    critical step in our process.
+                    However, we realize that due to the nature of the 2-D data points, there are certain normalizing
+                    transformations that we could not do.
+                    There also could be other externalities influencing the accuracy scores of our models.
+                </p>
+                <p class="col-md-8 fs-4">Future work</p>
+                <p>Stuff...
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="p-10 mb-6 bg-light rounded-3" id="acknowledgements">
+            <div class="container-fluid py-5">
+                <p class="col-md-8 fw-bold fs-4">Acknowledgements</p>
+                <p>For more information about the contributors of this project, please visit the <a
+                        href="https://github.com/ds5110/faces">project repository</a>.</p>
+                <p>The data used in this analysis comes from <a
+                        href="https://github.com/ostadabbas/Infant-Facial-Landmark-Detection-and-Tracking">InfAnFace:
+                        Bridging the Infant--Adult Domain Gap in Facial Landmark Estimation in the Wild</a>.
+                </p>
+                <p>Wan, M., Zhu, S., Luan, L., Prateek, G., Huang, X., Schwartz-Mette, R., Hayes, M., Zimmerman, E.,
+                    & Ostadabbas, S. "InfAnFace: Bridging the infant-adult domain gap in facial landmark estimation
+                    in the wild." 26th International Conference on Pattern Recognition (ICPR 2022).</p>
+                <p>Additional thanks to Dr. Michael Wan for his feedback and guidance on our project.</p>
+            </div>
+        </div>
+    </div>
+
+    <footer class="pt-3 mt-4 text-muted border-top">
+        &copy; 2022 DS5110
+    </footer>
+
+</body>
+
+</html>
