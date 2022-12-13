@@ -80,7 +80,14 @@ make bayes_figures
 
 ## Dependencies
 
-There is a [requirements.txt](requirements.txt) file at the root of the repo, as a convenience for installing dependencies. It is strongly recommended to create a new virtual environment for this project (see [pip/venv documentation](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/) for details). You can install these locally with pip:
+### Anaconda
+There is a conda environment file []() at the root of the repo. If you want to reproduce our work in a new conda environment, you can configure one by executing (at the root of the repo):
+```commandline
+conda env create -f environment.yml
+```
+
+### Pip
+There is also a [requirements.txt](requirements.txt) file at the root of the repo, as a convenience for installing dependencies. It is strongly recommended to create a new virtual environment for this project (see [pip/venv documentation](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/) for details). You can install project dependencies locally with pip:
   ```
   pip install -r requirements.txt
   ```
