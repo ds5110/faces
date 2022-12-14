@@ -1,14 +1,16 @@
 ## SVC
-
+To reproduce results in this section run
+```
+make svc_landmarks
+make svc_geometric
+```
 Applied SVC to landmarks and to geometric values. 
 
 `GridSearchCV` in both methods are applied to the train set, and classification reports are generated from the test set.
 
-Landmarks are already normalized and geometric values are computed from the normalized landmarks.
-
-Can reproduce all results by using `make svc_landmarks` and `make svc_geometric`, or simply run `src/zw_svc_landmarks.py` and `src/zw_svc_geometric_value.py`.
-
 ### Landmarks
+
+Used normalized landmarks, i.e. `'norm_cenrot-x0':'norm_cenrot-y67'` in `merged_landmarks`.
 
 There are 68 landmarks and two axis, x and y, for each landmark so there are 136 predictors in total.
 
@@ -59,6 +61,8 @@ As the scatter plot of the first two principals shows bellow, the model with `n_
 
 All above results are based on normalized landmarks. Bellow we add some results for using not normalized landmarks.
 
+Not normalized landmarks, i.e. `'x0':'y67'` in `merged_landmarks`.
+
 `n_components = 55`
 - Accuracy: 0.98
 - adult f1-score: 0.98
@@ -84,9 +88,13 @@ And the first two principal components using not normalized landmarks.
 <img src="figs/PCA_of_landmarks_infant_not_normalized.png">
 <img src="figs/PCA_of_landmarks_predict_not_normalized.png">
 
+---
+
 ### Geometric Values
 
-Now we use the two geometric values, `boxratio` and `interoclar_norm`, as predictors. Those two predictors are computed from the normalized landmarks, and they correspond to the `box width / box height` and `box size / interocular didtance` in `TABLE II` of Dr. Wan's paper. 
+Used geometric values, i.e. `'boxratio', 'interoc_norm'` in `merged_landmarks`, as predictors.
+
+Those two predictors are computed from the normalized landmarks, and they correspond to the `box width / box height` and `box size / interocular didtance` in `TABLE II` of Dr. Wan's paper. 
 
 Bellow is the performance on geometric values. The classification report is generated on the test set, and the last lines shows the number of support vectors in the train set with 736 samples.
 
@@ -120,8 +128,3 @@ The support vectors in the train set. They tend to form a curved boundary betwee
 
 <img src="figs/Support_Vectors.png">
 
-To reproduce the results from this section run:
-```
-make svc_geometric
-make svc_landmarks
-```
