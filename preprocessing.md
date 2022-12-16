@@ -91,6 +91,8 @@ We would like to derive three components of head orientation: "roll", "pitch", a
 
 The calculation for yaw is a simple weighted average of angles between key landmarks (mainly the corners of eyes, or "canthi"). This has proven very effective, as manually verified for nearly all of the training data.
 
+<img src="figs/yaw_analysis.png" width=600>
+
 ## Calculation of "roll"
 
 The calculation for "roll" is much more tenuous. We assume the head is a sphere, with diameter equal to the maximum horizontal distance between cheek landmarks (after "yaw correction"). Then we take the nose point (landmark 33) as a point on the surface of said sphere and calculate the angle: `roll = arcsin((nose-mid)/radius)`
