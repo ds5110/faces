@@ -42,7 +42,6 @@ y_nose = rotated.get_y()[nose_i]
 fig, ax = plt.subplots(figsize=(10, 10))
 plot_image(
     rotated,
-    annotate='scatter',
     ax=ax,
 )
 canthi = rotated.get_coords()[outer_canthi]
@@ -59,7 +58,6 @@ plt.show()
 fig, ax = plt.subplots(figsize=(10, 10))
 plot_image(
     rotated,
-    annotate='scatter',
     ax=ax,
 )
 ax.title.set_text('roll analysis')
