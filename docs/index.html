@@ -210,13 +210,17 @@
             <div class="container-fluid py-5">
                 <h1 class="display-5 fw-bold">Analysis</h1>
                 <p class="col-md-8 fs-4">Challenges</p>
-                <p>The main challenge with this project was pre-processing the data. The landmark data is generated from
-                    images, and sometimes those landmarks are turned, titled, or scaled differently.
-                    We accounted for these differences by "normalizing" the landmark points through rotating and scaling
+                <p>Some of the biggest challenges in this project were around pre-processing and normalizing the data.
+                    These landmark data are derived from a 2D projection of a 3D subject and sometimes the subject may
+                    be turned or tilted.
+                    Sometimes the camera may be closer or further from the subject and sometimes the resolution of the
+                    image may be larger or smaller to a significant extent.
+                    All of these extrinsic factors can have a large impact on the landmarks' coordinate values.
+                    We tried to account for these differences by "normalizing" the landmark points, rotating and scaling
                     the points to the "bounding box" of the face.
                     This allowed us to better compare the faces to one another, and gave us assurance that our
-                    classifiers are more likely to distinguish actual features of the faces (rather than something
-                    arbitrary, like the size of the image).
+                    classifiers are more likely to distinguish actual features of the faces (rather than those extrinsic
+                    features, like scale and rotation).
                     For more information on the specific pre-processing steps done, please refer to <a
                         href="https://github.com/ds5110/faces/blob/main/preprocessing.md">preprocessing.md</a>.
                 </p>
