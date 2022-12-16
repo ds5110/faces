@@ -63,6 +63,7 @@ landmark_cols = [x_cols, y_cols]
 cenrot_cols = [[f'cenrot-{axis}{i}' for i in range(68)] for axis in ['x','y']]
 norm_cols = [[f'norm_cenrot-{axis}{i}' for i in range(68)] for axis in ['x','y']]
 nose_i = 33  # the center of the horizontal line under nose
+outer_canthi = [36, 45]
 #Potential predictors for distinguishing infants
 main_predictors = ['boxratio', 'interoc','interoc_norm','boxsize','boxsize/interoc']
 #Angular offsets
