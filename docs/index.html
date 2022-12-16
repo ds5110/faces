@@ -94,18 +94,47 @@
     </div>
 
     <div class="container">
+        <div class="p-5 mb-4 bg-light rounded-3">
+            <div class="container-fluid py-5">
+                <h1 class="display-5 fw-bold">Derived Features: Preprocessing and Normalization</h1>
+                <p class="md-8 fs-4">
+                    In order to reduce the influence of extrinsic factors (e.g. image size, camera angle, and subject pose)
+                    we derived additional metadata from the ground truth landmarks for
+                    <a href="https://coe.northeastern.edu/Research/AClab/InfAnFace/labels.csv">InfAnFace</a> and
+                    <a href="https://github.com/ostadabbas/Infant-Facial-Landmark-Detection-and-Tracking/raw/master/data/300w">300W</a>
+                    data.
+                </p>
+                <p class="md-8 fs-4">
+                These derived features include:
+                </p>
+                <ul class="fs-4">
+                    <li>Estimated Rotations</li>
+                    <li>Box Ratio and Interocular Distance</li>
+                    <li>Normalized Landmarks</li>
+                    <li>Euclidean Distances</li>
+                </ul>
+                <p class="md-8 fs-4">
+                Some models struggled to find any useful patterns in the raw landmark coordinates, but by using Normalized Landmarks and Estimated Rotations, we were able to reduce the influence of extrinsic factors.
+                </p>
+                <img class="img-fluid" src="normalized_landmarks.png">
+                <p class="md-8 fs-4">
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
         <div class="row align-items-md-stretch" id="models">
             <div class="col-md-6">
                 <div class="h-100 p-5 bg-light border rounded-3">
-                    <h2>High Dimentional</h2>
+                    <h2>PCA > SVC</h2>
+                    <h2>High Dimensional</h2>
                     <div class="ratio ratio-4x3">
                         <img src="SVC_landmarks.png" class="img-fluid">
                     </div>
-                    <p class="col-md-8 fs-4">SVC</p>
-                    <p>Our best "high" dimensional model is an SVC model with 55 features.</p>
-                    <p>To generate this result, first we pre-processed the data.
-                        Then, we applied PCA to the normalized coordinate data. Finally we used used SVC for the
-                        classification.
+                    <p class="col-md-8 fs-4"></p>
+                    <p>Our best "high" dimensional model is a PCA > SVC model with 55 principal components.</p>
+                    <p>To generate this result we applied PCA to the normalized landmark coordinates and used SVC for classification. We used cross-validated hyperparameter tuning to find the best number of principal components, SVC regularization and SVC kernel coefficient.
                     </p>
                     <p>For further details on hyperparameter tuning and plotting of the principal components, please
                         visit <a href="https://github.com/ds5110/faces/blob/main/svc.md">svc.md</a>.
@@ -114,14 +143,15 @@
             </div>
             <div class="col-md-6">
                 <div class="h-100 p-5 bg-light border rounded-3">
-                    <h2>"Mid" Dimentional</h2>
+                    <h2>Logistic Regression</h2>
+                    <h2>"Mid" Dimensional</h2>
                     <div class="ratio ratio-4x3">
                         <img src="p3_fd_cmat.png" class="img-fluid">
                     </div>
-                    <p class="col-md-8 fs-4">Logistic Regression</p>
+                    <p class="col-md-8 fs-4"></p>
                     <p>Our best "mid" dimensional model is logistic regression with 7 features.</p>
-                    <p>To generate this result, first we pre-processed the data and generated the pair-wise euclidian
-                        distances.
+                    <p>To generate this result, we derived pair-wise euclidian
+                        distances from the normalized landmark coordinates.
                         Then, we applied forward feature selection to pick out the 6 most relevant distances.
                         Finally, using recursive feature selection and resampling, we combined the 6 distances with the
                         "box ratio" predictor and applied logistic regression.
@@ -137,27 +167,32 @@
             </div>
             <div class="col-md-6">
                 <div class="h-100 p-5 bg-light border rounded-3">
-                    <h2>another? Dimentional</h2>
+                    <h2>Gaussian Naive Bayes</h2>
+                    <h2>Low Dimensional</h2>
                     <div class="ratio ratio-4x3">
                         <img src="bayes_interoc_norm_confusion_matrix.png" class="img-fluid">
                     </div>
-                    <p class="col-md-8 fs-4">Bayes</p>
-                    <p>Our best dimensional model is with features.</p>
-                    <p>To generate this result, first we pre-processed the data.
-                        Then, we ....
+                    <p class="col-md-8 fs-4"></p>
+                    <p>Some of our best low-dimensional models use just 2 features.</p>
+                    <p>This model uses two derived features inspired by the statistics in TABLE II on page 3 of the <a href="https://arxiv.org/pdf/2110.08935.pdf">InfAnFace</a> paper:
+                        <ul>
+                            <li><b>boxratio</b>: <code>(box_width)/(box_height)</code> (using rotated coordinates)</li>
+                            <li><b>interoc</b>: euclidean distance between landmarks 36 and 45 (the outer canthi); this feature is similar to <b>interoc_norm</b>, but this feature is <i>not normalized</i>)</li>
+                        </ul>
                     </p>
-                    <p>For further details on and , please visit <a
+                    <p>For further details around this classifier, please visit <a
                             href="https://github.com/ds5110/faces/blob/main/bayes.md">bayes.md</a>.
                     </p>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="h-100 p-5 bg-light border rounded-3">
-                    <h2>Low Dimentional</h2>
+                    <h2>PCA > SVC</h2>
+                    <h2>Low Dimensional</h2>
                     <div class="ratio ratio-4x3">
                         <img src="SVC_geometric_value.png" class="img-fluid">
                     </div>
-                    <p class="col-md-8 fs-4">SVC</p>
+                    <p class="col-md-8 fs-4"></p>
                     <p>Our best "low" dimensional model is SVC with 2 features.</p>
                     <p>To generate this result, first we pre-processed the data.
                         Then, we selected to geometric value features....
@@ -173,22 +208,23 @@
     <div class="container">
         <div class="p-5 mb-4 bg-light rounded-3" id="analysis">
             <div class="container-fluid py-5">
-                <h1 class="display-5 fw-bold">Background & Analysis</h1>
-                <p class="col-md-8 fs-4">Background</p>
-                <p>The ACLab created a new dataset of infant facial landmarks to be used for machine learning applications, described in this <a href="https://arxiv.org/pdf/2110.08935.pdf">paper</a>. 
-                </p>
-                <p class="col-md-8 fs-4">Challenges & Pre-processing</p>
-                <p>The main challenge with this project was pre-processing the data. The landmark data is generated from
-                    images, and sometimes those landmarks are turned, titled, or scaled differently.
-                    We accounted for these differences by "normalizing" the landmark points through rotating and scaling
+                <h1 class="display-5 fw-bold">Analysis</h1>
+                <p class="col-md-8 fs-4">Challenges</p>
+                <p>Some of the biggest challenges in this project were around pre-processing and normalizing the data.
+                    These landmark data are derived from a 2D projection of a 3D subject and sometimes the subject may
+                    be turned or tilted.
+                    Sometimes the camera may be closer or further from the subject and sometimes the resolution of the
+                    image may be larger or smaller to a significant extent.
+                    All of these extrinsic factors can have a large impact on the landmarks' coordinate values.
+                    We tried to account for these differences by "normalizing" the landmark points, rotating and scaling
                     the points to the "bounding box" of the face.
                     This allowed us to better compare the faces to one another, and gave us assurance that our
-                    classifiers are more likely to distinguish actual features of the faces (rather than something
-                    arbitrary, like the size of the image).
+                    classifiers are more likely to distinguish actual features of the faces (rather than those extrinsic
+                    features, like scale and rotation).
                     For more information on the specific pre-processing steps done, please refer to <a
                         href="https://github.com/ds5110/faces/blob/main/preprocessing.md">preprocessing.md</a>.
                 </p>
-                <p class="col-md-8 fs-4">Analysis</p>
+                <p class="col-md-8 fs-4">Conclusion</p>
                 <p>After testing out a collection of supervised machine learning models with different sets of features,
                     pre-processing steps,
                     resampling, feature selection, and dimensional reduction methods we concluded that
@@ -200,8 +236,18 @@
                     There also could be other externalities influencing the accuracy scores of our models.
                 </p>
                 <p class="col-md-8 fs-4">Future work</p>
-                <p>In future we would like to continue to explore potential externalities influencing the accuracy scores of our models. We also experimented with
-                    pair-wise euclidian distances, and would like to continue to explore how those calculated features interact with our models.
+                <p>We may be able to understand some of our models better by inspecting specific images that are harder
+                    to classify correctly.
+                    We might find a way to quantify the degree of certainty in our classifiers
+                    and sort misclassified images for review; perhaps a pattern would emerge, indicating a common mode
+                    of failure.
+                    For example, one of our best predictors across models was <code>boxratio</code>, but we expect this
+                    feature to be artificially decreased for extreme angles of rotation about the y-axis; perhaps an
+                    infant face in profile (i.e. turned 90 degrees from the camera) would have a ratio indistinct from
+                    that of an adult face; perhaps a prioritized list of problematic images would make this evident.
+                    We might find ways to improve our API for plotting images, to make this sort of review easier.
+                    We would also like to extend our local image caching solution to retrieve <b>300W</b> faces
+                    as easily as the <b>InfAnFace</b> images.
                 </p>
             </div>
         </div>

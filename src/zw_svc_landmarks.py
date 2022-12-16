@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 # Get data
 df = pd.read_csv('data/merged_landmarks.csv')
 X_original = df.loc[:, 'norm_cenrot-x0':'norm_cenrot-y67']
+# X_original = df.loc[:, 'x0':'y67']
 y = df.loc[:, 'baby']
 X_train, X_test, y_train, y_test = train_test_split(X_original, y,
 													test_size=0.33,
@@ -147,13 +148,17 @@ print(classification_report(y_test, y_predict_2, target_names=['adult', 'infant'
 pca = PCA(whiten=True, n_components=2)
 X_2d = pd.DataFrame(pca.fit_transform(X_original))
 X_2d['PCA1'], X_2d['PCA2'], X_2d['baby'] = X_2d[0], X_2d[1], y
+for i in X_2d.index:
+	X_2d.loc[i, 'baby'] = 'adult' if X_2d.loc[i, 'baby'] == 0 else 'infant'
 sns.lmplot(data=X_2d, x='PCA1', y='PCA2', hue='baby',legend=True, fit_reg=False)
-plt.title('First 2 components true value')
+plt.title('First 2 components true adult vs true infant')
 plt.savefig('figs/PCA_of_landmarks_infant')
 plt.show()
 
 X_2d['pre'] = model_2.predict(X_original)
+for i in X_2d.index:
+	X_2d.loc[i, 'pre'] = 'adult' if X_2d.loc[i, 'pre'] == 0 else 'infant'
 sns.lmplot(data=X_2d, x='PCA1', y='PCA2', hue='pre',legend=True, fit_reg=False)
-plt.title('First 2 components predicted value')
+plt.title('First 2 components predicted adult vs predicted infant')
 plt.savefig('figs/PCA_of_landmarks_predict')
 plt.show()
