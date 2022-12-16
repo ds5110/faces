@@ -77,13 +77,12 @@ for i, image_name in enumerate([
     ))
     plot_image(
         rotated,
-        annotate='splinenum',
+        annotate='spline',
         skip_img=True,
+        unit_scale=True,
         ax=ax3,
     )
     ax3.title.set_text('normalized landmarks')
-    ax3.set_xlim(-1, 1)
-    ax3.set_ylim(1, -1)
     
 plt.tight_layout()
 if save_fig:
