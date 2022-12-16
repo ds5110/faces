@@ -96,7 +96,7 @@
     <div class="container">
         <div class="p-5 mb-4 bg-light rounded-3">
             <div class="container-fluid py-5">
-                <h2 class="fw-bold">Derived Features: Preprocessing and Normalization</h2>
+                <h1 class="display-5 fw-bold">Derived Features: Preprocessing and Normalization</h1>
                 <p class="md-8 fs-4">
                     In order to reduce the influence of extrinsic factors (e.g. image size, camera angle, and subject pose)
                     we derived additional metadata from the ground truth landmarks for
@@ -116,7 +116,7 @@
                 <p class="md-8 fs-4">
                 Some models struggled to find any useful patterns in the raw landmark coordinates, but by using Normalized Landmarks and Estimated Rotations, we were able to reduce the influence of extrinsic factors.
                 </p>
-                <img src="normalized_landmarks.png" width=1000>
+                <img class="img-fluid" src="normalized_landmarks.png">
                 <p class="md-8 fs-4">
                 </p>
             </div>
@@ -208,10 +208,8 @@
     <div class="container">
         <div class="p-5 mb-4 bg-light rounded-3" id="analysis">
             <div class="container-fluid py-5">
-                <h1 class="display-5 fw-bold">Background & Analysis</h1>
-                <p class="col-md-8 fs-4">Background</p>
-                <p>Background on paper and data.</p>
-                <p class="col-md-8 fs-4">Challenges & Pre-processing</p>
+                <h1 class="display-5 fw-bold">Analysis</h1>
+                <p class="col-md-8 fs-4">Challenges</p>
                 <p>The main challenge with this project was pre-processing the data. The landmark data is generated from
                     images, and sometimes those landmarks are turned, titled, or scaled differently.
                     We accounted for these differences by "normalizing" the landmark points through rotating and scaling
@@ -222,7 +220,7 @@
                     For more information on the specific pre-processing steps done, please refer to <a
                         href="https://github.com/ds5110/faces/blob/main/preprocessing.md">preprocessing.md</a>.
                 </p>
-                <p class="col-md-8 fs-4">Analysis</p>
+                <p class="col-md-8 fs-4">Conclusion</p>
                 <p>After testing out a collection of supervised machine learning models with different sets of features,
                     pre-processing steps,
                     resampling, feature selection, and dimensional reduction methods we concluded that
