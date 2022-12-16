@@ -114,9 +114,11 @@
                     <li>Euclidean Distances</li>
                 </ul>
                 <p class="md-8 fs-4">
-                Using Normalized Landmarks and Estimated Rotations, we were able to reduce the influence of extrinsic factors.
+                Some models struggled to find any useful patterns in the raw landmark coordinates, but by using Normalized Landmarks and Estimated Rotations, we were able to reduce the influence of extrinsic factors.
                 </p>
-                <img src="normalized_landmarks.png" width=900>
+                <img src="normalized_landmarks.png" width=1000>
+                <p class="md-8 fs-4">
+                </p>
             </div>
         </div>
     </div>
@@ -174,7 +176,7 @@
                     <p>Some of our best low-dimensional models use just 2 features.</p>
                     <p>This model uses two derived features inspired by the statistics in TABLE II on page 3 of the <a href="https://arxiv.org/pdf/2110.08935.pdf">InfAnFace</a> paper:
                         <ul>
-                            <li><b>boxratio</b>: <tt>(box_width)/(box_height)</tt> (using rotated coordinates)</li>
+                            <li><b>boxratio</b>: <code>(box_width)/(box_height)</code> (using rotated coordinates)</li>
                             <li><b>interoc</b>: euclidean distance between landmarks 36 and 45 (the outer canthi); this feature is similar to <b>interoc_norm</b>, but this feature is <i>not normalized</i>)</li>
                         </ul>
                     </p>
@@ -232,7 +234,18 @@
                     There also could be other externalities influencing the accuracy scores of our models.
                 </p>
                 <p class="col-md-8 fs-4">Future work</p>
-                <p>Stuff...
+                <p>We may be able to understand some of our models better by inspecting specific images that are harder
+                    to classify correctly.
+                    We might find a way to quantify the degree of certainty in our classifiers
+                    and sort misclassified images for review; perhaps a pattern would emerge, indicating a common mode
+                    of failure.
+                    For example, one of our best predictors across models was <code>boxratio</code>, but we expect this
+                    feature to be artificially decreased for extreme angles of rotation about the y-axis; perhaps an
+                    infant face in profile (i.e. turned 90 degrees from the camera) would have a ratio indistinct from
+                    that of an adult face; perhaps a prioritized list of problematic images would make this evident.
+                    We might find ways to improve our API for plotting images, to make this sort of review easier.
+                    We would also like to extend our local image caching solution to retrieve <b>300W</b> faces
+                    as easily as the <b>InfAnFace</b> images.
                 </p>
             </div>
         </div>
