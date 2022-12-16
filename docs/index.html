@@ -187,7 +187,8 @@
                     <p>This model uses two derived features inspired by the statistics in TABLE II on page 3 of the <a href="https://arxiv.org/pdf/2110.08935.pdf">InfAnFace</a> paper:
                         <ul>
                             <li><b>boxratio</b>: <code>(box_width)/(box_height)</code> (using rotated coordinates)</li>
-                            <li><b>interoc</b>: euclidean distance between landmarks 36 and 45 (the outer canthi); this feature is similar to <b>interoc_norm</b>, but this feature is <i>not normalized</i>)</li>
+                            <li><b>interoc</b>: Euclidean distance between landmarks 36, 45 (outer canthi);<br>
+                                <i>NOTE:</i> this is similar to <b>interoc_norm</b>, but it is <i>not normalized</i></li>
                         </ul>
                     </p>
                     <p>For further details around this classifier, please visit <a
@@ -203,9 +204,11 @@
                         <img src="SVC_geometric_value.png" class="img-fluid">
                     </div>
                     <p class="col-md-8 fs-4"></p>
-                    <p>Our best "low" dimensional model is SVC with 2 features.</p>
-                    <p>To generate this result, first we pre-processed the data.
-                        Then, we selected to geometric value features....
+                    <p>Our best "low" dimensional model is SVC with two features inspired by the statistics in TABLE II on page 3 of the <a href="https://arxiv.org/pdf/2110.08935.pdf">InfAnFace</a> paper:
+                        <ul>
+                            <li><b>boxratio</b>: <code>(box_width)/(box_height)</code> (using rotated coordinates)</li>
+                            <li><b>interoc_norm</b>: Euclidean distance between outer canthi (normalized to box extents)</li>
+                        </ul>
                     </p>
                     <p>For further details on hyperparameter tuning and plotting of the principal components, please
                         visit <a href="https://github.com/ds5110/faces/blob/main/svc.md">svc.md</a>.
