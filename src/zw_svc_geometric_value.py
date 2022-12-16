@@ -59,27 +59,33 @@ n_Support_vector = svc_trained.n_support_
 print("Number of support vector: ", n_Support_vector)
 Support_vector_index = svc_trained.support_
 
-# Plot geometric values and support vectors
+# Plot true values
 X_geometric['baby'] = y
+for i in X_geometric.index:
+	X_geometric.loc[i, 'baby'] = 'adult' if X_geometric.loc[i, 'baby'] == 0 else 'infant'
 sns.scatterplot(data=X_geometric, x='boxratio', y='interoc_norm',
 				hue='baby',
 				legend=True)
-plt.title('Scatter plot of all samples with geometric values')
+plt.title('All samples with true adult vs true infant')
 plt.savefig('figs/Geometric_values')
 plt.show()
 
-# Plot predict vs true
+# Plot predicted values
 X_geometric['pre'] = svc_trained.predict(X_geometric.loc[:, ['boxratio', 'interoc_norm']])
+for i in X_geometric.index:
+	X_geometric.loc[i, 'pre'] = 'adult' if X_geometric.loc[i, 'pre'] == 0 else 'infant'
 sns.scatterplot(data=X_geometric, x='boxratio', y='interoc_norm',
 				hue='pre',
 				legend=True)
-plt.title('Scatter plot of predict vs true')
+plt.title('All samples with predicted adult vs predicted infant')
 plt.savefig('figs/Geometric_values_pre_vs_true')
 plt.show()
 
-# Plot support vecrors
+# Plot support vectors
 support_vector = X_train.iloc[Support_vector_index][:]
 support_vector['baby'] = y_train.iloc[Support_vector_index][:]
+for i in support_vector.index:
+	support_vector.loc[i, 'baby'] = 'adult' if support_vector.loc[i, 'baby'] == 0 else 'infant'
 sns.scatterplot(data=support_vector, x='boxratio', y='interoc_norm',
 				hue='baby',
 				legend=True)
