@@ -48,6 +48,7 @@ def plot_image(
         cross=False,
         grayscale=False,
         skip_img=False,
+        unit_scale=False,
         save_fig=False,
         ax=None,
 ):
@@ -71,16 +72,19 @@ def plot_image(
             - 'scaternum': landmark points with indices
             - 'spline': best-fit splines between landmark points
             - 'splinelabel': best-fit splines with feature names
-            - 'splinenum': splines with numbered landmarks
+            - 'lines': similar to splines, but without interpolation
         The default is None.
     cross : bool
         True to include blue crosshairs at image center.
         The default is False.
-    grayscale : bool
-        True to convert image to grayscale (using default colormap 'viridis').
+    grayscale : bool or str
+        If True then convert image to grayscale (using default colormap 'viridis').
+        If str then interpret as the name of a colormap for grayscale.
         The default is False.
     skip_img : bool
         True to skip raw image data. The default is False.
+    unit_scale : bool
+        True to apply hacks for normalized landmarks. The default is False.
     save_fig : bool, optional
         True to save result to 'figs' directory. The default is False.
     ax: pyplot Axes
@@ -132,6 +136,7 @@ def plot_image(
     
     if annotate:
         if annotate.startswith('spline'):
+            s = .000001 if unit_scale else .2
             for f in landmark68.features:
                 xx = X[f.idx]
                 yy = Y[f.idx]
@@ -148,7 +153,7 @@ def plot_image(
                 if not distance[-1]: continue;
                 
                 distance = np.insert(distance, 0, 0)/distance[-1]
-                splines = [UnivariateSpline(distance, point, k=2, s=.2) for point in points]
+                splines = [UnivariateSpline(distance, point, k=2, s=s) for point in points]
                 points_fitted = np.vstack(
                     [spline(np.linspace(0, 1, 64)) for spline in splines]
                 )
@@ -179,6 +184,26 @@ def plot_image(
                         markersize=1,
                         c='tab:blue' if skip_img else 'white',
                     )
+        elif annotate == 'lines':
+            for f in landmark68.features:
+                xx = X[f.idx]
+                yy = Y[f.idx]
+                if pd.isna(xx).any(): continue;
+                if pd.isna(yy).any(): continue;
+
+                points = np.stack((xx, yy))
+                ax.plot(
+                    *points,
+                    linestyle='-',
+                    linewidth='1',
+                    c='fuchsia',
+                )
+                ax.plot(
+                    *points,
+                    'o',
+                    markersize=1,
+                    c='tab:blue' if skip_img else 'white',
+                )
         if annotate and annotate.startswith('scatter'):
             if scatter_points is None:
                 scatter_points = range(68)
@@ -206,6 +231,9 @@ def plot_image(
         )
     if skip_img:
         fix_axes(X,Y,ax)
+    if unit_scale:
+        ax.set_xlim(-1, 1)
+        ax.set_ylim(1, -1)
     
     # skip display for unowned axes
     # NOTE: this is a quick fix to support multiplot

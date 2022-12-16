@@ -155,3 +155,43 @@ make logreg_test
 ```
 make logreg_eda
 ```
+
+## Logistic Regression: Normalized vs Un-normalized coordinate data
+We wanted to see how the normalization step (explained in [preprocessing.md](preprocessing.md)) impacted our models. To test this, we first ran our logistic regression model on the UN-normalized coordinate data and got the following results:
+* Accuracy score: 0.97
+* Recall score adult: 0.99
+* Recall score baby: 0.95
+
+<img src="figs/un_norm_nf_cmat.png" width=600>
+
+Then, we ran the same model with the normalized coordinate data and got these results:
+* Accuracy score: 0.91
+* Recall score adult: 1.00
+* Recall score baby: 0.77
+
+<img src="figs/norm_nf_cmat.png" width=600>
+
+Similar to our process above, we then did recursive feature selection and downsampling. The recursive feature selection on the normalized coordinate data selected 29 optimal features.
+
+CV to tune optimal features:
+
+<img src="figs/cv_norm_29.png" width=600>
+
+Re-running the model with those selected features and downsampling got these results:
+* Accuracy score: 0.93
+* Recall score adult: .92
+* Recall score baby: 0.94
+
+<img src="figs/norm_fd_cmat.png" width=600>
+
+However, the un-normalized coordinate data did not converge with forward or recursive feature selection. This is an indication that the data does not fit the model well, and could be overfitting. We were able to apply downsampling, and got the following scores:
+* Accuracy score: 0.98
+* Recall score adult: 1.00
+* Recall score baby: 0.95
+
+In conclusion, we believe that normalization of the data is necessary. While using the raw data creates seemingly "good" accuracy scores, we believe that the classifier is picking up on "extrinsic" features (like scale) and using those for the classification rather than actual features. This is further evidenced by the failure of the feature selection methods. However, with normalized data, the feature selection methods work as intended and are able to remove unnecessary data. 
+
+To reproduce the results from this section run:
+```
+make logreg_test
+```

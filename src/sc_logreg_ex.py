@@ -7,6 +7,7 @@ from util.sc_helpers import get_Xy, plot_cm, class_report, tt_split, get_data
 from util.sc_resample import upsample, downsample
 from util.sc_feature_selection import tune_rfe, plot_tune, rec_feature_selection, fwd_feature_selection
 from util.model import main_predictors, norm_cols
+from util.column_names import merged_cols
 
 #basic
 import numpy as np
@@ -73,7 +74,7 @@ def main():
     df_downsampled = downsample(df)
     rec_feature_select(df_downsampled,main_predictors,num_features_selected)
 
-    print('Testing out [norm_cenrot-]')
+    print('Testing out [norm_cenrot-] aka normalized coordinates')
     print('Partition 2 - Without feature selection')
     without_f(df,norm_cols[0]) 
     print('Partition 2 - Feature selection')
@@ -95,6 +96,25 @@ def main():
     rec_feature_select(df,predictors_list,num_features_selected)
     df_downsampled = downsample(df)
     rec_feature_select(df_downsampled,predictors_list,num_features_selected)
+
+    print('Comparing UNnormalized (raw) coordinates with normalized')
+    print('Partition 4 raw - Without feature selection')
+    without_f(df,merged_cols)
+    print('Partition 4 norm - Without feature selection')
+    without_f(df,norm_cols[0])
+    print('Partition 4 raw - Feature selection (does not work)')
+    # num_features_selected = rec_feature_tune(df,merged_cols)
+    print('Partition 4 norm - Feature selection')
+    num_features_selected = rec_feature_tune(df,norm_cols[0])
+    print('Partition 4 raw - With Feature selection (does not work)')
+    # rec_feature_select(df,merged_cols,29)
+    print('Partition 4 norm - With Feature selection')
+    rec_feature_select(df,norm_cols[0],29)
+    print('Partition 4 raw - downsampled')
+    df_downsampled = downsample(df)
+    without_f(df_downsampled,merged_cols)
+    print('Partition 4 norm - With Feature selection & downsampled')
+    rec_feature_select(df_downsampled,norm_cols[0],29)
 
 
 if __name__ == "__main__":

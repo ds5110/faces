@@ -14,7 +14,7 @@ from scipy.interpolate import UnivariateSpline
 import skimage
 
 # intra-project
-from util.model import AnnoImg, landmark68, cheeks, h_syms, nose_i
+from util.model import AnnoImg, landmark68, cheeks, h_syms, nose_i, outer_canthi
 
 
 # some constants for coord math (mostly premature optimization)
@@ -51,7 +51,7 @@ default_syms = [
     Sym(
         'canthi',
         [
-            [36, 45],
+            outer_canthi,
             [39, 42],
         ],
         4.  # higher weight for canthi

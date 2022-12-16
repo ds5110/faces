@@ -10,8 +10,11 @@ angles_logreg:
 compare_normalized:
 	python src/jh_plot_norm.py
 
-roll_yaw:
+compare_roll_yaw:
 	python src/jh_plot_roll_yaw.py
+
+plot_roll_yaw:
+	python src/jh_plot_roll.py
 
 angle_outliers:
 	python src/jh_big_yaw.py
