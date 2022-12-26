@@ -65,19 +65,29 @@ To show this same behavior on another feature selection:
 <img src="figs/bayes_boxratio_vs_interoc_norm.png" width=400>
 <img src="figs/bayes_interoc_norm_boundary.png" width=1000>
 <img src="figs/bayes_interoc_norm_confusion_matrix.png" width=600>
-<img src="figs/bayes_interoc_norm_metrics.png" width=1000>
+<img src="figs/bayes_interoc_norm_metrics.png" width=600>
 
-## The Original 68 Landmarks
-We can demonstrate the bias variance tradeoff in more depth by feeding these models a higher dimensionality dataset, in this case 68 x,y coordinates or 136 features:
+## The Ground Truth 68 Landmarks
+Next, we're looking at the original 'ground truth' cooridinates in the InfAnFace dataset. These are x, y pixel coordinates for 68 labeled coordinates that were determined by human researchers. 
+
+These have not been normalized in scale, so larger images will lead to different coordinates, regardless of the class label, and I expected that this noisy extrinsic variable would lead to poorer model test performance. 
 
 <img src="figs/bayes_original_confusion_matrix.png" width=600>
 <img src="figs/bayes_original_metrics.png" width=600>
 
+Surprisingly, both LDA and QDA were able to achieve high test scores. I interpret this result as both and especially QDA being able to perform their own 'normalization' via a covariance matrix.  
+Gaussian Niave Bayes performs poorly, and shows that without the covariance estimates, the noise from pixel coordinates overpower the model.  
+
+KNN performs poorly as well. This can be expected, because KNN becomes highly sensitive to noisy features in high dimensional data.
+
 ## The Normalized, Centered and Rotated 68 Landmarks
-Finally, we can compare the original data scores to the normalized, centered and rotated features that we created to see if removing pixel-base externalities improved the models' predictive capability.
+Finally, we feed the models normalized, centered and rotated coordinates that we created, and see if removing pixel-base externalities improved the models' predictive capability.
 
 <img src="figs/bayes_norm_confusion_matrix.png" width=600>
 <img src="figs/bayes_norm_metrics.png" width=600>
 
 GaussianNB is still the worst performer, but with 1/3 the error rate as with the original training set.
-This time LDA has managed to maintain its excellent score in the test set.
+
+Whereas QDA was the best performer on the raw coordinates, it shows overfitting on the normalized coordinates. 
+
+LDA seems to strike a bias-variance balance by learning the different covariances between features generally, without overfitting as quickly as QDA. 
